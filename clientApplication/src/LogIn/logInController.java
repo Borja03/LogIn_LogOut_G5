@@ -1,8 +1,4 @@
 package LogIn;
-/**
- *
- * @author Alder
- */
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -14,14 +10,25 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.logging.Logger;
+import Utils.UtilsMethods;
 
 /**
  * Controlador para la interfaz de inicio de sesión.
  * Este controlador maneja la lógica de la vista de inicio de sesión, incluyendo la
  * validación de credenciales y la visibilidad de la contraseña.
+ * 
+ * <p>Se encarga de gestionar la interacción del usuario con los componentes de la 
+ * interfaz de usuario, así como de proporcionar retroalimentación mediante mensajes 
+ * de alerta.</p>
+ * 
+ * @author Alder
  */
 public class logInController {
 
+    /** Instancia de métodos utilitarios. */
+    UtilsMethods utils = new UtilsMethods();
+    
+    /** Logger para registrar eventos y mensajes. */
     private static final Logger logger = Logger.getLogger(logInController.class.getName());
 
     @FXML
@@ -48,7 +55,8 @@ public class logInController {
     @FXML
     private ImageView passwordImage; // Imagen que indica la visibilidad de la contraseña.
 
-    private boolean isPasswordVisible = false; // Indica si la contraseña es visible.
+    /** Indica si la contraseña es visible. */
+    private boolean isPasswordVisible = false; 
 
     /**
      * Método que se ejecuta al inicializar el controlador.
@@ -62,7 +70,7 @@ public class logInController {
         // Agregar listener para verificar el email cuando pierde el foco
         emailTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) { // Si pierde el foco
-                validateEmail(emailTextField.getText());
+                utils.validateEmail(emailTextField.getText());
             }
         });
     }
@@ -78,9 +86,10 @@ public class logInController {
 
         if (validateCredentials(email, password)) {
             logger.info("Log in exitoso.");
+            // Aquí se puede agregar la lógica adicional para la transición a la siguiente vista.
         } else {
             logger.warning("Credenciales incorrectas.");
-            showAlert("Error", "Los campos no pueden estar vacíos");
+            utils.showAlert("Error", "Los campos no pueden estar vacíos");
         }
     }
 
@@ -91,7 +100,7 @@ public class logInController {
     @FXML
     private void handleSignUpButtonAction() {
         logger.info("Abrir vista de registro.");
-        showAlert("Registro", "Abrir vista de registro.");
+        utils.showAlert("Registro", "Abrir vista de registro.");
     }
 
     /**
@@ -117,37 +126,12 @@ public class logInController {
 
     /**
      * Valida las credenciales del usuario.
+     * 
      * @param email El email del usuario.
      * @param password La contraseña del usuario.
      * @return true si las credenciales son válidas, false de lo contrario.
      */
     private boolean validateCredentials(String email, String password) {
         return !email.isEmpty() && !password.isEmpty();
-    }
-
-    /**
-     * Valida el formato del email.
-     * Muestra una alerta si el formato no es válido.
-     * @param email El email a validar.
-     */
-    private void validateEmail(String email) {
-        String emailRegex = "^[\\w-\\.]+@[\\w-]+\\.[a-zA-Z]{2,4}$";
-        if (!email.matches(emailRegex)) {
-            logger.warning("Formato de email inválido: " + email);
-            showAlert("Formato de email inválido", "El texto tiene que estar en formato email 'example@example.extension'");
-        }
-    }
-
-    /**
-     * Muestra una alerta con el título y el mensaje especificados.
-     * @param title El título de la alerta.
-     * @param message El mensaje de la alerta.
-     */
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
