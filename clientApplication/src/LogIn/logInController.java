@@ -1,6 +1,7 @@
 package LogIn;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -8,7 +9,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.logging.Logger;
+
 public class logInController {
+
+    private static final Logger logger = Logger.getLogger(logInController.class.getName());
 
     @FXML
     private TextField emailTextField;
@@ -26,13 +31,19 @@ public class logInController {
     private Label passwordLabel;
     @FXML
     private ImageView passwordImage;
-    
+
     private boolean isPasswordVisible = false; // Para controlar la visibilidad de la contraseña
 
     @FXML
     public void initialize() {
-        // Inicialización, si es necesaria
         visiblePasswordField.setVisible(false); // Inicialmente, el campo de texto visible está oculto
+
+        // Agregar listener para verificar el email cuando pierde el foco
+        emailTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) { // Si pierde el foco
+                validateEmail(emailTextField.getText());
+            }
+        });
     }
 
     @FXML
@@ -41,15 +52,17 @@ public class logInController {
         String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
 
         if (validateCredentials(email, password)) {
-            System.out.println("Log in exitoso.");
+            logger.info("Log in exitoso.");
         } else {
-            System.out.println("Credenciales incorrectas.");
+            logger.warning("Credenciales incorrectas.");
+            showAlert("Error", "Los campos no pueden estar vacios");
         }
     }
 
     @FXML
     private void handleSignUpButtonAction() {
-        System.out.println("Abrir vista de registro.");
+        logger.info("Abrir vista de registro.");
+        showAlert("Registro", "Abrir vista de registro.");
     }
 
     @FXML
@@ -71,5 +84,21 @@ public class logInController {
 
     private boolean validateCredentials(String email, String password) {
         return !email.isEmpty() && !password.isEmpty();
+    }
+
+    private void validateEmail(String email) {
+        String emailRegex = "^[\\w-\\.]+@[\\w-]+\\.[a-zA-Z]{2,4}$";
+        if (!email.matches(emailRegex)) {
+            logger.warning("Formato de email inválido: " + email);
+            showAlert("Formato de email inválido", "El texto tiene que estar en formato email 'example@example.extension'");
+        }
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

@@ -11,7 +11,7 @@ public class Application extends javafx.application.Application {
         // Asegúrate de que la ruta sea correcta
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LogIn/LogIn.fxml"));
         Scene scene = new Scene(loader.load());
-        primaryStage.setTitle("Login Application");
+        primaryStage.setTitle("SingUp/SingIn");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
