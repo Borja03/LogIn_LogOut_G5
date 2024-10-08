@@ -128,7 +128,7 @@
                   </HBox>
                   <HBox layoutX="10.0" layoutY="365.0" prefHeight="50.0" prefWidth="520.0">
                      <children>
-                        <Button id="btn_signin" fx:id="btn_signin" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Signin">
+                        <Button id="btn_signin" fx:id="btn_signup" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="SingUp">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -143,7 +143,7 @@
                   </HBox>
                   <HBox prefHeight="50.0" prefWidth="520.0">
                      <children>
-                        <Label fx:id="lbl_error" prefHeight="20.0" text="ERROR" textAlignment="CENTER" textFill="#df0e0e">
+                        <Label fx:id="lbl_error" prefHeight="20.0" textAlignment="CENTER" textFill="#df0e0e">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
