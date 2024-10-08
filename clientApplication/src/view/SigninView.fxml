@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane dividerPositions="0.29797979797979796" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <items>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="598.0" prefWidth="213.0" />
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+         <children>
+            <VBox layoutX="16.0" layoutY="12.0" prefHeight="565.0" prefWidth="529.0">
+               <children>
+                  <HBox prefHeight="60.0" prefWidth="520.0">
+                     <children>
+                        <Label prefHeight="56.0" prefWidth="525.0" text="SIGN UP" textAlignment="CENTER">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                           <padding>
+                              <Insets left="200.0" />
+                           </padding>
+                           <HBox.margin>
+                              <Insets top="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Label fx:id="lbl_email" prefHeight="40.0" prefWidth="170.0" text="Email" textAlignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <TextField id="tf_dni" fx:id="tf_email" prefHeight="40.0" prefWidth="300.0" promptText="Enter your email">
+                           <font>
+                              <Font size="14.0" />
+                           </font></TextField>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="70.0" prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Label id="lbl_email" prefHeight="40.0" prefWidth="170.0" text="Password" textAlignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="lbl_password" prefHeight="40.0" prefWidth="300.0" promptText="Enter your password">
+                           <font>
+                              <Font size="14.0" />
+                           </font></PasswordField>
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="120.0" prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Label id="lbl_email" prefHeight="40.0" prefWidth="170.0" text="Password" textAlignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="tf_password_confirm" prefHeight="40.0" prefWidth="300.0" promptText="confirm your password">
+                           <font>
+                              <Font size="14.0" />
+                           </font></PasswordField>
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="165.0" prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Label id="lbl_name" prefHeight="40.0" prefWidth="170.0" text="Name" textAlignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <TextField id="tf_dni" fx:id="tf_name" prefHeight="40.0" prefWidth="300.0" promptText="Enter your name">
+                           <font>
+                              <Font size="14.0" />
+                           </font></TextField>
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="215.0" prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Label id="lbl_dni" prefHeight="40.0" prefWidth="170.0" text="DNI" textAlignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <TextField id="tf_dni" fx:id="tf_dni" prefHeight="40.0" prefWidth="300.0" promptText="Enter your DNI">
+                           <font>
+                              <Font size="14.0" />
+                           </font></TextField>
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="265.0" prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Label id="lbl_phone_number" prefHeight="40.0" prefWidth="170.0" text="Tel number" textAlignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <TextField id="tf_phone_number" fx:id="tf_phone_number" prefHeight="40.0" prefWidth="300.0" promptText="Enter your phone number">
+                           <font>
+                              <Font size="14.0" />
+                           </font></TextField>
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="315.0" prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Label id="lbl_company" prefHeight="40.0" prefWidth="170.0" text="Company" textAlignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="cb_company" prefHeight="40.0" prefWidth="300.0" promptText="Choose your company" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="365.0" prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Button id="btn_signin" fx:id="btn_signin" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Signin">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="350.0" top="20.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Label fx:id="lbl_error" prefHeight="20.0" text="ERROR" textAlignment="CENTER" textFill="#df0e0e">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="250.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets top="20.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="496.0" prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Label prefHeight="40.0" text="Already have an account ?">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="120.0" top="20.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Hyperlink fx:id="hl_login" prefHeight="40.0" text="Login now">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets top="20.0" />
+                           </HBox.margin>
+                        </Hyperlink>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children></AnchorPane>
+  </items>
+</SplitPane>
