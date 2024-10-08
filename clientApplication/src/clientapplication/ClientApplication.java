@@ -6,9 +6,13 @@ package clientapplication;
  * and open the template in the editor.
  */
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
@@ -28,7 +32,9 @@ public class ClientApplication extends Application {
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
+      
+                openSignUpView();
+                
             }
         });
         
@@ -49,4 +55,19 @@ public class ClientApplication extends Application {
         launch(args);
     }
     
+    
+    public void openSignUpView(){
+                
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignUpView.fxml"));
+            Stage stage = new Stage();
+            Scene scene = null;
+                try {
+                    scene = new Scene(loader.load());
+                } catch (IOException ex) {
+                    Logger.getLogger(ClientApplication.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            stage.setTitle("Third Window");
+            stage.setScene(scene);
+            stage.show();
+    }
 }

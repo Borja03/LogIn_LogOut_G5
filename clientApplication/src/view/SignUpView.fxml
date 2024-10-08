@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.29797979797979796" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<SplitPane dividerPositions="0.29797979797979796" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.SignUpController">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="598.0" prefWidth="213.0" />
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -58,7 +58,7 @@
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <PasswordField fx:id="lbl_password" prefHeight="40.0" prefWidth="300.0" promptText="Enter your password">
+                        <PasswordField fx:id="tf_password" prefHeight="40.0" prefWidth="300.0" promptText="Enter your password">
                            <font>
                               <Font size="14.0" />
                            </font></PasswordField>
@@ -148,7 +148,7 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                            <HBox.margin>
-                              <Insets left="250.0" />
+                              <Insets left="50.0" />
                            </HBox.margin>
                            <padding>
                               <Insets top="20.0" />
