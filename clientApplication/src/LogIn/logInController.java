@@ -1,4 +1,8 @@
 package LogIn;
+/**
+ *
+ * @author Alder
+ */
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
