@@ -1,5 +1,7 @@
 package Model;
 
+import java.io.Serializable;
+
 /**
  * Representa un mensaje en el sistema, que está asociado a un usuario y un tipo de mensaje.
  * 
@@ -8,7 +10,7 @@ package Model;
  * 
  * @author Alder
  */
-public class Message {
+public class Message implements Serializable{
     private User user;      // Usuario que envía el mensaje
     private TipoMensaje tipo; // Tipo de mensaje (ej. texto, imagen, etc.)
     

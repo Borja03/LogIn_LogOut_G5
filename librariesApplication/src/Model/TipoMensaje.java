@@ -1,7 +1,5 @@
 package Model;
 
-import java.io.Serializable;
-
 /**
  * Enumera los tipos de mensajes que se pueden enviar o recibir en el sistema.
  * 
@@ -18,7 +16,7 @@ import java.io.Serializable;
  * 
  * @author Alder
  */
-public enum TipoMensaje implements Serializable{
+public enum TipoMensaje{
     ENVIAR, // Mensaje enviado
     RECIBIR, // Mensaje recibido
     OK, // Operación exitosa
