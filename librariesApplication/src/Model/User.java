@@ -1,5 +1,7 @@
 package Model;
 
+import java.io.Serializable;
+
 /**
  * Clase que representa a un usuario en el sistema.
  * Contiene la información del usuario, como email, contraseña, nombre,
@@ -7,7 +9,7 @@ package Model;
  * 
  * @author Alder
  */
-public class User {
+public class User implements Serializable{
     private String email;
     private String password;
     private String name;
