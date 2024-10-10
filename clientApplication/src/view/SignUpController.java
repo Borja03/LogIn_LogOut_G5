@@ -217,9 +217,12 @@ private void validateInputs(String email, String password, String confirmPasswor
      */
     private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
        
+       // UserDao userdao= new UserDao();
+        //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
+       // User insertedUSer = userdao.insertUser(user);
+
       //  UserDao userdao= new UserDao();
         //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
-        User user = new User( email,  password,  name,dni,phoneNumber,companyID) ;
       //  User insertedUSer = userdao.insertUser(user);
 
         logger.log(Level.INFO, "Sign-up successful for: {0}", email);

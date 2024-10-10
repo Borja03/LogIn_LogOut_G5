@@ -23,5 +23,5 @@ public enum TipoMensaje {
     WRONG_PASSWORD,     // Contraseña incorrecta
     EMAIL_EXISTS,      // Email ya existe
     SERVER_ERROR       // Error en el servidor
-
 }
+

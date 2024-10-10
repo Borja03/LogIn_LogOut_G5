@@ -1,4 +1,4 @@
-package MainWindow;
+package view;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
