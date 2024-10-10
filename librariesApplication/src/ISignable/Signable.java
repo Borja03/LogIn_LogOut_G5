@@ -14,6 +14,7 @@ public interface Signable {
     /**
      * Método para registrar un nuevo usuario.
      * 
+     * @param user es el objeto que se devuelve como parametro
      * @return User es el objeto que se retorna en el metodo
      * @throws Exception Si ocurre un error durante el registro.
      */
@@ -21,7 +22,7 @@ public interface Signable {
 
     /**
      * Método para iniciar sesión de un usuario existente.
-     * 
+     * @param user es el objeto que se devuelve como parametro
      * @return User es el objeto que se retorna en el metodo
      * @throws Exception Si ocurre un error durante el inicio de sesión.
      */
