@@ -19,9 +19,9 @@ public class Application extends javafx.application.Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/LogIn/LogIn.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainWindow/Main.fxml"));
         Scene scene = new Scene(loader.load());
-        primaryStage.setTitle("SingUp/SingIn"); // Título de la ventana
+        primaryStage.setTitle("Main"); // Título de la ventana
         primaryStage.setScene(scene); // Establece la escena en el escenario principal
         primaryStage.show(); // Muestra el escenario
     }
