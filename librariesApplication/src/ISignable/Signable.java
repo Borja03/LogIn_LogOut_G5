@@ -33,6 +33,7 @@ public interface Signable {
      * @param user El objeto User que contiene la información de inicio de sesión.
      * @throws Exception Si ocurre un error durante el inicio de sesión.
      */
-    public void main(User user) throws Exception;
+    public void main(User user) throws Exception; 
+    
     
 }
