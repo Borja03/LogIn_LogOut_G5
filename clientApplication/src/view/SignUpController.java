@@ -219,8 +219,11 @@ private void validateInputs(String email, String password, String confirmPasswor
        
        // UserDao userdao= new UserDao();
         //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
-        User user = new User( email,  password,  name,dni,phoneNumber,companyID) ;
        // User insertedUSer = userdao.insertUser(user);
+
+      //  UserDao userdao= new UserDao();
+        //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
+      //  User insertedUSer = userdao.insertUser(user);
 
         logger.log(Level.INFO, "Sign-up successful for: {0}", email);
         // Add logic to send this data to the backend service for further processing
