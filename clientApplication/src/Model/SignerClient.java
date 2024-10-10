@@ -20,6 +20,7 @@ import ISignable.Signable;
  *
  * @author Alder
  */
+
 public class SignerClient implements Signable {
 
     /**
@@ -45,4 +46,5 @@ public class SignerClient implements Signable {
     public User signIn(User user) throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }

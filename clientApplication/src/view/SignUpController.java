@@ -2,6 +2,7 @@ package view;
 
 import Model.User;
 import exception.EmptyFieldException;
+import exception.InvalidDniFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidPhoneNumberFormatException;
@@ -115,7 +116,7 @@ public class SignUpController implements Initializable {
      * @throws InvalidPhoneNumberFormatException if the phone number is invalid
      */
 private void validateInputs(String email, String password, String confirmPassword, String name, String dni, String phoneNumber, String company)
-        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException {
+        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException, InvalidDniFormatException {
 
     // Validate email
     if (email == null || email.isEmpty()) {
@@ -151,6 +152,12 @@ private void validateInputs(String email, String password, String confirmPasswor
     // Validate DNI
     if (dni == null || dni.isEmpty()) {
         throw new EmptyFieldException("DNI cannot be empty.");
+    }
+    
+    // Validate DNI
+    String dniRegex = "^[0-9]{8}[A-Za-z]$";
+    if (!dni.matches(dniRegex)) {
+        throw new InvalidDniFormatException("DNI must be 8 digits followed by a letter (e.g., 12345678A).");
     }
 
     // Validate phone number
@@ -217,9 +224,12 @@ private void validateInputs(String email, String password, String confirmPasswor
      */
     private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
        
+       // UserDao userdao= new UserDao();
+        //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
+       // User insertedUSer = userdao.insertUser(user);
+
       //  UserDao userdao= new UserDao();
         //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
-        User user = new User( email,  password,  name,dni,phoneNumber,companyID) ;
       //  User insertedUSer = userdao.insertUser(user);
 
         logger.log(Level.INFO, "Sign-up successful for: {0}", email);
