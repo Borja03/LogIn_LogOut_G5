@@ -27,4 +27,5 @@ public interface Signable {
      * @throws Exception Si ocurre un error durante el inicio de sesión.
      */
     public User signIn(User user) throws Exception;
+
 }
