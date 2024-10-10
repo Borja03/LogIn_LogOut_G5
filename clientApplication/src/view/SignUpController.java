@@ -20,6 +20,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 /**
  * SignUpController is responsible for handling user interactions in the sign-up
@@ -224,9 +227,8 @@ private void validateInputs(String email, String password, String confirmPasswor
       //  UserDao userdao= new UserDao();
         //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
       //  User insertedUSer = userdao.insertUser(user);
-
+      navigateToMainScreen();
         logger.log(Level.INFO, "Sign-up successful for: {0}", email);
-        // Add logic to send this data to the backend service for further processing
     }
 
     /**
@@ -250,11 +252,47 @@ private void validateInputs(String email, String password, String confirmPasswor
     /**
      * Navigates to the login screen (dummy logic for demonstration).
      */
-    private void navigateToLoginScreen() {
-        
-        
+    
+ private void navigateToMainScreen() {
+    try {
+        // Load the FXML file of the main view
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Main.fxml"));
+        Scene mainScene = new Scene(loader.load());
 
-        logger.log(Level.INFO, "Navigating to login screen...");
-        // Add logic to change the scene or navigate to the login screen
+        // Get the current stage
+        Stage currentStage = (Stage) btn_signup.getScene().getWindow();
+
+        // Change the current stage's scene to the main scene
+        currentStage.setScene(mainScene);
+        currentStage.setTitle("Main"); // Title of the new window 
+        currentStage.show();
+        
+        logger.log(Level.INFO, "Navigated to main screen.");
+
+    } catch (Exception e) {
+        logger.log(Level.SEVERE, "Failed to load main screen: " + e.getMessage(), e);
     }
+}
+ 
+private void navigateToLoginScreen() {
+    try {
+        // Load the FXML file of the login view
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LogIn.fxml"));
+        Scene loginScene = new Scene(loader.load());
+
+        // Get the current stage
+        Stage currentStage = (Stage) btn_signup.getScene().getWindow();
+
+        // Change the current stage's scene to the login scene
+        currentStage.setScene(loginScene);
+        currentStage.setTitle("LogIn"); // Title of the new window 
+        currentStage.show();
+        
+        logger.log(Level.INFO, "Navigated to login screen.");
+
+    } catch (Exception e) {
+        logger.log(Level.SEVERE, "Failed to load login screen: " + e.getMessage(), e);
+    }
+}
+
 }
