@@ -121,6 +121,68 @@ public class SignUpController implements Initializable {
         // ... (la lógica de validación sigue igual)
     }
 
+
+    /**
+     * Validates the password based on specified criteria.
+     *
+     * @param password the password to validate
+     * @return true if the password is valid, false otherwise
+     */
+    private boolean validatePassword(String password) {
+        if (password.length() < 6) {
+            return false;
+        }
+
+        boolean hasUppercase = false;
+        boolean hasDigit = false;
+        boolean hasSpecialChar = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                hasUppercase = true;
+            } else if (Character.isDigit(c)) {
+                hasDigit = true;
+            } else if (!Character.isLetterOrDigit(c)) {
+                hasSpecialChar = true;
+            }
+        }
+        return hasUppercase && hasDigit && hasSpecialChar;
+    }
+
+    /**
+     * Validates the phone number to ensure it is exactly 9 digits.
+     *
+     * @param phoneNumber the phone number to validate
+     * @return true if the phone number is valid, false otherwise
+     */
+    private boolean validatePhoneNumber(String phoneNumber) {
+        return phoneNumber.matches("\\d{9}");
+    }
+
+    /**
+     * Performs the sign-in logic, typically involves calling a backend service.
+     *
+     * @param email the email entered by the user
+     * @param password the password entered by the user
+     * @param name the name entered by the user
+     * @param dni the DNI entered by the user
+     * @param phoneNumber the phone number entered by the user
+     * @param company the selected company from the ComboBox
+     */
+    private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
+       
+       // UserDao userdao= new UserDao();
+        //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
+       // User insertedUSer = userdao.insertUser(user);
+
+      //  UserDao userdao= new UserDao();
+        //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
+      //  User insertedUSer = userdao.insertUser(user);
+
+        logger.log(Level.INFO, "Sign-up successful for: {0}", email);
+        // Add logic to send this data to the backend service for further processing
+    }
+
     /**
      * Performs the sign-in logic, typically involves calling a backend service.
      *
