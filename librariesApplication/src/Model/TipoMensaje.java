@@ -5,13 +5,21 @@ package Model;
  * 
  * <p>Esta enumeración incluye los siguientes tipos:</p>
  * <ul>
- *     <li><b>ENVIAR:</b> Indica que el mensaje está siendo enviado.</li>
- *     <li><b>RECIBIR:</b> Indica que el mensaje ha sido recibido.</li>
+ *     <li><b>SIGN_IN_REQUEST:</b> Indica que se está solicitando iniciar sesión.</li>
+ *     <li><b>SIGN_UP_REQUEST:</b> Indica que se está solicitando registrarse.</li>
+ *     <li><b>USER_NOT_EXIST:</b> Indica que el usuario no existe en el sistema.</li>
+ *     <li><b>WRONG_PASSWORD:</b> Indica que la contraseña proporcionada es incorrecta.</li>
+ *     <li><b>EMAIL_EXISTS:</b> Indica que el correo electrónico ya está registrado en el sistema.</li>
+ *     <li><b>SERVER_ERROR:</b> Indica que ha ocurrido un error en el servidor.</li>
  * </ul>
  * 
  * @author Alder
  */
 public enum TipoMensaje {
-    ENVIAR, // Mensaje enviado
-    RECIBIR // Mensaje recibido
+    SIGN_IN_REQUEST,  // Solicitud de inicio de sesión
+    SIGN_UP_REQUEST,   // Solicitud de registro
+    USER_NOT_EXIST,    // Usuario no existe
+    WRONG_PASSWORD,     // Contraseña incorrecta
+    EMAIL_EXISTS,      // Email ya existe
+    SERVER_ERROR       // Error en el servidor
 }
