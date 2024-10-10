@@ -5,10 +5,14 @@
  */
 package Model;
 
+import ISignable.Signable;
+
 /**
  *
  * @author Alder
  */
 public class SignableFactory {
-    
+    public Signable getSignable(){
+        return new SignerClient();
+    }
 }
