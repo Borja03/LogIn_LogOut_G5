@@ -16,19 +16,12 @@ package Model;
  * @author Alder
  */
 public enum TipoMensaje {
-<<<<<<< HEAD
-=======
 
->>>>>>> 95bb34b7d859a20855b607f445f7499b237e4166
     SIGN_IN_REQUEST,  // Solicitud de inicio de sesión
     SIGN_UP_REQUEST,   // Solicitud de registro
     USER_NOT_EXIST,    // Usuario no existe
     WRONG_PASSWORD,     // Contraseña incorrecta
     EMAIL_EXISTS,      // Email ya existe
     SERVER_ERROR       // Error en el servidor
-<<<<<<< HEAD
 }
-=======
 
-}
->>>>>>> 95bb34b7d859a20855b607f445f7499b237e4166
