@@ -43,7 +43,6 @@ public class MainController {
     
      @FXML
     private void logOut() {
-      
         // Add further logic for logout, like clearing user data or redirecting to login screen.
     }
 }

@@ -26,4 +26,13 @@ public interface Signable {
      * @throws Exception Si ocurre un error durante el inicio de sesión.
      */
     public void signIn(User user) throws Exception;
+    
+        /**
+     * Método para sacar datos de un usuario existente.
+     * 
+     * @param user El objeto User que contiene la información de inicio de sesión.
+     * @throws Exception Si ocurre un error durante el inicio de sesión.
+     */
+    public void main(User user) throws Exception;
+    
 }
