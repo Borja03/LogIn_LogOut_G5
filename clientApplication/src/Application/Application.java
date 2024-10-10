@@ -19,7 +19,7 @@ public class Application extends javafx.application.Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignuUpController.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignUpView.fxml"));
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle("SingUp/SingIn"); // Título de la ventana
         primaryStage.setScene(scene); // Establece la escena en el escenario principal
