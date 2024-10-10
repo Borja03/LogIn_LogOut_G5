@@ -183,7 +183,7 @@ public class SignUpController implements Initializable {
         logger.log(Level.INFO, "Sign-up successful for: {0}", email);
         // Add logic to send this data to the backend service for further processing
     }
-*/
+    */
     /**
      * Performs the sign-in logic, typically involves calling a backend service.
      *
