@@ -100,7 +100,6 @@ public class logInController {
     @FXML
     private void handleSignUpButtonAction() {
         logger.info("Abrir vista de registro.");
-        utils.showAlert("Registro", "Abrir vista de registro.");
     }
 
     /**
