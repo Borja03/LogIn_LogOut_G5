@@ -91,7 +91,7 @@ public class logInController {
 
         if (validateCredentials(email, password)) {
             logger.info("Log in exitoso.");
-            navigateToMainScreen();
+            navigateToScreen("/view/Main.fxml", "Main");
         } else {
             logger.warning("Credenciales incorrectas.");
             utils.showAlert("Error", "Los campos no pueden estar vacíos");
@@ -105,7 +105,7 @@ public class logInController {
     @FXML
     private void handleSignUpButtonAction() {
         logger.info("Abrir vista de registro.");
-        navigateToSignUpScreen();
+        navigateToScreen("/view/SignUpView.fxml", "SignUp");
     }
 
     /**
@@ -139,46 +139,32 @@ public class logInController {
     private boolean validateCredentials(String email, String password) {
         return !email.isEmpty() && !password.isEmpty();
     }
-    
-        private void navigateToSignUpScreen() {
-    try {
-        // Load the FXML file of the LogIn view
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignUpView.fxml"));
-        Scene signUpScene = new Scene(loader.load());
 
-        // Get the current stage
-        Stage currentStage = (Stage)  signUpButton.getScene().getWindow();
+     /**
+     * General method to navigate to different screens.
+     *
+     * @param fxmlPath the path to the FXML file of the target screen
+     * @param windowTitle the title to set for the window
+     * @author Borja
+     */
+    private void navigateToScreen(String fxmlPath, String title) {
+        try {
+            // Load the FXML file of the target view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Scene scene = new Scene(loader.load());
 
-        // Change the current stage's scene to the LogIn scene
-        currentStage.setScene(signUpScene);
-        currentStage.setTitle("SignUp"); // Title of the new window 
-        currentStage.show();
-        
-        logger.log(Level.INFO, "Navigated to SignUp screen.");
+            // Get the current stage
+            Stage currentStage = (Stage) logInButton.getScene().getWindow();
 
-    } catch (Exception e) {
-        logger.log(Level.SEVERE, "Failed to load SignUp screen: " + e.getMessage(), e);
+             // Change the current stage's scene to the new scene
+            currentStage.setScene(scene);
+            currentStage.setTitle(title); // Set the title of the new window
+            currentStage.show();
+            
+            logger.log(Level.INFO, "Navigated to " + title + " screen.");
+
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
+        }
     }
-}
-        
-         private void navigateToMainScreen() {
-    try {
-        // Load the FXML file of the main view
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Main.fxml"));
-        Scene mainScene = new Scene(loader.load());
-
-        // Get the current stage
-        Stage currentStage = (Stage) logInButton.getScene().getWindow();
-
-        // Change the current stage's scene to the main scene
-        currentStage.setScene(mainScene);
-        currentStage.setTitle("Main"); // Title of the new window 
-        currentStage.show();
-        
-        logger.log(Level.INFO, "Navigated to main screen.");
-
-    } catch (Exception e) {
-        logger.log(Level.SEVERE, "Failed to load main screen: " + e.getMessage(), e);
-    }
-}
 }
