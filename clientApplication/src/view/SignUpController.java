@@ -169,6 +169,7 @@ public class SignUpController implements Initializable {
      * @param phoneNumber the phone number entered by the user
      * @param company the selected company from the ComboBox
      */
+    /*
     private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
        
        // UserDao userdao= new UserDao();
@@ -182,7 +183,7 @@ public class SignUpController implements Initializable {
         logger.log(Level.INFO, "Sign-up successful for: {0}", email);
         // Add logic to send this data to the backend service for further processing
     }
-
+*/
     /**
      * Performs the sign-in logic, typically involves calling a backend service.
      *
@@ -193,7 +194,11 @@ public class SignUpController implements Initializable {
      * @param phoneNumber the phone number entered by the user
      * @param companyID the selected company's ID
      */
-    
+    private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
+        // Lógica de registro de usuario
+        navigateToScreen("/view/Main.fxml", "Main");
+        logger.log(Level.INFO, "Sign-up successful for: {0}", email);
+    }
 
     /**
      * Populates the ComboBox with company names (simulated data).
