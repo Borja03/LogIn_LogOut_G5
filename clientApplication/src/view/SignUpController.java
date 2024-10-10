@@ -193,11 +193,7 @@ public class SignUpController implements Initializable {
      * @param phoneNumber the phone number entered by the user
      * @param companyID the selected company's ID
      */
-    private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
-        // Lógica de registro de usuario
-        navigateToScreen("/view/Main.fxml", "Main");
-        logger.log(Level.INFO, "Sign-up successful for: {0}", email);
-    }
+    
 
     /**
      * Populates the ComboBox with company names (simulated data).
