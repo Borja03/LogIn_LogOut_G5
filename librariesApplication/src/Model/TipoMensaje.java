@@ -22,6 +22,8 @@ public enum TipoMensaje {
     USER_NOT_EXIST,    // Usuario no existe
     WRONG_PASSWORD,     // Contraseña incorrecta
     EMAIL_EXISTS,      // Email ya existe
-    SERVER_ERROR       // Error en el servidor
+    SERVER_ERROR,       // Error en el servidor
+    MAX_THREAD_USER,
+    OK_RESPONSE
 }
 

@@ -1,16 +1,20 @@
 package view;
 
+import Model.SignerClient;
+import Model.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.logging.Logger;
 import Utils.UtilsMethods;
+import javafx.scene.layout.Pane;
 
 /**
  * Controlador para la interfaz de inicio de sesión.
@@ -44,16 +48,19 @@ public class logInController {
     private Button logInButton; // Botón para iniciar sesión.
     
     @FXML
-    private Button signUpButton; // Botón para abrir la vista de registro.
-    
-    @FXML
     private Label emailLabel; // Etiqueta para el campo de email.
     
     @FXML
     private Label passwordLabel; // Etiqueta para el campo de contraseña.
     
     @FXML
+    private Hyperlink createUserLink; // Enlace para crear usuario.
+    
+    @FXML
     private ImageView passwordImage; // Imagen que indica la visibilidad de la contraseña.
+    
+    @FXML
+    private Pane centralPane;
 
     /** Indica si la contraseña es visible. */
     private boolean isPasswordVisible = false; 
@@ -65,6 +72,8 @@ public class logInController {
      */
     @FXML
     public void initialize() {
+        centralPane.setFocusTraversable(true);
+        centralPane.requestFocus();
         visiblePasswordField.setVisible(false); // Inicialmente, el campo de texto visible está oculto
 
         // Agregar listener para verificar el email cuando pierde el foco
@@ -80,26 +89,25 @@ public class logInController {
      * Valida las credenciales del usuario y muestra un mensaje apropiado.
      */
     @FXML
-    private void handleLogInButtonAction() {
+    private void handleLogInButtonAction() throws Exception {
         String email = emailTextField.getText();
         String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
 
-        if (validateCredentials(email, password)) {
-            logger.info("Log in exitoso.");
-            // Aquí se puede agregar la lógica adicional para la transición a la siguiente vista.
-        } else {
-            logger.warning("Credenciales incorrectas.");
-            utils.showAlert("Error", "Los campos no pueden estar vacíos");
-        }
+            SignerClient s = new SignerClient();
+            User user = new User();
+            user.setEmail(emailLabel.getText());
+            user.setPassword(passwordLabel.getText());
+            s.signIn(user);
     }
 
     /**
-     * Maneja la acción del botón de registro.
+     * Maneja la acción del enlace para crear un usuario.
      * Muestra un mensaje indicando que se abrirá la vista de registro.
      */
     @FXML
-    private void handleSignUpButtonAction() {
+    private void handleCreateUserLinkAction() {
         logger.info("Abrir vista de registro.");
+        // Aquí puedes implementar la lógica para abrir la vista de registro
     }
 
     /**
@@ -121,16 +129,5 @@ public class logInController {
             visiblePasswordField.setVisible(false);
             passwordField.setText(visiblePasswordField.getText());
         }
-    }
-
-    /**
-     * Valida las credenciales del usuario.
-     * 
-     * @param email El email del usuario.
-     * @param password La contraseña del usuario.
-     * @return true si las credenciales son válidas, false de lo contrario.
-     */
-    private boolean validateCredentials(String email, String password) {
-        return !email.isEmpty() && !password.isEmpty();
     }
 }
