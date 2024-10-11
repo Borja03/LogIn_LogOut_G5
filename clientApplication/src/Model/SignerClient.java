@@ -46,7 +46,20 @@ public class SignerClient implements Signable {
      */
     @Override
     public User signUp(User user) throws Exception {
-        ObjectOutputStream oos = null;
+        return null;
+      
+    }
+
+    /**
+     * Inicia sesión para un usuario existente.
+     *
+     * @param user El usuario que desea iniciar sesión.
+     * @return El usuario que ha iniciado sesión.
+     * @throws Exception Si ocurre un error durante el inicio de sesión.
+     */
+    @Override
+    public User signIn(User user) throws Exception {
+          ObjectOutputStream oos = null;
         ObjectInputStream ois = null;
 
         try {
@@ -88,18 +101,6 @@ public class SignerClient implements Signable {
         }
         //Devuleve un objeto user
         return user;
-    }
-
-    /**
-     * Inicia sesión para un usuario existente.
-     *
-     * @param user El usuario que desea iniciar sesión.
-     * @return El usuario que ha iniciado sesión.
-     * @throws Exception Si ocurre un error durante el inicio de sesión.
-     */
-    @Override
-    public User signIn(User user) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

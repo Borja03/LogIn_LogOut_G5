@@ -8,13 +8,8 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-<<<<<<< HEAD
-    <jar href="clientApplication.jar" size="32306" download="eager" />
-    <jar href="lib\librariesApplication.jar" size="11019" download="eager" />
-=======
-    <jar href="clientApplication.jar" size="33187" download="eager" />
-    <jar href="lib\librariesApplication.jar" size="6620" download="eager" />
->>>>>>> 8ed013006c5ac5583337ec749286eab9d5d37440
+    <jar href="clientApplication.jar" size="34536" download="eager" />
+    <jar href="lib\librariesApplication.jar" size="11564" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="clientApplication" >
     <param name="requiredFXVersion" value="8.0+"/>
