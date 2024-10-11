@@ -11,6 +11,11 @@ import javafx.scene.image.ImageView;
 
 import java.util.logging.Logger;
 import Utils.UtilsMethods;
+import static Utils.UtilsMethods.logger;
+import java.util.logging.Level;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 /**
  * Controlador para la interfaz de inicio de sesión.
@@ -86,7 +91,7 @@ public class logInController {
 
         if (validateCredentials(email, password)) {
             logger.info("Log in exitoso.");
-            // Aquí se puede agregar la lógica adicional para la transición a la siguiente vista.
+            navigateToScreen("/view/Main.fxml", "Main");
         } else {
             logger.warning("Credenciales incorrectas.");
             utils.showAlert("Error", "Los campos no pueden estar vacíos");
@@ -100,6 +105,7 @@ public class logInController {
     @FXML
     private void handleSignUpButtonAction() {
         logger.info("Abrir vista de registro.");
+        navigateToScreen("/view/SignUpView.fxml", "SignUp");
     }
 
     /**
@@ -132,5 +138,33 @@ public class logInController {
      */
     private boolean validateCredentials(String email, String password) {
         return !email.isEmpty() && !password.isEmpty();
+    }
+
+     /**
+     * General method to navigate to different screens.
+     *
+     * @param fxmlPath the path to the FXML file of the target screen
+     * @param windowTitle the title to set for the window
+     * @author Borja
+     */
+    private void navigateToScreen(String fxmlPath, String title) {
+        try {
+            // Load the FXML file of the target view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Scene scene = new Scene(loader.load());
+
+            // Get the current stage
+            Stage currentStage = (Stage) logInButton.getScene().getWindow();
+
+             // Change the current stage's scene to the new scene
+            currentStage.setScene(scene);
+            currentStage.setTitle(title); // Set the title of the new window
+            currentStage.show();
+            
+            logger.log(Level.INFO, "Navigated to " + title + " screen.");
+
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
+        }
     }
 }

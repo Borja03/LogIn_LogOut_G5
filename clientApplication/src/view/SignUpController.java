@@ -1,5 +1,7 @@
 package view;
 
+import ISignable.Signable;
+import Model.SignableFactory;
 import Model.User;
 import exception.EmptyFieldException;
 import exception.InvalidEmailFormatException;
@@ -7,9 +9,11 @@ import exception.InvalidPasswordFormatException;
 import exception.InvalidPhoneNumberFormatException;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +24,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 
 /**
  * SignUpController is responsible for handling user interactions in the sign-up
@@ -43,9 +53,6 @@ public class SignUpController implements Initializable {
 
     @FXML
     private TextField tf_name;
-
-    @FXML
-    private TextField tf_dni;
 
     @FXML
     private TextField tf_phone_number;
@@ -85,14 +92,13 @@ public class SignUpController implements Initializable {
             String password = tf_password.getText();
             String confirmPassword = tf_password_confirm.getText();
             String name = tf_name.getText();
-            String dni = tf_dni.getText();
             String phoneNumber = tf_phone_number.getText();
             String company = cb_company.getValue();
 
-            validateInputs(email, password, confirmPassword, name, dni, phoneNumber, company);
+            validateInputs(email, password, confirmPassword, name, phoneNumber, company);
             lbl_error.setText("");  // Clear previous error messages
             //get id of comapny here by hashmap
-            performSignUp(email, password, name, dni, phoneNumber, 1);
+            performSignUp(email, password, name, phoneNumber, 1);
         } catch (Exception e) {
             lbl_error.setText(e.getMessage());  // Display the error message
             logger.log(Level.WARNING, e.getMessage(), e);  // Log the warning
@@ -114,7 +120,7 @@ public class SignUpController implements Initializable {
      * @throws InvalidPasswordFormatException if the password does not meet the criteria
      * @throws InvalidPhoneNumberFormatException if the phone number is invalid
      */
-private void validateInputs(String email, String password, String confirmPassword, String name, String dni, String phoneNumber, String company)
+private void validateInputs(String email, String password, String confirmPassword, String name, String phoneNumber, String company)
         throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException {
 
     // Validate email
@@ -148,10 +154,7 @@ private void validateInputs(String email, String password, String confirmPasswor
         throw new EmptyFieldException("Name cannot be empty.");
     }
 
-    // Validate DNI
-    if (dni == null || dni.isEmpty()) {
-        throw new EmptyFieldException("DNI cannot be empty.");
-    }
+ 
 
     // Validate phone number
     if (phoneNumber == null || phoneNumber.isEmpty()) {
@@ -215,15 +218,18 @@ private void validateInputs(String email, String password, String confirmPasswor
      * @param phoneNumber the phone number entered by the user
      * @param company the selected company from the ComboBox
      */
-    private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
+    private void performSignUp(String email, String password, String name, String phoneNumber, int companyID) {
        
-       // UserDao userdao= new UserDao();
+        
         //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
-       // User insertedUSer = userdao.insertUser(user);
+        User user = new User(email,password,name,phoneNumber,companyID);
+        try {
+            User insertedUSer = SignableFactory.getSignable().signIn(user);
+        } catch (Exception ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-      //  UserDao userdao= new UserDao();
-        //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
-      //  User insertedUSer = userdao.insertUser(user);
+      
 
         logger.log(Level.INFO, "Sign-up successful for: {0}", email);
         // Add logic to send this data to the backend service for further processing
@@ -244,17 +250,35 @@ private void validateInputs(String email, String password, String confirmPasswor
      * @param event the ActionEvent triggered by the hyperlink click
      */
     private void handleLoginHyperlinkAction(ActionEvent event) {
-        navigateToLoginScreen();
+        navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
-
     /**
-     * Navigates to the login screen (dummy logic for demonstration).
+     * General method to navigate to different screens.
+     *
+     * @param fxmlPath the path to the FXML file of the target screen
+     * @param windowTitle the title to set for the window
+     * @author Borja
      */
-    private void navigateToLoginScreen() {
-        
-        
+    private void navigateToScreen(String fxmlPath, String windowTitle) {
+        try {
+            // Load the FXML file of the target view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Scene scene = new Scene(loader.load());
 
-        logger.log(Level.INFO, "Navigating to login screen...");
-        // Add logic to change the scene or navigate to the login screen
+            // Get the current stage
+            Stage currentStage = (Stage) btn_signup.getScene().getWindow();
+
+            // Change the current stage's scene to the new scene
+            currentStage.setScene(scene);
+            currentStage.setTitle(windowTitle); // Set the title of the new window
+            currentStage.show();
+
+            logger.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
+        }
     }
+    
+  
+
 }

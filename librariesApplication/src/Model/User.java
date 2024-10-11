@@ -13,7 +13,6 @@ public class User implements Serializable{
     private String email;
     private String password;
     private String name;
-    private String dni;
     private String telefono;
     private int companyID;
 
@@ -24,7 +23,7 @@ public class User implements Serializable{
         this.email = "";
         this.password = "";
         this.name = "";
-        this.dni = "";
+        //this.dni = "";
         this.telefono = "";
         this.companyID = 0;
     }
@@ -39,11 +38,11 @@ public class User implements Serializable{
      * @param telefono  El número de teléfono del usuario.
      * @param companyID El ID de la empresa asociada al usuario.
      */
-    public User(String email, String password, String name, String dni, String telefono, int companyID) {
+    public User(String email, String password, String name, String telefono, int companyID) {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.dni = dni;
+ 
         this.telefono = telefono;
         this.companyID = companyID;
     }
@@ -100,24 +99,6 @@ public class User implements Serializable{
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Obtiene el DNI del usuario.
-     * 
-     * @return El DNI del usuario.
-     */
-    public String getDni() {
-        return dni;
-    }
-
-    /**
-     * Establece el DNI del usuario.
-     * 
-     * @param dni El nuevo DNI del usuario.
-     */
-    public void setDni(String dni) {
-        this.dni = dni;
     }
 
     /**

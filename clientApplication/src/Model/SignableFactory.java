@@ -12,7 +12,7 @@ import ISignable.Signable;
  * @author Alder
  */
 public class SignableFactory {
-    public Signable getSignable(){
+    public static Signable getSignable(){
         return new SignerClient();
     }
 }
