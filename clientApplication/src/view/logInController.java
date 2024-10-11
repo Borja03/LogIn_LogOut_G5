@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import exception.*;
 
 /**
  * Controlador para la interfaz de inicio de sesión. Este controlador maneja la
@@ -97,23 +98,43 @@ public class logInController {
 
     /**
      * Maneja la acción del botón de inicio de sesión. Valida las credenciales
-     * del usuario y muestra un mensaje apropiado.
+     * del usuario y muestra un mensaje apropiado. Si el inicio de sesión es
+     * exitoso, navega a la pantalla principal.
      */
     @FXML
-    private void handleLogInButtonAction() throws Exception {
+    private void handleLogInButtonAction() {
         String email = emailTextField.getText();
         String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
-        SignerClient s = new SignerClient();
+        
+        SignerClient signerClient = new SignerClient();
         User user = new User();
-        user.setEmail(emailLabel.getText());
-        user.setPassword(passwordLabel.getText());
-        s.signIn(user);
-        navigateToScreen("/view/Main.fxml", "Main");
+        user.setEmail(email);
+        user.setPassword(password);
+
+        try {
+            User loggedInUser = signerClient.signIn(user);
+            
+            if (loggedInUser != null) {
+                // Si el inicio de sesión es exitoso, navega a la pantalla principal
+                navigateToScreen("/view/Main.fxml", "Main");
+            } else {
+                // Manejar el caso en que el usuario no se devuelve
+                utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
+            }
+        } catch (UserAlreadyExistsException e) {
+            utils.showAlert("Error", "El usuario ya existe.");
+            logger.warning(e.getMessage());
+        } catch (ConnectionException e) {
+            utils.showAlert("Error", "Problemas de conexión con el servidor.");
+            logger.warning(e.getMessage());
+        } catch (Exception e) {
+            utils.showAlert("Error", "Ocurrió un error inesperado.");
+            logger.severe(e.getMessage());
+        }
     }
 
     /**
-     * Maneja la acción del enlace para crear un usuario. Muestra un mensaje
-     * indicando que se abrirá la vista de registro.
+     * Maneja la acción del enlace para crear un usuario. Navega a la vista de registro.
      */
     @FXML
     private void handleCreateUserLinkAction() {
@@ -123,7 +144,7 @@ public class logInController {
 
     /**
      * Maneja la acción de cambiar la visibilidad de la contraseña. Alterna
-     * entre mostrar y ocultar la contraseña.
+     * entre mostrar y ocultar la contraseña en el campo correspondiente.
      */
     @FXML
     private void handlePasswordImageButtonAction() {
@@ -141,25 +162,25 @@ public class logInController {
             passwordField.setText(visiblePasswordField.getText());
         }
     }
+
     /**
-     * General method to navigate to different screens.
+     * Navega a una pantalla diferente cargando el archivo FXML correspondiente.
      *
-     * @param fxmlPath the path to the FXML file of the target screen
-     * @param windowTitle the title to set for the window
-     * @author Borja
+     * @param fxmlPath la ruta del archivo FXML de la pantalla objetivo
+     * @param title el título a establecer para la ventana
      */
     private void navigateToScreen(String fxmlPath, String title) {
         try {
-            // Load the FXML file of the target view
+            // Cargar el archivo FXML de la vista objetivo
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Scene scene = new Scene(loader.load());
 
-            // Get the current stage
+            // Obtener el escenario actual
             Stage currentStage = (Stage) logInButton.getScene().getWindow();
 
-            // Change the current stage's scene to the new scene
+            // Cambiar la escena del escenario actual a la nueva escena
             currentStage.setScene(scene);
-            currentStage.setTitle(title); // Set the title of the new window
+            currentStage.setTitle(title); // Establecer el título de la nueva ventana
             currentStage.show();
 
             logger.log(Level.INFO, "Navigated to " + title + " screen.");
