@@ -1,22 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package serverapplication;
 
 import Model.MyServerSocket;
 
 /**
- *
+ * The main class for the server application. This class initializes the server
+ * with a default port (9999) or a port provided through the command line.
+ * It then creates and starts an instance of the server using the specified port.
+ * 
+ * <p>The server listens for incoming connections from clients, handling requests
+ * as defined in the {@link MyServerSocket} class.</p>
+ * 
  * @author Borja
  */
 public class ServerApplication {
 
     /**
-     * @param args the command line arguments
+     * The entry point for the server application.
+     * 
+     * This method checks for an optional command-line argument for the port number.
+     * If the port is provided and is a valid integer, the server will use that port.
+     * Otherwise, it will default to port 9999.
+     * 
+     * <p>The method creates a {@link MyServerSocket} instance with the specified port
+     * and starts the server to listen for incoming connections.</p>
+     *
+     * @param args the command-line arguments, where the first argument is expected to be the port number
      */
-  public static void main(String[] args) {
+    public static void main(String[] args) {
         int port = 9999;  // Default port
 
         // Check if a port is provided via command-line arguments

@@ -1,31 +1,55 @@
 package Model;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.ServerSocket; // Import the correct ServerSocket class
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This class represents a custom server socket that listens for client connections,
+ * processes incoming requests, and sends responses back to the clients.
+ * The server operates on a specified port and handles each client in a separate thread.
+ * 
+ * <p>The server listens for incoming connections on the given port and processes
+ * messages received from clients. Each message can be processed based on its type
+ * and can generate an appropriate response.</p>
+ * 
+ * @author Borja
+ */
 public class MyServerSocket {
 
+    // Logger for logging server activities
     private static final Logger logger = Logger.getLogger(MyServerSocket.class.getName());
-    private int port;
-    private ServerSocket serverSocket; // Use the correct ServerSocket type from java.net
 
-    // Constructor that accepts the server's port
+    // Port number for the server to listen on
+    private int port;
+    private ServerSocket serverSocket;
+
+    /**
+     * Constructor for initializing the server with a specified port.
+     * 
+     * @param port the port number the server will listen on
+     */
     public MyServerSocket(int port) {
         this.port = port;
     }
 
-    // Method to start the server
+    /**
+     * Starts the server and begins listening for incoming client connections.
+     * <p>This method creates a {@link ServerSocket} that listens on the specified
+     * port. When a client connects, the server accepts the connection and spawns
+     * a new thread to handle the communication with that client.</p>
+     * <p>Each client is handled in a separate thread to ensure the server can
+     * accept multiple clients concurrently.</p>
+     */
     public void start() {
         try {
-            // Create the ServerSocket
+            // Create the ServerSocket to accept client connections
             serverSocket = new ServerSocket(port);
             logger.info("Server is listening on port " + port);
 
@@ -42,31 +66,50 @@ public class MyServerSocket {
         }
     }
 
-    // Method that handles communication with the client
+    /**
+     * Handles communication with a connected client.
+     * <p>This method processes incoming messages from the client, and based on the
+     * message type, it performs appropriate actions. For example, a sign-up request
+     * is processed, and a response is sent back to the client. The client connection
+     * is closed after the communication is completed.</p>
+     * 
+     * @param clientSocket the socket representing the client's connection
+     */
     private void handleClient(Socket clientSocket) {
         try {
+            // Input and output streams for communication with the client
             InputStream input = clientSocket.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            ObjectInputStream objectReader = new ObjectInputStream(input);
 
             OutputStream output = clientSocket.getOutputStream();
-            PrintWriter writer = new PrintWriter(output, true);
+            ObjectOutputStream objectWriter = new ObjectOutputStream(output);
 
-            // Loop to keep receiving messages from the client
-            String message;
-            while ((message = reader.readLine()) != null) {
-                logger.info("Received from client: " + message);
+            // Read the message object sent by the client
+            Message clientMessage = (Message) objectReader.readObject();
+            logger.info("Received message from client: " + clientMessage);
 
-                // Send a response to the client
-                writer.println("Hello from server! You sent: " + message);
+            // Example of processing the received message
+            if (clientMessage != null && clientMessage.getTipo() == TipoMensaje.SIGN_UP_REQUEST) {
+                logger.info("Processing sign-up request...");
 
-                // Optionally, perform more operations based on the client's message
+                // You can perform any operations like user registration here.
+                // For now, let's send back a response to the client.
+
+                clientMessage.setTipo(TipoMensaje.OK_RESPONSE); // Set response type as OK
+                clientMessage.getUser().setName("Server Response"); // Add example user response
+
+                // Send response back to the client
+                objectWriter.writeObject(clientMessage);
+                logger.info("Response sent to client");
             }
 
-            // After the client closes connection, we also close the client socket
-           /* clientSocket.close();
-            logger.info("Client connection closed");*/
+            // Clean up: close the client socket and streams
+            objectReader.close();
+            objectWriter.close();
+            clientSocket.close();
+            logger.info("Client connection closed");
 
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             logger.log(Level.SEVERE, "Client handling exception: " + e.getMessage(), e);
         }
     }
