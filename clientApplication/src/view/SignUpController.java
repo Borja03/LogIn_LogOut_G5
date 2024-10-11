@@ -2,7 +2,6 @@ package view;
 
 import Model.User;
 import exception.EmptyFieldException;
-import exception.InvalidDniFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidPhoneNumberFormatException;
@@ -118,7 +117,7 @@ public class SignUpController implements Initializable {
      * @throws InvalidPhoneNumberFormatException if the phone number is invalid
      */
     private void validateInputs(String email, String password, String confirmPassword, String name, String dni, String phoneNumber, String company)
-        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException, InvalidDniFormatException {
+        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException {
 
     // Validate email
     if (email == null || email.isEmpty()) {
@@ -154,11 +153,6 @@ public class SignUpController implements Initializable {
     // Validate DNI
     if (dni == null || dni.isEmpty()) {
         throw new EmptyFieldException("DNI cannot be empty.");
-    }
-    // Regex pattern for a valid DNI format (8 digits followed by a letter)
-    String dniRegex = "^[0-9]{8}[A-Za-z]$";
-    if (!dni.matches(dniRegex)) {
-        throw new InvalidDniFormatException("DNI must be 8 digits followed by a letter (e.g., 12345678A).");
     }
 
     // Validate phone number
