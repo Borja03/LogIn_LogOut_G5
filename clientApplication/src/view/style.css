@@ -1,0 +1,66 @@
+/* General Styles */
+.root {
+    -fx-background-color: #f0f0f0; /* Fondo general */
+    -fx-padding: 20px;
+    -fx-font-family: 'Arial', sans-serif;
+}
+
+/* Labels */
+.label {
+    -fx-text-fill: #333; /* Color del texto de las etiquetas */
+    -fx-font-size: 18px; /* Tamaño de la fuente de las etiquetas */
+    -fx-font-weight: bold; /* Negrita para las etiquetas */
+}
+
+/* Text Fields */
+.text-field, .password-field {
+    -fx-background-color: #fff; /* Fondo blanco para los campos */
+    -fx-border-color: #ccc; /* Borde gris claro */
+    -fx-border-radius: 5px; /* Borde redondeado */
+    -fx-padding: 10px; /* Espaciado interno */
+    -fx-font-size: 16px; /* Tamaño de fuente en campos de texto */
+}
+
+/* Button */
+.button {
+    -fx-background-color: #4CAF50; /* Color de fondo verde */
+    -fx-text-fill: white; /* Color del texto blanco */
+    -fx-font-size: 18px; /* Tamaño de la fuente */
+    -fx-border-radius: 5px; /* Borde redondeado */
+    -fx-padding: 10px 20px; /* Espaciado del botón */
+}
+
+.button:hover {
+    -fx-background-color: #45a049; /* Color del botón al pasar el cursor */
+}
+
+/* Error Label */
+#lbl_error {
+    -fx-text-fill: #e74c3c; /* Color de texto rojo para mensajes de error */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Hyperlink */
+.hyperlink {
+    -fx-text-fill: #3498db; /* Azul para los enlaces */
+    -fx-font-size: 18px;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #2980b9; /* Color azul más oscuro al pasar el cursor */
+}
+
+/* CheckBox */
+.check-box {
+    -fx-text-fill: #333; /* Color del texto en las casillas */
+    -fx-font-size: 16px;
+}
+
+/* Sign Up Title */
+.label#lbl_title {
+    -fx-font-size: 30px;
+    -fx-text-fill: #2c3e50; /* Color oscuro para el título */
+    -fx-alignment: center; /* Centrado del texto */
+    -fx-padding: 20px 0; /* Espaciado del título */
+}

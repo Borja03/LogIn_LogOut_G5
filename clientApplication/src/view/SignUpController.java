@@ -1,11 +1,12 @@
 package view;
 
 import Model.User;
+import static com.sun.jmx.snmp.EnumRowStatus.active;
 import exception.EmptyFieldException;
-import exception.InvalidDniFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidPhoneNumberFormatException;
+import exception.InvalidZipException;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -21,8 +22,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.stage.Stage;
 
 /**
@@ -49,13 +52,19 @@ public class SignUpController implements Initializable {
     private TextField tf_name;
 
     @FXML
-    private TextField tf_dni;
+    private TextField tf_zip;
 
     @FXML
     private TextField tf_phone_number;
-
+    
     @FXML
-    private ComboBox<String> cb_company;
+    private TextField tf_city;
+    
+    @FXML
+    private TextField tf_address;
+    
+    @FXML
+    private CheckBox cb_active;
 
     @FXML
     private Button btn_signup;
@@ -71,8 +80,10 @@ public class SignUpController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        initializeCompanyComboBox();
-
+       
+        cb_active.selectedProperty().addListener((observable, oldValue, newValue) -> {
+       
+    });
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
     }
@@ -89,13 +100,15 @@ public class SignUpController implements Initializable {
             String password = tf_password.getText();
             String confirmPassword = tf_password_confirm.getText();
             String name = tf_name.getText();
-            String dni = tf_dni.getText();
             String phoneNumber = tf_phone_number.getText();
-            String company = cb_company.getValue();
+            String zip = tf_zip.getText();
+            String city = tf_city.getText();
+            String address = tf_address.getText();
+            //boolean active = cb_active;
 
-            validateInputs(email, password, confirmPassword, name, dni, phoneNumber, company);
+            validateInputs(email, password, confirmPassword, name, zip, city, address, phoneNumber);
             lbl_error.setText("");  // Clear previous error messages
-            performSignUp(email, password, name, dni, phoneNumber, 1);
+            performSignUp(email, password, name, zip, phoneNumber, 1);
         } catch (Exception e) {
             lbl_error.setText(e.getMessage());  // Display the error message
             logger.log(Level.WARNING, e.getMessage(), e);  // Log the warning
@@ -117,8 +130,8 @@ public class SignUpController implements Initializable {
      * @throws InvalidPasswordFormatException if the password does not meet the criteria
      * @throws InvalidPhoneNumberFormatException if the phone number is invalid
      */
-    private void validateInputs(String email, String password, String confirmPassword, String name, String dni, String phoneNumber, String company)
-        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException, InvalidDniFormatException {
+    private void validateInputs(String email, String password, String confirmPassword, String name, String zip, String city, String address, String phoneNumber)
+        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException, InvalidZipException {
 
     // Validate email
     if (email == null || email.isEmpty()) {
@@ -151,14 +164,23 @@ public class SignUpController implements Initializable {
         throw new EmptyFieldException("Name cannot be empty.");
     }
 
-    // Validate DNI
-    if (dni == null || dni.isEmpty()) {
-        throw new EmptyFieldException("DNI cannot be empty.");
+    // Validate ZIP
+    if (zip == null || zip.isEmpty()) {
+        throw new EmptyFieldException("ZIP cannot be empty.");
     }
     // Regex pattern for a valid DNI format (8 digits followed by a letter)
-    String dniRegex = "^[0-9]{8}[A-Za-z]$";
-    if (!dni.matches(dniRegex)) {
-        throw new InvalidDniFormatException("DNI must be 8 digits followed by a letter (e.g., 12345678A).");
+    String zipCode = zip;
+    if (zipCode.length() != 5 || !zipCode.matches("\\d{5}")) {
+        throw new InvalidZipException("ZIP must be 5 digits (e.g., 48260).");
+    }
+    
+    // Validate city
+    if (city == null || city.isEmpty()) {
+        throw new EmptyFieldException("City cannot be empty.");
+    }
+    // Validate address
+    if (address == null || address.isEmpty()) {
+        throw new EmptyFieldException("Address cannot be empty.");
     }
 
     // Validate phone number
@@ -169,10 +191,7 @@ public class SignUpController implements Initializable {
         throw new InvalidPhoneNumberFormatException("Phone number must be exactly 9 digits.");
     }
 
-    // Validate company
-    if (company == null || company.isEmpty()) {
-        throw new EmptyFieldException("Company cannot be empty.");
-    }
+    
 }
 
 
@@ -236,10 +255,7 @@ public class SignUpController implements Initializable {
     /**
      * Populates the ComboBox with company names (simulated data).
      */
-    private void initializeCompanyComboBox() {
-        cb_company.getItems().addAll("Company A", "Company B", "Company C");
-    }
-
+    
     /**
      * Action handler for navigating to the login screen.
      *
@@ -275,4 +291,8 @@ public class SignUpController implements Initializable {
             logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
         }
     }
+
+    
+
+    
 }
