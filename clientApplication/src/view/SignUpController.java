@@ -2,6 +2,7 @@ package view;
 
 import Model.User;
 import exception.EmptyFieldException;
+import exception.InvalidDniFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidPhoneNumberFormatException;
@@ -117,8 +118,100 @@ public class SignUpController implements Initializable {
      * @throws InvalidPhoneNumberFormatException if the phone number is invalid
      */
     private void validateInputs(String email, String password, String confirmPassword, String name, String dni, String phoneNumber, String company)
-            throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException {
-        // ... (la lógica de validación sigue igual)
+        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException, InvalidDniFormatException {
+
+    // Validate email
+    if (email == null || email.isEmpty()) {
+        throw new EmptyFieldException("Email cannot be empty.");
+    }
+    // Regex pattern for a valid email format
+    String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
+    if (!email.matches(emailRegex)) {
+        throw new InvalidEmailFormatException("Email must be in a valid format (e.g., example@domain.com).");
+    }
+
+    // Validate password
+    if (password == null || password.isEmpty()) {
+        throw new EmptyFieldException("Password cannot be empty.");
+    }
+    if (!validatePassword(password)) {
+        throw new InvalidPasswordFormatException("Password must be at least 6 characters, with lowercase, uppercase, numbers, and special characters.");
+    }
+
+    // Validate password confirmation
+    if (confirmPassword == null || confirmPassword.isEmpty()) {
+        throw new EmptyFieldException("Password confirmation cannot be empty.");
+    }
+    if (!password.equals(confirmPassword)) {
+        throw new InvalidPasswordFormatException("Passwords do not match.");
+    }
+
+    // Validate name
+    if (name == null || name.isEmpty()) {
+        throw new EmptyFieldException("Name cannot be empty.");
+    }
+
+    // Validate DNI
+    if (dni == null || dni.isEmpty()) {
+        throw new EmptyFieldException("DNI cannot be empty.");
+    }
+    // Regex pattern for a valid DNI format (8 digits followed by a letter)
+    String dniRegex = "^[0-9]{8}[A-Za-z]$";
+    if (!dni.matches(dniRegex)) {
+        throw new InvalidDniFormatException("DNI must be 8 digits followed by a letter (e.g., 12345678A).");
+    }
+
+    // Validate phone number
+    if (phoneNumber == null || phoneNumber.isEmpty()) {
+        throw new EmptyFieldException("Phone number cannot be empty.");
+    }
+    if (!validatePhoneNumber(phoneNumber)) {
+        throw new InvalidPhoneNumberFormatException("Phone number must be exactly 9 digits.");
+    }
+
+    // Validate company
+    if (company == null || company.isEmpty()) {
+        throw new EmptyFieldException("Company cannot be empty.");
+    }
+}
+
+
+
+    /**
+     * Validates the password based on specified criteria.
+     *
+     * @param password the password to validate
+     * @return true if the password is valid, false otherwise
+     */
+    private boolean validatePassword(String password) {
+        if (password.length() < 6) {
+            return false;
+        }
+
+        boolean hasUppercase = false;
+        boolean hasDigit = false;
+        boolean hasSpecialChar = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                hasUppercase = true;
+            } else if (Character.isDigit(c)) {
+                hasDigit = true;
+            } else if (!Character.isLetterOrDigit(c)) {
+                hasSpecialChar = true;
+            }
+        }
+        return hasUppercase && hasDigit && hasSpecialChar;
+    }
+
+    /**
+     * Validates the phone number to ensure it is exactly 9 digits.
+     *
+     * @param phoneNumber the phone number to validate
+     * @return true if the phone number is valid, false otherwise
+     */
+    private boolean validatePhoneNumber(String phoneNumber) {
+        return phoneNumber.matches("\\d{9}");
     }
 
     /**
@@ -129,8 +222,11 @@ public class SignUpController implements Initializable {
      * @param name the name entered by the user
      * @param dni the DNI entered by the user
      * @param phoneNumber the phone number entered by the user
-     * @param companyID the selected company's ID
+     * @param company the selected company from the ComboBox
      */
+   
+
+    
     private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
         // Lógica de registro de usuario
         navigateToScreen("/view/Main.fxml", "Main");
