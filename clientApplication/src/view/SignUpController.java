@@ -2,6 +2,7 @@ package view;
 
 import Model.User;
 import exception.EmptyFieldException;
+import exception.InvalidDniFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidPhoneNumberFormatException;
@@ -20,6 +21,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 /**
  * SignUpController is responsible for handling user interactions in the sign-up
@@ -91,7 +95,6 @@ public class SignUpController implements Initializable {
 
             validateInputs(email, password, confirmPassword, name, dni, phoneNumber, company);
             lbl_error.setText("");  // Clear previous error messages
-            //get id of comapny here by hashmap
             performSignUp(email, password, name, dni, phoneNumber, 1);
         } catch (Exception e) {
             lbl_error.setText(e.getMessage());  // Display the error message
@@ -114,8 +117,8 @@ public class SignUpController implements Initializable {
      * @throws InvalidPasswordFormatException if the password does not meet the criteria
      * @throws InvalidPhoneNumberFormatException if the phone number is invalid
      */
-private void validateInputs(String email, String password, String confirmPassword, String name, String dni, String phoneNumber, String company)
-        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException {
+    private void validateInputs(String email, String password, String confirmPassword, String name, String dni, String phoneNumber, String company)
+        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException, InvalidDniFormatException {
 
     // Validate email
     if (email == null || email.isEmpty()) {
@@ -152,6 +155,11 @@ private void validateInputs(String email, String password, String confirmPasswor
     if (dni == null || dni.isEmpty()) {
         throw new EmptyFieldException("DNI cannot be empty.");
     }
+    // Regex pattern for a valid DNI format (8 digits followed by a letter)
+    String dniRegex = "^[0-9]{8}[A-Za-z]$";
+    if (!dni.matches(dniRegex)) {
+        throw new InvalidDniFormatException("DNI must be 8 digits followed by a letter (e.g., 12345678A).");
+    }
 
     // Validate phone number
     if (phoneNumber == null || phoneNumber.isEmpty()) {
@@ -166,6 +174,7 @@ private void validateInputs(String email, String password, String confirmPasswor
         throw new EmptyFieldException("Company cannot be empty.");
     }
 }
+
 
 
     /**
@@ -215,26 +224,19 @@ private void validateInputs(String email, String password, String confirmPasswor
      * @param phoneNumber the phone number entered by the user
      * @param company the selected company from the ComboBox
      */
+   
+
+    
     private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
-       
-       // UserDao userdao= new UserDao();
-        //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
-       // User insertedUSer = userdao.insertUser(user);
-
-      //  UserDao userdao= new UserDao();
-        //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
-      //  User insertedUSer = userdao.insertUser(user);
-
+        // Lógica de registro de usuario
+        navigateToScreen("/view/Main.fxml", "Main");
         logger.log(Level.INFO, "Sign-up successful for: {0}", email);
-        // Add logic to send this data to the backend service for further processing
     }
 
     /**
      * Populates the ComboBox with company names (simulated data).
      */
     private void initializeCompanyComboBox() {
-        // hashmap list of company with id names show only name
-        //when name is selected we get it s id
         cb_company.getItems().addAll("Company A", "Company B", "Company C");
     }
 
@@ -244,17 +246,33 @@ private void validateInputs(String email, String password, String confirmPasswor
      * @param event the ActionEvent triggered by the hyperlink click
      */
     private void handleLoginHyperlinkAction(ActionEvent event) {
-        navigateToLoginScreen();
+        navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
 
     /**
-     * Navigates to the login screen (dummy logic for demonstration).
+     * General method to navigate to different screens.
+     *
+     * @param fxmlPath the path to the FXML file of the target screen
+     * @param windowTitle the title to set for the window
+     * @author Borja
      */
-    private void navigateToLoginScreen() {
-        
-        
+    private void navigateToScreen(String fxmlPath, String windowTitle) {
+        try {
+            // Load the FXML file of the target view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Scene scene = new Scene(loader.load());
 
-        logger.log(Level.INFO, "Navigating to login screen...");
-        // Add logic to change the scene or navigate to the login screen
+            // Get the current stage
+            Stage currentStage = (Stage) btn_signup.getScene().getWindow();
+
+            // Change the current stage's scene to the new scene
+            currentStage.setScene(scene);
+            currentStage.setTitle(windowTitle); // Set the title of the new window
+            currentStage.show();
+
+            logger.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
+        }
     }
 }
