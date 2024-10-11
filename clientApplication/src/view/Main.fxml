@@ -37,8 +37,8 @@
         <Label style="-fx-font-size: 25;" text="NAME" />
         <TextField editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the name" GridPane.columnIndex="1" />
         
-        <Label style="-fx-font-size: 25;" text="DNI" GridPane.rowIndex="1" />
-        <TextField editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the dni" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Label style="-fx-font-size: 25;" text="ADDRESS" GridPane.rowIndex="1" />
+        <TextField editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the address" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         
         <Label style="-fx-font-size: 25;" text="COMPANY" GridPane.rowIndex="2" />
         <TextField editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the company" GridPane.columnIndex="1" GridPane.rowIndex="2" />
