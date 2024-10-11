@@ -14,7 +14,7 @@ package Model;
  * </ul>
  * 
  * @author Alder
- */
+ */ 
 public enum TipoMensaje {
 
     SIGN_IN_REQUEST,  // Solicitud de inicio de sesión
