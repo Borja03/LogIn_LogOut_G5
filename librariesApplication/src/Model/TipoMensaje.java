@@ -24,6 +24,7 @@ public enum TipoMensaje {
     EMAIL_EXISTS,      // Email ya existe
     SERVER_ERROR,       // Error en el servidor
     MAX_THREAD_USER,
-    OK_RESPONSE
+    OK_RESPONSE,
+    INCORRECT_CREDENTIALS_RESPONSE
 }
 

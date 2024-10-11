@@ -1,5 +1,6 @@
 package view;
 
+import Model.SignableFactory;
 import Model.SignerClient;
 import Model.User;
 import javafx.fxml.FXML;
@@ -84,16 +85,7 @@ public class logInController {
      */
     @FXML
     public void initialize() {
-        centralPane.setFocusTraversable(true);
-        centralPane.requestFocus();
         visiblePasswordField.setVisible(false); // Inicialmente, el campo de texto visible está oculto
-
-        // Agregar listener para verificar el email cuando pierde el foco
-        emailTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Si pierde el foco
-                utils.validateEmail(emailTextField.getText());
-            }
-        });
     }
 
     /**
@@ -102,39 +94,40 @@ public class logInController {
      * exitoso, navega a la pantalla principal.
      */
     @FXML
-    private void handleLogInButtonAction() {
-        String email = emailTextField.getText();
-        String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
-        
-        SignerClient signerClient = new SignerClient();
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(password);
+    private void handleLogInButtonAction() throws InvalidEmailFormatException {
+            utils.validateEmail(emailTextField.getText());
+            String email = emailTextField.getText();
+            String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
 
-        try {
-            User loggedInUser = signerClient.signIn(user);
-            
-            if (loggedInUser != null) {
-                // Si el inicio de sesión es exitoso, navega a la pantalla principal
-                navigateToScreen("/view/Main.fxml", "Main");
-            } else {
-                // Manejar el caso en que el usuario no se devuelve
-                utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
+            User user = new User();
+            user.setEmail(email);
+            user.setPassword(password);
+
+            try {
+                User loggedInUser = SignableFactory.getSignable().signIn(user);
+
+                if (loggedInUser != null) {
+                    // Si el inicio de sesión es exitoso, navega a la pantalla principal
+                    navigateToScreen("/view/Main.fxml", "Main");
+                } else {
+                    // Manejar el caso en que el usuario no se devuelve
+                    utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
+                }
+            } catch (UserAlreadyExistsException e) {
+                utils.showAlert("Error", "El usuario ya existe.");
+                logger.warning(e.getMessage());
+            } catch (ConnectionException e) {
+                utils.showAlert("Error", "Problemas de conexión con el servidor.");
+                logger.warning(e.getMessage());
+            } catch (Exception e) {
+                utils.showAlert("Error", "Ocurrió un error inesperado.");
+                logger.severe(e.getMessage());
             }
-        } catch (UserAlreadyExistsException e) {
-            utils.showAlert("Error", "El usuario ya existe.");
-            logger.warning(e.getMessage());
-        } catch (ConnectionException e) {
-            utils.showAlert("Error", "Problemas de conexión con el servidor.");
-            logger.warning(e.getMessage());
-        } catch (Exception e) {
-            utils.showAlert("Error", "Ocurrió un error inesperado.");
-            logger.severe(e.getMessage());
-        }
     }
 
     /**
-     * Maneja la acción del enlace para crear un usuario. Navega a la vista de registro.
+     * Maneja la acción del enlace para crear un usuario. Navega a la vista de
+     * registro.
      */
     @FXML
     private void handleCreateUserLinkAction() {

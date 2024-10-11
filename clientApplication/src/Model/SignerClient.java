@@ -11,13 +11,14 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 /**
- * La clase <code>SignerClient</code> implementa la interfaz <code>Signable</code>,
- * proporcionando métodos para el registro e inicio de sesión de un usuario.
- * 
+ * La clase <code>SignerClient</code> implementa la interfaz
+ * <code>Signable</code>, proporcionando métodos para el registro e inicio de
+ * sesión de un usuario.
+ *
  * <p>
- * Esta clase maneja la comunicación con un servidor para llevar a cabo 
- * operaciones de registro e inicio de sesión. Los métodos <code>signUp</code> 
- * y <code>signIn</code> permiten a los usuarios registrarse y acceder al sistema,
+ * Esta clase maneja la comunicación con un servidor para llevar a cabo
+ * operaciones de registro e inicio de sesión. Los métodos <code>signUp</code> y
+ * <code>signIn</code> permiten a los usuarios registrarse y acceder al sistema,
  * respectivamente. En caso de errores, se lanzan excepciones específicas.
  * </p>
  *
@@ -71,11 +72,11 @@ public class SignerClient implements Signable {
      * Inicia sesión para un usuario existente.
      *
      * <p>
-     * Este método establece una conexión con el servidor y envía un 
-     * mensaje de solicitud de inicio de sesión. Luego, espera una respuesta 
-     * del servidor y maneja diferentes tipos de mensajes de respuesta. 
-     * En caso de éxito, devuelve el usuario que ha iniciado sesión; de lo contrario,
-     * lanza excepciones específicas según el error encontrado.
+     * Este método establece una conexión con el servidor y envía un mensaje de
+     * solicitud de inicio de sesión. Luego, espera una respuesta del servidor y
+     * maneja diferentes tipos de mensajes de respuesta. En caso de éxito,
+     * devuelve el usuario que ha iniciado sesión; de lo contrario, lanza
+     * excepciones específicas según el error encontrado.
      * </p>
      *
      * @param user El usuario que desea iniciar sesión.
@@ -88,44 +89,45 @@ public class SignerClient implements Signable {
         ObjectInputStream ois = null;
 
         try {
-            LOGGER.info("Iniciando inicio de sesión...");
-            // Instanciamos el socket
+            //Instanciamos el socket
+            LOGGER.info("Iniciando Sesión...");
             Socket socketCliente = new Socket(HOST, PUERTO);
-            // Creamos el output y preparamos el mensaje para enviarlo al servidor
+            //Creamos el output y preparamos el encapsulador para enviarlo al servidor
             oos = new ObjectOutputStream(socketCliente.getOutputStream());
             msg = new Message();
             msg.setUser(user);
-            msg.setTipo(TipoMensaje.SIGN_UP_REQUEST);
+            msg.setTipo(TipoMensaje.SIGN_IN_REQUEST);
             oos.writeObject(msg);
 
-            // Recibimos el objeto encapsulado del servidor
+            //Recibimos el objeto encapsulado del servidor
             ois = new ObjectInputStream(socketCliente.getInputStream());
             msg = (Message) ois.readObject();
             user = msg.getUser();
-
-            // Cerramos las conexiones
+            //Cerramos las conexiones
             oos.close();
+            ois.close();
             socketCliente.close();
-
-            // Dependiendo del mensaje que recibamos, lanzamos o manejamos el mensaje
+            //Dependiendo de el mensaje que reciva lanza o escribe un mensaje nuevo
             switch (msg.getTipo()) {
                 case OK_RESPONSE:
                     return user;
-                case EMAIL_EXISTS:
-                    throw new UserAlreadyExistsException("El usuario ya existe");
+                case INCORRECT_CREDENTIALS_RESPONSE:
+                    throw new IncorrectCredentialsException("Email o contraseña incorrectos.");
                 case SERVER_ERROR:
-                    throw new ConnectionException("Ha ocurrido algún error en el servidor");
-                case MAX_THREAD_USER:
-                    throw new Exception("Máximo de usuarios alcanzado, inténtelo más tarde");
+                    throw new ConnectionException("Ha ocurrido un error en el servidor.");
+                /*case MAX_THREAD_USER:
+                    throw new Exception("Maximo de usuarios alcanzado, inténtelo más tarde");*/
+
             }
+            //Control de excepciones
         } catch (ClassNotFoundException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // Devuelve un objeto user
+        //Devuelve un obejto user
         return user;
     }
 }
