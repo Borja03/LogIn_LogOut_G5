@@ -1,6 +1,5 @@
 package view;
 
-import ISignable.Signable;
 import Model.SignableFactory;
 import Model.User;
 import exception.EmptyFieldException;
@@ -9,11 +8,9 @@ import exception.InvalidPasswordFormatException;
 import exception.InvalidPhoneNumberFormatException;
 
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,11 +21,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 /**
@@ -99,6 +93,7 @@ public class SignUpController implements Initializable {
             lbl_error.setText("");  // Clear previous error messages
             //get id of comapny here by hashmap
             performSignUp(email, password, name, phoneNumber, 1);
+
         } catch (Exception e) {
             lbl_error.setText(e.getMessage());  // Display the error message
             logger.log(Level.WARNING, e.getMessage(), e);  // Log the warning
@@ -214,7 +209,6 @@ private void validateInputs(String email, String password, String confirmPasswor
      * @param email the email entered by the user
      * @param password the password entered by the user
      * @param name the name entered by the user
-     * @param dni the DNI entered by the user
      * @param phoneNumber the phone number entered by the user
      * @param company the selected company from the ComboBox
      */
@@ -229,18 +223,14 @@ private void validateInputs(String email, String password, String confirmPasswor
             Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-      
 
         logger.log(Level.INFO, "Sign-up successful for: {0}", email);
-        // Add logic to send this data to the backend service for further processing
     }
 
     /**
      * Populates the ComboBox with company names (simulated data).
      */
     private void initializeCompanyComboBox() {
-        // hashmap list of company with id names show only name
-        //when name is selected we get it s id
         cb_company.getItems().addAll("Company A", "Company B", "Company C");
     }
 

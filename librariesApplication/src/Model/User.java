@@ -34,7 +34,6 @@ public class User implements Serializable{
      * @param email     El email del usuario.
      * @param password  La contraseña del usuario.
      * @param name      El nombre del usuario.
-     * @param dni       El DNI del usuario.
      * @param telefono  El número de teléfono del usuario.
      * @param companyID El ID de la empresa asociada al usuario.
      */
@@ -42,7 +41,6 @@ public class User implements Serializable{
         this.email = email;
         this.password = password;
         this.name = name;
- 
         this.telefono = telefono;
         this.companyID = companyID;
     }

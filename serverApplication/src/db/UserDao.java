@@ -25,11 +25,11 @@ public class UserDao {
         ResultSet rs = null;
 
         try {
-            // Step 1: Get a connection (Use a connection pool for scalability)
+            //et a connection (Use a connection pool for scalability)
             conn = DatabaseConnectionPool.getConnection();
             conn.setAutoCommit(false); // Start transaction
 
-            // Step 2: Insert into res_partner
+            //Insert into res_partner
             String sqlPartner = "INSERT INTO res_partner (name, email, phone, display_name, is_company, company_id) "
                     + "VALUES (?, ?, ?, ?, FALSE, 1) RETURNING id";
             psPartner = conn.prepareStatement(sqlPartner);
@@ -44,19 +44,17 @@ public class UserDao {
                 partnerId = rs.getInt("id");  // Get generated partner_id
             }
 
-            // Step 3: Insert into res_users
+            //Insert into res_users
             String sqlUser = "INSERT INTO res_users (login, password, partner_id, company_id, notification_type) "
                  + "VALUES (?, ?, ?, ?, 'email')";
             psUser = conn.prepareStatement(sqlUser);
             psUser.setString(1, user.getEmail());
-           // psUser.setString(2, hashPassword(password));  // Password should be hashed
             psUser.setString(2, user.getPassword());  
-
             psUser.setInt(3, partnerId);  // Use the partner ID from res_partner
             psUser.setInt(4,user.getCompanyID());
             psUser.executeUpdate();
 
-            // Step 4: Commit the transaction
+            //Commit the transaction
             conn.commit();
             return user;
 
@@ -72,7 +70,7 @@ public class UserDao {
             e.printStackTrace();
             return null;
         } finally {
-            // Step 6: Close all resources
+            //Close all resources
             try {
                 if (rs != null) rs.close();
                 if (psPartner != null) psPartner.close();
