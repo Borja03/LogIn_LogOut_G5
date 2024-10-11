@@ -168,6 +168,7 @@ public class logInController {
      *
      * @param fxmlPath la ruta del archivo FXML de la pantalla objetivo
      * @param title el título a establecer para la ventana
+     * @author Borja
      */
     private void navigateToScreen(String fxmlPath, String title) {
         try {
