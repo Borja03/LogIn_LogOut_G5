@@ -9,55 +9,55 @@ import java.io.Serializable;
  * 
  * @author Alder
  */
-public class User implements Serializable{
+public class User implements Serializable {
     private String email;
     private String password;
     private String name;
-    private String telefono;
+    private boolean activo;
     private int companyID;
+    private String street;
+    private String city;
+    private int zip;
 
-    /**
-     * Constructor por defecto que inicializa un usuario vacío.
-     */
     public User() {
-        this.email = "";
-        this.password = "";
-        this.name = "";
-        //this.dni = "";
-        this.telefono = "";
-        this.companyID = 0;
     }
 
     /**
-     * Constructor que inicializa un usuario con los datos proporcionados.
+     * Constructor de la clase User.
      * 
-     * @param email     El email del usuario.
+     * @param email     El correo electrónico del usuario.
      * @param password  La contraseña del usuario.
      * @param name      El nombre del usuario.
-     * @param telefono  El número de teléfono del usuario.
-     * @param companyID El ID de la empresa asociada al usuario.
+     * @param activo    Estado de actividad del usuario.
+     * @param companyID El ID de la empresa a la que pertenece el usuario.
+     * @param street    La dirección del usuario.
+     * @param city      La ciudad del usuario.
+     * @param zip       El código postal del usuario.
      */
-    public User(String email, String password, String name, String telefono, int companyID) {
+    public User(String email, String password, String name, boolean activo, int companyID, String street, String city, int zip) {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.telefono = telefono;
+        this.activo = activo;
         this.companyID = companyID;
+        this.street = street;
+        this.city = city;
+        this.zip = zip;
     }
 
     /**
-     * Obtiene el email del usuario.
+     * Obtiene el correo electrónico del usuario.
      * 
-     * @return El email del usuario.
+     * @return El correo electrónico del usuario.
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * Establece el email del usuario.
+     * Establece el correo electrónico del usuario.
      * 
-     * @param email El nuevo email del usuario.
+     * @param email El nuevo correo electrónico del usuario.
      */
     public void setEmail(String email) {
         this.email = email;
@@ -100,38 +100,92 @@ public class User implements Serializable{
     }
 
     /**
-     * Obtiene el número de teléfono del usuario.
+     * Obtiene el estado de actividad del usuario.
      * 
-     * @return El número de teléfono del usuario.
+     * @return true si el usuario está activo, false en caso contrario.
      */
-    public String getTelefono() {
-        return telefono;
+    public boolean isActivo() {
+        return activo;
     }
 
     /**
-     * Establece el número de teléfono del usuario.
+     * Establece el estado de actividad del usuario.
      * 
-     * @param telefono El nuevo número de teléfono del usuario.
+     * @param activo El nuevo estado de actividad del usuario.
      */
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
     /**
-     * Obtiene el ID de la empresa asociada al usuario.
+     * Obtiene el ID de la empresa a la que pertenece el usuario.
      * 
-     * @return El ID de la empresa.
+     * @return El ID de la empresa del usuario.
      */
     public int getCompanyID() {
         return companyID;
     }
 
     /**
-     * Establece el ID de la empresa asociada al usuario.
+     * Establece el ID de la empresa a la que pertenece el usuario.
      * 
-     * @param companyID El nuevo ID de la empresa.
+     * @param companyID El nuevo ID de la empresa del usuario.
      */
     public void setCompanyID(int companyID) {
         this.companyID = companyID;
+    }
+
+    /**
+     * Obtiene la dirección del usuario.
+     * 
+     * @return La dirección del usuario.
+     */
+    public String getStreet() {
+        return street;
+    }
+
+    /**
+     * Establece la dirección del usuario.
+     * 
+     * @param street La nueva dirección del usuario.
+     */
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    /**
+     * Obtiene la ciudad del usuario.
+     * 
+     * @return La ciudad del usuario.
+     */
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * Establece la ciudad del usuario.
+     * 
+     * @param city La nueva ciudad del usuario.
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    /**
+     * Obtiene el código postal del usuario.
+     * 
+     * @return El código postal del usuario.
+     */
+    public int getZip() {
+        return zip;
+    }
+
+    /**
+     * Establece el código postal del usuario.
+     * 
+     * @param zip El nuevo código postal del usuario.
+     */
+    public void setZip(int zip) {
+        this.zip = zip;
     }
 }

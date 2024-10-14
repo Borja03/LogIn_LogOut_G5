@@ -8,17 +8,12 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-<<<<<<< HEAD
-    <jar href="clientApplication.jar" size="38900" download="eager" />
+    <jar href="clientApplication.jar" size="42044" download="eager" />
     <jar href="lib\commons-dbcp2-2.12.0.jar" size="218071" download="eager" />
     <jar href="lib\commons-logging-1.3.4.jar" size="73721" download="eager" />
     <jar href="lib\commons-pool2-2.12.0.jar" size="150048" download="eager" />
-    <jar href="lib\librariesApplication.jar" size="30800" download="eager" />
+    <jar href="lib\librariesApplication.jar" size="10487" download="eager" />
     <jar href="lib\postgresql-42.6.0.jar" size="1081604" download="eager" />
-=======
-    <jar href="clientApplication.jar" size="33187" download="eager" />
-    <jar href="lib\librariesApplication.jar" size="6620" download="eager" />
->>>>>>> origin/dev
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="clientApplication" >
     <param name="requiredFXVersion" value="8.0+"/>

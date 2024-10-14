@@ -12,58 +12,55 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: 00000;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
-   <children>
-      <ImageView fitHeight="101.0" fitWidth="103.0" layoutX="45.0" layoutY="21.0">
-         <image>
-            <Image url="@../Images/userIcon.png" />
-         </image>
-      </ImageView>
+    <children>
+        <ImageView fitHeight="101.0" fitWidth="103.0" layoutX="45.0" layoutY="21.0">
+            <image>
+                <Image url="@../Images/userIcon.png" />
+            </image>
+        </ImageView>
       
-      <Label fx:id="emailLabel" layoutX="177.0" layoutY="29.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="86.0" prefWidth="410.0" style="-fx-font-size: 40; -fx-background-color: 00000; -fx-border-color: 00000;" text="email@example.com" />
+        <Label fx:id="emailLabel" layoutX="177.0" layoutY="29.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="86.0" prefWidth="410.0" style="-fx-font-size: 40; -fx-background-color: 00000; -fx-border-color: 00000;" text="email@example.com" />
       
-      <GridPane layoutX="51.0" layoutY="214.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="282.0" prefWidth="394.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="219.20001220703125" minWidth="10.0" prefWidth="219.20001220703125" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="176.0" minWidth="10.0" prefWidth="148.79998779296875" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+        <GridPane layoutX="51.0" layoutY="214.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="282.0" prefWidth="394.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="219.20001220703125" minWidth="10.0" prefWidth="219.20001220703125" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="176.0" minWidth="10.0" prefWidth="148.79998779296875" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+            </rowConstraints>
 
-        <Label style="-fx-font-size: 25;" text="NAME" />
-        <TextField editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the name" GridPane.columnIndex="1" />
+            <Label style="-fx-font-size: 25;" text="NAME" />
+            <TextField id="nameTextField" editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the name" GridPane.columnIndex="1" />
         
-        <Label style="-fx-font-size: 25;" text="DNI" GridPane.rowIndex="1" />
-        <TextField editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the dni" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label style="-fx-font-size: 25;" text="ADDRESS" GridPane.rowIndex="1" />
+            <TextField id="addressTextField" editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the address" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         
-        <Label style="-fx-font-size: 25;" text="COMPANY" GridPane.rowIndex="2" />
-        <TextField editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the company" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label style="-fx-font-size: 25;" text="COMPANY" GridPane.rowIndex="2" />
+            <TextField id="companyTextField" editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the company" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         
-        <Label style="-fx-font-size: 25;" text="PHONE NUMBER" GridPane.rowIndex="3" />
-        <TextField editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the phone" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label style="-fx-font-size: 25;" text="PHONE NUMBER" GridPane.rowIndex="3" />
+            <TextField id="phoneTextField" editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the phone" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         
-        <Label style="-fx-font-size: 25;" text="PASSWORD" GridPane.rowIndex="4" />
+            <Label style="-fx-font-size: 25;" text="PASSWORD" GridPane.rowIndex="4" />
         
-        <PasswordField fx:id="passwordField" editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <PasswordField id="passwordField" fx:id="passwordField" editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-        <TextField fx:id="plainPasswordField" style="-fx-background-color: transparent; -fx-border-color: transparent;" GridPane.columnIndex="1" GridPane.rowIndex="4" visible="false"/>
-      </GridPane>
+            <TextField id="passwordTextField" fx:id="plainPasswordField" style="-fx-background-color: transparent; -fx-border-color: transparent;" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        </GridPane>
+     
+     
+        <Button fx:id="logOutButton" layoutX="680.0" layoutY="530.0" onAction="#logOut" prefWidth="100.0" text="Log Out" />
+        <Button id="eyeButton" layoutX="468.0" layoutY="430.0" mnemonicParsing="false" onAction="#togglePasswordVisibility" prefWidth="30.0">
+            <graphic>
+                <ImageView fx:id="eyeImageView" fitHeight="24.0" fitWidth="24.0" />
+            </graphic>
+        </Button>
 
-      <ImageView fx:id="passwordNotVisible" fitHeight="27.0" fitWidth="26.0" layoutX="445.0" layoutY="429.0" onMouseClicked="#showPassword">
-         <image>
-            <Image url="@../Images/passwordNotVisible.png" />
-         </image>
-      </ImageView>
       
-      <ImageView fx:id="passwordVisible" fitHeight="27.0" fitWidth="26.0" layoutX="445.0" layoutY="429.0" onMouseClicked="#hidePassword" visible="false">
-         <image>
-            <Image url="@../Images/passwordVisible.png" />
-         </image>
-      </ImageView>
-      <Button fx:id="logOutButton" text="Log Out" layoutX="680.0" layoutY="530.0" prefWidth="100.0" onAction="#logOut" />
-   </children>
+    </children>
 </Pane>

@@ -13,6 +13,22 @@ import java.io.Serializable;
 public class Message implements Serializable{
     private User user;      // Usuario que envía el mensaje
     private TipoMensaje tipo; // Tipo de mensaje (ej. texto, imagen, etc.)
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public TipoMensaje getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoMensaje tipo) {
+        this.tipo = tipo;
+    }
+
     
-    // Aquí puedes agregar los constructores, métodos y otros elementos necesarios
 }

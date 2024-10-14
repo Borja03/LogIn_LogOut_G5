@@ -1,11 +1,13 @@
 package view;
 
-import Model.SignableFactory;
 import Model.User;
 import exception.EmptyFieldException;
+import exception.InvalidCityFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidPhoneNumberFormatException;
+import exception.InvalidStreetFormatException;
+import exception.InvalidZipFormatException;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,7 +17,6 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -23,6 +24,9 @@ import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.stage.Stage;
 
 /**
@@ -47,12 +51,14 @@ public class SignUpController implements Initializable {
 
     @FXML
     private TextField tf_name;
-
     @FXML
-    private TextField tf_phone_number;
-
+    private TextField tf_street;
     @FXML
-    private ComboBox<String> cb_company;
+    private TextField tf_city;
+    @FXML
+    private TextField tf_zip;
+    @FXML
+    private CheckBox chb_active;
 
     @FXML
     private Button btn_signup;
@@ -68,15 +74,14 @@ public class SignUpController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        initializeCompanyComboBox();
 
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
     }
 
     /**
-     * Handles the sign-up button action. It validates user inputs and 
-     * performs the sign-up process if all inputs are valid.
+     * Handles the sign-up button action. It validates user inputs and performs
+     * the sign-up process if all inputs are valid.
      *
      * @param event the ActionEvent triggered by the button click
      */
@@ -86,13 +91,19 @@ public class SignUpController implements Initializable {
             String password = tf_password.getText();
             String confirmPassword = tf_password_confirm.getText();
             String name = tf_name.getText();
-            String phoneNumber = tf_phone_number.getText();
-            String company = cb_company.getValue();
+            String street = tf_street.getText();
+            String city = tf_city.getText();
+            String zip = tf_zip.getText();
+            boolean isActive = chb_active.isSelected();
 
-            validateInputs(email, password, confirmPassword, name, phoneNumber, company);
             lbl_error.setText("");  // Clear previous error messages
-            //get id of comapny here by hashmap
-            performSignUp(email, password, name, phoneNumber, 1);
+
+            // Validate inputs
+            validateInputs(email, password, confirmPassword, name, street, city, zip);
+
+            // Proceed with sign-up logic
+            logger.info("Email : " + email + " " + "Zip :" + isActive);
+            performSignUp(email, password, name, 1, street, city, Integer.parseInt(zip), isActive);
 
         } catch (Exception e) {
             lbl_error.setText(e.getMessage());  // Display the error message
@@ -101,7 +112,8 @@ public class SignUpController implements Initializable {
     }
 
     /**
-     * Validates the user inputs for email, password, phone number, and other fields.
+     * Validates the user inputs for email, password, phone number, and other
+     * fields.
      *
      * @param email the email entered by the user
      * @param password the password entered by the user
@@ -112,59 +124,81 @@ public class SignUpController implements Initializable {
      * @param company the selected company from the ComboBox
      * @throws EmptyFieldException if any required fields are empty
      * @throws InvalidEmailFormatException if the email format is invalid
-     * @throws InvalidPasswordFormatException if the password does not meet the criteria
+     * @throws InvalidPasswordFormatException if the password does not meet the
+     * criteria
      * @throws InvalidPhoneNumberFormatException if the phone number is invalid
      */
-private void validateInputs(String email, String password, String confirmPassword, String name, String phoneNumber, String company)
-        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException {
+    private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
+                    throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
 
-    // Validate email
-    if (email == null || email.isEmpty()) {
-        throw new EmptyFieldException("Email cannot be empty.");
-    }
-    // Regex pattern for a valid email format
-    String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
-    if (!email.matches(emailRegex)) {
-        throw new InvalidEmailFormatException("Email must be in a valid format (e.g., example@domain.com).");
+        // Validate email
+        if (email == null || email.isEmpty()) {
+            throw new EmptyFieldException("Email cannot be empty.");
+        }
+        // Validate password
+        if (password == null || password.isEmpty()) {
+            throw new EmptyFieldException("Password cannot be empty.");
+        }
+        // Validate password confirmation empty 
+        if (confirmPassword == null || confirmPassword.isEmpty()) {
+            throw new EmptyFieldException("Password confirmation cannot be empty.");
+        }
+        // Validate name is empty 
+        if (name == null || name.isEmpty()) {
+            throw new EmptyFieldException("Name cannot be empty.");
+        }
+        // Validate street
+        if (street == null || street.isEmpty()) {
+            throw new EmptyFieldException("Street cannot be empty.");
+        }
+        // You can add any additional format checks for street if needed
+
+        // Validate city
+        if (city == null || city.isEmpty()) {
+            throw new EmptyFieldException("City cannot be empty.");
+        }
+
+        // Validate zip
+        if (zip == null || zip.isEmpty()) {
+            throw new EmptyFieldException("Zip code cannot be empty.");
+        }
+
+        // Regex pattern for a valid email format
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
+        if (!email.matches(emailRegex)) {
+            throw new InvalidEmailFormatException("Email must be in a valid format (e.g., example@domain.com).");
+        }
+
+        // Validate password format
+        if (!validatePassword(password)) {
+            throw new InvalidPasswordFormatException("Password must be at least 6 characters, with lowercase, uppercase, numbers, and special characters.");
+        }
+
+        // Validate password format equals
+        if (!password.equals(confirmPassword)) {
+            throw new InvalidPasswordFormatException("Passwords do not match.");
+        }
+
+        // Example: check that city only contains letters (basic validation)
+        if (!city.matches("[a-zA-Z\\s]+")) {
+            throw new InvalidCityFormatException("City must only contain letters.");
+        }
+
+        // Example: check that zip contains exactly 5 digits
+        if (!zip.matches("\\d{5}")) {
+            throw new InvalidZipFormatException("Zip code must be exactly 5 digits.");
+        }
+
     }
 
-    // Validate password
-    if (password == null || password.isEmpty()) {
-        throw new EmptyFieldException("Password cannot be empty.");
-    }
-    if (!validatePassword(password)) {
-        throw new InvalidPasswordFormatException("Password must be at least 6 characters, with lowercase, uppercase, numbers, and special characters.");
+    public void checkEmptyFields() {
+
     }
 
-    // Validate password confirmation
-    if (confirmPassword == null || confirmPassword.isEmpty()) {
-        throw new EmptyFieldException("Password confirmation cannot be empty.");
-    }
-    if (!password.equals(confirmPassword)) {
-        throw new InvalidPasswordFormatException("Passwords do not match.");
-    }
+    public void checkFieldsFormat() {
 
-    // Validate name
-    if (name == null || name.isEmpty()) {
-        throw new EmptyFieldException("Name cannot be empty.");
     }
-
- 
-
-    // Validate phone number
-    if (phoneNumber == null || phoneNumber.isEmpty()) {
-        throw new EmptyFieldException("Phone number cannot be empty.");
-    }
-    if (!validatePhoneNumber(phoneNumber)) {
-        throw new InvalidPhoneNumberFormatException("Phone number must be exactly 9 digits.");
-    }
-
-    // Validate company
-    if (company == null || company.isEmpty()) {
-        throw new EmptyFieldException("Company cannot be empty.");
-    }
-}
-
 
     /**
      * Validates the password based on specified criteria.
@@ -194,44 +228,39 @@ private void validateInputs(String email, String password, String confirmPasswor
     }
 
     /**
-     * Validates the phone number to ensure it is exactly 9 digits.
-     *
-     * @param phoneNumber the phone number to validate
-     * @return true if the phone number is valid, false otherwise
-     */
-    private boolean validatePhoneNumber(String phoneNumber) {
-        return phoneNumber.matches("\\d{9}");
-    }
-
-    /**
      * Performs the sign-in logic, typically involves calling a backend service.
      *
      * @param email the email entered by the user
      * @param password the password entered by the user
      * @param name the name entered by the user
-     * @param phoneNumber the phone number entered by the user
-     * @param company the selected company from the ComboBox
      */
-    private void performSignUp(String email, String password, String name, String phoneNumber, int companyID) {
-       
-        
-        //boolean insert = userdao.insertUser(name,email,phoneNumber,password,1);
-        User user = new User(email,password,name,phoneNumber,companyID);
+    private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
+        User user = new User(email, password, name, isActive, companyID, street, city, zip);
         try {
-            User insertedUSer = SignableFactory.getSignable().signIn(user);
+            // UserDao userq = new UserDao();
+            // User insertedUser = userq.signUp(user);
+
+            // Log sign-up success
+            logger.log(Level.INFO, "Sign-up successful for: {0}", email);
+
+            // Inform the user of successful sign-up using an Alert
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Sign-up Successful");
+            alert.setHeaderText(null);
+            alert.setContentText("Your account has been created successfully!");
+
+            // Handle alert button click
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    // Navigate to another screen after the user clicks OK
+                    navigateToScreen("/view/LogIn.fxml", "LogIn");
+
+                }
+            });
+
         } catch (Exception ex) {
             Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-
-        logger.log(Level.INFO, "Sign-up successful for: {0}", email);
-    }
-
-    /**
-     * Populates the ComboBox with company names (simulated data).
-     */
-    private void initializeCompanyComboBox() {
-        cb_company.getItems().addAll("Company A", "Company B", "Company C");
     }
 
     /**
@@ -242,6 +271,7 @@ private void validateInputs(String email, String password, String confirmPasswor
     private void handleLoginHyperlinkAction(ActionEvent event) {
         navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
+
     /**
      * General method to navigate to different screens.
      *
@@ -268,7 +298,5 @@ private void validateInputs(String email, String password, String confirmPasswor
             logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
         }
     }
-    
-  
 
 }
