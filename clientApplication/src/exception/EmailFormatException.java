@@ -3,16 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model;
-
-import ISignable.Signable;
+package exception;
 
 /**
  *
  * @author Alder
  */
-public class SignableFactory {
-    public static Signable getSignable(){
-        return new SignerClient();
+public class EmailFormatException extends Exception {
+
+    public EmailFormatException(String message) {
+        super(message);
     }
 }

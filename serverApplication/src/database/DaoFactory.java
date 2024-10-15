@@ -3,16 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model;
+package database;
 
 import ISignable.Signable;
 
 /**
  *
- * @author Alder
+ * @author Omar
  */
-public class SignableFactory {
-    public static Signable getSignable(){
-        return new SignerClient();
+public class DaoFactory {
+
+    public static Signable getSignable() {
+        Signable signable = null;
+
+        signable = (Signable) new UserDao();
+        return signable;
     }
 }

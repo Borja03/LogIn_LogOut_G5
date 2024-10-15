@@ -5,3 +5,5 @@
 /clientApplication/dist/
 /librariesApplication/dist/
 /librariesApplication/build/
+/serverApplication/build/
+/serverApplication/dist/

@@ -1,4 +1,4 @@
 /**
- * This is the package used to store de windows and their controllers.
+ * This is the package used to store all client exceptions.
  */
 package exception;
