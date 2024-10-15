@@ -21,6 +21,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import exception.*;
+import javafx.scene.Parent;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
 
 /**
  * Controlador para la interfaz de inicio de sesión. Este controlador maneja la
@@ -95,34 +99,34 @@ public class logInController {
      */
     @FXML
     private void handleLogInButtonAction() throws InvalidEmailFormatException {
-            utils.validateEmail(emailTextField.getText());
-            String email = emailTextField.getText();
-            String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
+        utils.validateEmail(emailTextField.getText());
+        String email = emailTextField.getText();
+        String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
 
-            User user = new User();
-            user.setEmail(email);
-            user.setPassword(password);
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
 
-            try {
-                User loggedInUser = SignableFactory.getSignable().signIn(user);
+        try {
+            User loggedInUser = SignableFactory.getSignable().signIn(user);
 
-                if (loggedInUser != null) {
-                    // Si el inicio de sesión es exitoso, navega a la pantalla principal
-                    navigateToScreen("/view/Main.fxml", "Main");
-                } else {
-                    // Manejar el caso en que el usuario no se devuelve
-                    utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
-                }
-            } catch (UserAlreadyExistsException e) {
-                utils.showAlert("Error", "El usuario ya existe.");
-                logger.warning(e.getMessage());
-            } catch (ConnectionException e) {
-                utils.showAlert("Error", "Problemas de conexión con el servidor.");
-                logger.warning(e.getMessage());
-            } catch (Exception e) {
-                utils.showAlert("Error", "Ocurrió un error inesperado.");
-                logger.severe(e.getMessage());
+            if (loggedInUser != null) {
+                // Si el inicio de sesión es exitoso, navega a la pantalla principal
+                navigateToScreen("/view/Main.fxml", "Main");
+            } else {
+                // Manejar el caso en que el usuario no se devuelve
+                utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
             }
+        } catch (UserAlreadyExistsException e) {
+            utils.showAlert("Error", "El usuario ya existe.");
+            logger.warning(e.getMessage());
+        } catch (ConnectionException e) {
+            utils.showAlert("Error", "Problemas de conexión con el servidor.");
+            logger.warning(e.getMessage());
+        } catch (Exception e) {
+            utils.showAlert("Error", "Ocurrió un error inesperado.");
+            logger.severe(e.getMessage());
+        }
     }
 
     /**
@@ -166,11 +170,35 @@ public class logInController {
     private void navigateToScreen(String fxmlPath, String title) {
         try {
             // Cargar el archivo FXML de la vista objetivo
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Scene scene = new Scene(loader.load());
 
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = (Parent) loader.load();
+            Scene scene = new Scene(root);
             // Obtener el escenario actual
             Stage currentStage = (Stage) logInButton.getScene().getWindow();
+  MenuItem darkMode = new MenuItem("Dark Mode");
+            MenuItem lightMode = new MenuItem("Light Mode");
+
+           // Create the ContextMenu and add the MenuItems
+            ContextMenu contextMenu = new ContextMenu(darkMode, lightMode);
+
+            // Action for Dark Mode
+            darkMode.setOnAction(e -> {
+                // Load the dark theme CSS
+                //System.out.println("----" + getClass().getResource("css/dark-theme.css").toExternalForm().toString());
+                scene.getStylesheets().add(getClass().getResource("dark-theme.css").toExternalForm());
+                System.out.println("Dark Mode Activated");
+            });
+
+            // Action for Light Mode
+            lightMode.setOnAction(e -> {
+                // Load the light theme CSS
+                scene.getStylesheets().clear();  // Clear any existing stylesheets
+                scene.getStylesheets().add(getClass().getResource("css/light-theme.css").toExternalForm());
+                System.out.println("Light Mode Activated");
+            });
+
+            root.setOnContextMenuRequested(e -> contextMenu.show(root, e.getScreenX(), e.getScreenY()));
 
             // Cambiar la escena del escenario actual a la nueva escena
             currentStage.setScene(scene);

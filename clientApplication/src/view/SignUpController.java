@@ -95,16 +95,16 @@ public class SignUpController implements Initializable {
             String city = tf_city.getText();
             String zip = tf_zip.getText();
             boolean isActive = chb_active.isSelected();
-
-            lbl_error.setText("");  // Clear previous error messages
+            // Clear previous error messages            
+            lbl_error.setText("");  
 
             // Validate inputs
             validateInputs(email, password, confirmPassword, name, street, city, zip);
 
             // Proceed with sign-up logic
-            logger.info("Email : " + email + " " + "Zip :" + isActive);
+            
             performSignUp(email, password, name, 1, street, city, Integer.parseInt(zip), isActive);
-
+        logger.info("Performing signup");     
         } catch (Exception e) {
             lbl_error.setText(e.getMessage());  // Display the error message
             logger.log(Level.WARNING, e.getMessage(), e);  // Log the warning
@@ -119,8 +119,6 @@ public class SignUpController implements Initializable {
      * @param password the password entered by the user
      * @param confirmPassword the confirmed password entered by the user
      * @param name the name entered by the user
-     * @param dni the DNI entered by the user
-     * @param phoneNumber the phone number entered by the user
      * @param company the selected company from the ComboBox
      * @throws EmptyFieldException if any required fields are empty
      * @throws InvalidEmailFormatException if the email format is invalid
@@ -298,5 +296,6 @@ public class SignUpController implements Initializable {
             logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
         }
     }
+  
 
 }
