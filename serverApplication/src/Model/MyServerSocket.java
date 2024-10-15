@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * 
  * @author Borja
  */
-public class MyServerSocket {
+public class MyServerSocket implements Runnable{
 
     // Logger for logging server activities
     private static final Logger logger = Logger.getLogger(MyServerSocket.class.getName());
