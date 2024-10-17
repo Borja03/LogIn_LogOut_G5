@@ -6,7 +6,7 @@
 /* General styles */
 .root {
     -fx-background-color: #ffffff;
-    -fx-font-family: 'Cochin', Arial, sans-serif;
+    -fx-font-family: 'Helvetica', Arial, sans-serif;
 }
 
 /* Card-like appearance for the SignUp form */
@@ -14,8 +14,11 @@
     -fx-background-color: white;      /* White background for the card */
     -fx-background-radius: 15px;      /* Rounded corners */
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 5); /* Drop shadow effect */
-    -fx-padding: 20px;                /* Padding inside the card */
+    -fx-padding: 10px;                /* Padding inside the card */
     -fx-border-radius: 15px;          /* Rounded borders matching the background */
+}
+.HBox{
+    -fx-padding : 0px 0px 7px 0px;
 }
 
 /* Label styles */
@@ -27,8 +30,8 @@
 
 }
 #lbl_signup{
-    -fx-text-alignment: center;
-
+    -fx-font-size: 40px;
+    -fx-alignment: center;
 }
 
 .text-field, .password-field {
@@ -47,7 +50,7 @@
 
 .button:hover {
     -fx-background-color: #3a7fcf;
-    -fx-effect: none; /* Remove shadow on hover */
+  
 }
 
 .button:pressed {
@@ -84,4 +87,21 @@
     -fx-border-radius: 100px;
     -fx-background-radius: 15px;
 
+}
+.tf_email {
+    -fx-background-image: url("images/userIcon.png");
+    -fx-background-position: left center;
+    -fx-background-repeat: no-repeat;
+    -fx-padding: 0 0 0 25; /* Adjust padding as necessary */
+}
+
+.font-awesome-icon {
+    -fx-fill: #007bff;
+}
+#btn_show_password, 
+#btn_show_password_conf {
+    -fx-background-color: transparent; /* No background */
+    -fx-border-color: transparent; /* No border */
+    -fx-padding: 0; /* Remove padding */
+    -fx-cursor: hand; /* Optional: Change cursor to hand on hover */
 }
