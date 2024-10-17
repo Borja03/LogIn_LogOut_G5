@@ -99,6 +99,8 @@ public class SignUpController implements Initializable {
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
         tf_password.setVisible(false);
+        btn_show_password.setOnAction(event -> handlePasswordImageButtonAction());
+        
 
     }
 
@@ -112,12 +114,26 @@ public class SignUpController implements Initializable {
             pf_password.setVisible(false);
             tf_password.setVisible(true);
             tf_password.setText(pf_password.getText());
+            pf_password_confirm.setVisible(false);
+            tf_password_confirm.setVisible(true);
+            tf_password_confirm.setText(pf_password_confirm.getText());
+            
+            
+            
+            
         } else {
             imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png")));
             pf_password.setVisible(true);
             tf_password.setVisible(false);
             pf_password.setText(tf_password.getText());
+            pf_password_confirm.setVisible(true);
+            tf_password_confirm.setVisible(false);
+            pf_password_confirm.setText(tf_password_confirm.getText());
         }
+    }
+    
+    private void handleShowPasswordButton(){
+    
     }
 
     private void handleSignUpButtonAction(ActionEvent event) {
