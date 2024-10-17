@@ -6,10 +6,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 
 /**
@@ -23,33 +27,18 @@ import javafx.stage.Stage;
  */
 public class MainController {
 
-    /**
-     * The masked password input field that hides the user password.
-     */
     @FXML
     private PasswordField passwordField; // The masked password input
 
-    /**
-     * The plain text password input field that displays the user password in clear text when shown.
-     */
     @FXML
     private TextField plainPasswordField; // The visible plain text input (used when the password is shown)
 
-    /**
-     * The button that triggers the log-out action.
-     */
     @FXML
     private Button logOutButton; // LogOut button
 
-    /**
-     * The button that toggles the visibility of the password.
-     */
     @FXML
     private Button eyeButton; // Eye button for showing/hiding password
 
-    /**
-     * The ImageView that displays the eye icon.
-     */
     @FXML
     private ImageView eyeImageView; // Eye icon for password visibility
 
@@ -57,75 +46,98 @@ public class MainController {
     private final Image eyeClosed = new Image(getClass().getResourceAsStream("/Images/passwordVisible.png"));
     private final Image eyeOpen = new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png"));
 
-    // Variable to keep track of the password visibility
     private boolean passwordIsVisible = false;
 
-    /**
-     * Initializes the controller.
-     * This method is called automatically after the FXML file is loaded.
-     */
+    // Context menus for copying selected text
+    private ContextMenu contextMenu;
+
     @FXML
     public void initialize() {
         // Set the eye icon to the closed eye by default
         eyeImageView.setImage(eyeClosed);
-
-        // Hide the plain password field initially and show the masked password field
         passwordField.setVisible(true);
         plainPasswordField.setVisible(false);
+
+        // Initialize the context menu for copy functionality
+        createContextMenu();
     }
 
     /**
-     * Handles the log-out action.
-     * Navigates the user back to the LogIn screen.
+     * Creates a context menu with a copy option for selected text.
      */
+    private void createContextMenu() {
+        contextMenu = new ContextMenu();
+        MenuItem copyItem = new MenuItem("Copy");
+
+        // Set action for the copy menu item
+        copyItem.setOnAction(event -> copySelectedText());
+
+        // Add the copy option to the context menu
+        contextMenu.getItems().add(copyItem);
+
+        // Attach the context menu to relevant text fields
+        attachContextMenuToTextField(passwordField);
+        attachContextMenuToTextField(plainPasswordField);
+    }
+
+    /**
+     * Attaches the context menu to a TextField or PasswordField.
+     * 
+     * @param textField The text field to which the context menu will be attached.
+     */
+    private void attachContextMenuToTextField(TextField textField) {
+        textField.setContextMenu(contextMenu);
+    }
+
+    /**
+     * Copies the selected text from the active text field to the clipboard.
+     */
+    private void copySelectedText() {
+        String selectedText = "";
+        
+        if (passwordField.isVisible() && passwordField.getSelectedText() != null) {
+            selectedText = passwordField.getSelectedText();
+        } else if (plainPasswordField.isVisible() && plainPasswordField.getSelectedText() != null) {
+            selectedText = plainPasswordField.getSelectedText();
+        }
+
+        if (!selectedText.isEmpty()) {
+            Clipboard clipboard = Clipboard.getSystemClipboard();
+            ClipboardContent content = new ClipboardContent();
+            content.putString(selectedText);
+            clipboard.setContent(content);
+        }
+    }
+
     @FXML
     private void logOut() {
         navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
 
-    /**
-     * Toggles the password visibility and changes the eye icon.
-     * If the password is visible, it hides it; if the password is hidden, it shows it.
-     */
     @FXML
     private void togglePasswordVisibility() {
         if (passwordIsVisible) {
-            // Hide password and change eye icon to closed
             passwordField.setVisible(true);
             plainPasswordField.setVisible(false);
             eyeImageView.setImage(eyeClosed);
         } else {
-            // Show password and change eye icon to open
             passwordField.setVisible(false);
             plainPasswordField.setVisible(true);
-            plainPasswordField.setText(passwordField.getText()); // Transfer text from PasswordField to TextField
+            plainPasswordField.setText(passwordField.getText());
             eyeImageView.setImage(eyeOpen);
         }
-        // Toggle visibility flag
         passwordIsVisible = !passwordIsVisible;
     }
 
-    /**
-     * General method to navigate between different screens in the application.
-     * 
-     * @param fxmlPath the path to the FXML file of the target screen
-     * @param windowTitle the title to set for the window
-     */
     private void navigateToScreen(String fxmlPath, String windowTitle) {
         try {
-            // Load the FXML file of the target view
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Scene scene = new Scene(loader.load());
 
-            // Get the current stage
             Stage currentStage = (Stage) logOutButton.getScene().getWindow();
-
-            // Change the current stage's scene to the new scene
             currentStage.setScene(scene);
-            currentStage.setTitle(windowTitle); // Set the title of the new window
+            currentStage.setTitle(windowTitle);
             currentStage.show();
-
-            logger.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
         }

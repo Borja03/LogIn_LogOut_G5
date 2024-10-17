@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * 
  * @author Borja
  */
-public class MyServerSocket {
+public class MyServerSocket implements Runnable{
 
     // Logger for logging server activities
     private static final Logger logger = Logger.getLogger(MyServerSocket.class.getName());
@@ -112,5 +112,10 @@ public class MyServerSocket {
         } catch (IOException | ClassNotFoundException e) {
             logger.log(Level.SEVERE, "Client handling exception: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
