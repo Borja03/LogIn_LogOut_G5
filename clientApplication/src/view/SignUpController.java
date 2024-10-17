@@ -1,12 +1,10 @@
 package view;
 
-import ISignable.Signable;
 import Model.User;
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
-import exception.InvalidPhoneNumberFormatException;
 import exception.InvalidStreetFormatException;
 import exception.InvalidZipFormatException;
 
@@ -23,109 +21,89 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-/**
- * SignUpController is responsible for handling user interactions in the sign-up
- * UI. It validates user inputs and triggers actions like sign-up and navigating
- * to the login screen.
- */
-public class SignUpController {
+public class SignUpController implements Initializable {
 
     // Logger for logging events
-    private static final Logger LOGGER = Logger.getLogger("package view");
-    // company id 
-    private final int COMPANY_ID = 1;
+    private static final Logger logger = Logger.getLogger(SignUpController.class.getName());
 
     // UI Components
     @FXML
-    private VBox vbx_card;
-
-    @FXML
     private TextField tf_email;
-
     @FXML
     private PasswordField pf_password;
-
-    @FXML
-    private Button btn_show_password;
-
     @FXML
     private PasswordField pf_password_confirm;
-
     @FXML
-    private Button btn_show_password_conf;
-
+    private TextField tf_password;
     @FXML
     private TextField tf_name;
-
     @FXML
     private TextField tf_street;
-
     @FXML
     private TextField tf_city;
-
     @FXML
     private TextField tf_zip;
-
     @FXML
     private CheckBox chb_active;
-
     @FXML
     private Button btn_signup;
-
+    //@FXML
+   // private Button btn_show_password;
     @FXML
     private Label lbl_error;
-
     @FXML
     private Hyperlink hl_login;
 
-    private Stage stage;
-
     
-    
-    public void initialize(Parent root) {
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
 
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setTitle("SignUp2");
-        stage.setResizable(false);
-        Image icon = new Image("images/usericon.png");
-        stage.getIcons().add(icon);
-
-        // text changes handling
-       
-
-        //handle Actions
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
-        stage.setOnCloseRequest(this::handleOnActionExit);
+      
 
     }
-    
-    
-    
-    public Stage getStage() {
-        return stage;
+
+    private void handleSignUpButtonAction(ActionEvent event) {
+        try {
+            String email = tf_email.getText();
+            String password = pf_password.getText();
+            String confirmPassword = pf_password_confirm.getText();
+            String name = tf_name.getText();
+            String street = tf_street.getText();
+            String city = tf_city.getText();
+            String zip = tf_zip.getText();
+            boolean isActive = chb_active.isSelected();
+            // Clear previous error messages            
+            lbl_error.setText("");
+
+            // Validate inputs
+            validateInputs(email, password, confirmPassword, name, street, city, zip);
+            // Proceed with sign-up logic
+            performSignUp(email, password, name, 1, street, city, Integer.parseInt(zip), isActive);
+            logger.info("Performing signup");
+        } catch (Exception e) {
+            lbl_error.setText(e.getMessage());
+            logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
+    public void handleShowHidePasswordAction() {
+    
     }
 
-    private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidCityFormatException, InvalidPasswordFormatException, InvalidStreetFormatException, InvalidZipFormatException {
-        //check if allfield are not empty 
+    private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
+                    throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+
         checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
-        //check if allfield are not empty 
         checkFieldsFormat(email, password, confirmPassword, name, street, city, zip);
 
     }
@@ -151,7 +129,7 @@ public class SignUpController {
         if (street == null || street.isEmpty()) {
             throw new EmptyFieldException("Street cannot be empty.");
         }
-
+        // You can add any additional format checks for street if needed
         // Validate city
         if (city == null || city.isEmpty()) {
             throw new EmptyFieldException("City cannot be empty.");
@@ -162,7 +140,7 @@ public class SignUpController {
         }
     }
 
-    public void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws InvalidEmailFormatException, InvalidPasswordFormatException,
+    public void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
                     InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
         // Regex pattern for a valid email format
         String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
@@ -177,12 +155,10 @@ public class SignUpController {
         if (!password.equals(confirmPassword)) {
             throw new InvalidPasswordFormatException("Passwords do not match.");
         }
-
         // Example: check that city only contains letters (basic validation)
         if (!city.matches("[a-zA-Z\\s]+")) {
             throw new InvalidCityFormatException("City must only contain letters.");
         }
-
         // Example: check that zip contains exactly 5 digits
         if (!zip.matches("\\d{5}")) {
             throw new InvalidZipFormatException("Zip code must be exactly 5 digits.");
@@ -210,36 +186,6 @@ public class SignUpController {
         return hasUppercase && hasDigit && hasSpecialChar;
     }
 
-    private void handleSignUpButtonAction(ActionEvent event) {
-        try {
-            System.out.println("sdddd");
-            String email = tf_email.getText();
-            String password = pf_password.getText();
-            String confirmPassword = pf_password_confirm.getText();
-            String name = tf_name.getText();
-            String street = tf_street.getText();
-            String city = tf_city.getText();
-            String zip = tf_zip.getText();
-            boolean isActive = chb_active.isSelected();
-
-            // Clear previous error messages            
-            lbl_error.setText("");
-            // Validate inputs
-            validateInputs(email, password, confirmPassword, name, street, city, zip);
-            // Proceed with sign-up logic
-            performSignUp(email, password, name, COMPANY_ID, street, city, Integer.parseInt(zip), isActive);
-            LOGGER.info("signup prformed");
-        } catch (Exception e) {
-            // Display the error message
-            lbl_error.setText(e.getMessage());
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-        }
-    }
-
-    public void handleOnActionExit(Event event) {
-
-    }
-
     private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
         try {
@@ -247,11 +193,21 @@ public class SignUpController {
             // User insertedUser = userq.signUp(user);
 
             // Log sign-up success
-            LOGGER.log(Level.INFO, "Sign-up successful for: {0}", email);
+            logger.log(Level.INFO, "Sign-up successful for: {0}", email);
 
             // Inform the user of successful sign-up using an Alert
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Sign-up Successful");
+            alert.setHeaderText(null);
+            alert.setContentText("Your account has been created successfully!");
+
             // Handle alert button click
-            showAlert();
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    // Navigate to another screen after the user clicks OK
+                    navigateToScreen("/view/LogIn.fxml", "LogIn");
+                }
+            });
 
         } catch (Exception ex) {
             Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
@@ -276,26 +232,10 @@ public class SignUpController {
             currentStage.setTitle(windowTitle); // Set the title of the new window
             currentStage.show();
 
-            LOGGER.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
+            logger.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
+            logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
         }
     }
 
-    public void showAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sign-up Successful");
-        alert.setHeaderText(null);
-        alert.setContentText("Your account has been created successfully!");
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                // Navigate to another screen after the user clicks OK
-                navigateToScreen("/view/LogIn.fxml", "LogIn");
-
-            }
-        });
-    }
-
-    
-    
 }
