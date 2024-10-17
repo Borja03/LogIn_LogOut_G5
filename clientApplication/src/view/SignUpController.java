@@ -26,6 +26,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class SignUpController implements Initializable {
@@ -35,40 +38,86 @@ public class SignUpController implements Initializable {
 
     // UI Components
     @FXML
-    private TextField tf_email;
-    @FXML
-    private PasswordField pf_password;
-    @FXML
-    private PasswordField pf_password_confirm;
-    @FXML
-    private TextField tf_password;
-    @FXML
-    private TextField tf_name;
-    @FXML
-    private TextField tf_street;
-    @FXML
-    private TextField tf_city;
-    @FXML
-    private TextField tf_zip;
-    @FXML
-    private CheckBox chb_active;
+    private Button btn_show_password;
+
     @FXML
     private Button btn_signup;
-    //@FXML
-   // private Button btn_show_password;
+
     @FXML
-    private Label lbl_error;
+    private CheckBox chb_active;
+
     @FXML
     private Hyperlink hl_login;
 
-    
+    @FXML
+    private ImageView imgShowPassword;
+
+    @FXML
+    private Label lbl_error;
+
+    @FXML
+    private Label lbl_signup;
+
+    @FXML
+    private Label lbl_txt;
+
+    @FXML
+    private PasswordField pf_password;
+
+    @FXML
+    private PasswordField pf_password_confirm;
+
+    @FXML
+    private TextField tf_city;
+
+    @FXML
+    private TextField tf_email;
+
+    @FXML
+    private TextField tf_name;
+
+    @FXML
+    private TextField tf_password;
+
+    @FXML
+    private TextField tf_password_confirm;
+
+    @FXML
+    private TextField tf_street;
+
+    @FXML
+    private TextField tf_zip;
+
+    @FXML
+    private VBox vbx_card;
+
+    private boolean isPasswordVisible = false;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
-      
+        tf_password.setVisible(false);
 
+    }
+
+    
+    @FXML
+    private void handlePasswordImageButtonAction() {
+        isPasswordVisible = !isPasswordVisible;
+
+        if (isPasswordVisible) {
+            imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png")));
+            pf_password.setVisible(false);
+            tf_password.setVisible(true);
+            tf_password.setText(pf_password.getText());
+        } else {
+            imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png")));
+            pf_password.setVisible(true);
+            tf_password.setVisible(false);
+            pf_password.setText(tf_password.getText());
+        }
     }
 
     private void handleSignUpButtonAction(ActionEvent event) {
@@ -96,12 +145,12 @@ public class SignUpController implements Initializable {
     }
 
     public void handleShowHidePasswordAction() {
-    
+
     }
 
     private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
-                    throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
-                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+            throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+            InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
 
         checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
         checkFieldsFormat(email, password, confirmPassword, name, street, city, zip);
@@ -141,7 +190,7 @@ public class SignUpController implements Initializable {
     }
 
     public void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
-                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+            InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
         // Regex pattern for a valid email format
         String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
         if (!email.matches(emailRegex)) {
