@@ -1,5 +1,6 @@
 package Utils;
 
+import exception.InvalidEmailFormatException;
 import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 
@@ -24,11 +25,13 @@ public class UtilsMethods {
      *
      * @param email la dirección de correo electrónico a validar
      */
-    public void validateEmail(String email) {
+    public void validateEmail(String email) throws InvalidEmailFormatException {
         String emailRegex = "^[\\w-\\.]+@[\\w-]+\\.[a-zA-Z]{2,4}$";
         if (!email.matches(emailRegex)) {
+            Exception InvalidEmailFormatException;
             logger.warning("Formato de email inválido: " + email);
             showAlert("Formato de email inválido", "El texto tiene que estar en formato email 'example@example.extension'");
+            throw new InvalidEmailFormatException ("Formato email invalido: " + email);
         }
     }
 
