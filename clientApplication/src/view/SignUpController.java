@@ -1,5 +1,6 @@
 package view;
 
+import Model.SignableFactory;
 import Model.User;
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
@@ -323,11 +324,10 @@ public class SignUpController {
     private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
         try {
-        
-
+                
+          //  User users =SignableFactory.getSignable().signUp(user);
             // Log sign-up success
-            LOGGER.log(Level.INFO, "Sign-up successful for: {0}", email);
-
+            LOGGER.log(Level.INFO, "Calling user from Signable");
             // Inform the user of successful sign-up using an Alert
             showAlert();
         } catch (Exception ex) {
