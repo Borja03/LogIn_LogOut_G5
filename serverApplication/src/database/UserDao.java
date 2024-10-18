@@ -68,7 +68,7 @@ public class UserDao implements Signable {
      * @throws IncorrectCredentialsException Si el usuario está inactivo o si las credenciales son incorrectas.
      */
     @Override
-    public User signIn(User user) throws Exception {
+    public synchronized User signIn(User user) throws Exception {
         Connection connection = null;
         PreparedStatement partnerStmt = null;
         PreparedStatement userStmt = null;
@@ -153,7 +153,7 @@ public class UserDao implements Signable {
      * @throws Exception Si se produce un error en la inserción de los datos o en la transacción.
      */
     @Override
-    public User signUp(User user) throws Exception {
+    public synchronized User signUp(User user) throws Exception {
         Connection conn = null;
         PreparedStatement psPartner = null;
         PreparedStatement psUser = null;
