@@ -1,5 +1,7 @@
 package view;
 
+import ISignable.Signable;
+import Model.SignableFactory;
 import Model.User;
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
@@ -8,13 +10,10 @@ import exception.InvalidPasswordFormatException;
 import exception.InvalidStreetFormatException;
 import exception.InvalidZipFormatException;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -22,13 +21,19 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class SignUpController implements Initializable {
+public class SignUpController {
 
     // Logger for logging events
     private static final Logger logger = Logger.getLogger(SignUpController.class.getName());
@@ -55,20 +60,99 @@ public class SignUpController implements Initializable {
     @FXML
     private Button btn_signup;
     //@FXML
-   // private Button btn_show_password;
+    private Button btn_show_password;
     @FXML
     private Label lbl_error;
     @FXML
     private Hyperlink hl_login;
 
+    private Stage stage;
+    private Signable signable;
+    private static final Logger LOGGER = Logger.getLogger("package view");
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    void initStage(Parent root) {
+        LOGGER.info("Initialising Sign Up window.");
+        Scene scene = new Scene(root);
     
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
+        stage.setScene(scene);
+        stage.setTitle("SignUp");
+        stage.setResizable(false);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.getIcons().add(new Image("Images/userIcon.png"));
 
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
-      
+        //signable = ClientFactory.getImplementation();
 
+        MenuItem darkMode = new MenuItem("Dark Mode");
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem clearFields = new MenuItem("Clear All Fields");
+
+        // Create the ContextMenu and add the MenuItems
+        ContextMenu contextMenu = new ContextMenu(darkMode, lightMode, clearFields);
+
+        // Action for Dark Mode
+        darkMode.setOnAction(e -> {
+            scene.getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
+            System.out.println("Dark Mode Activated");
+            contextMenu.hide();  // Hide the context menu
+        });
+
+        // Action for Light Mode
+        lightMode.setOnAction(e -> {
+             // Remove all stylesheets
+            scene.getStylesheets().clear(); 
+            // Apply light mode stylesheet
+            scene.getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());  
+            System.out.println("Light Mode Activated");
+            contextMenu.hide();  // Hide the context menu
+        });
+
+        // Action for Clear All Fields
+        clearFields.setOnAction(e -> {
+            clearAllFields();  // Clear all input fields
+            System.out.println("All Fields Cleared");
+            contextMenu.hide();  // Hide the context menu
+        });
+
+        // Show context menu on right-click (context menu request)
+          root.setOnContextMenuRequested(e -> {
+        System.out.println("Context menu requested at: " + e.getScreenX() + ", " + e.getScreenY());
+        contextMenu.show(root, e.getScreenX(), e.getScreenY());
+    });
+        logger.info("Window opened.");
+        stage.showAndWait();
+    }
+
+  
+
+    private void applyDarkMode() {
+        logger.info("Applying dark mode.");
+        // Set dark mode styles (you can modify this to point to a stylesheet or CSS rules)
+        stage.getScene().getRoot().setStyle("-fx-base: #333; -fx-background-color: #2B2B2B; -fx-text-fill: white;");
+    }
+
+    private void applyLightMode() {
+        logger.info("Applying light mode.");
+        // Reset to light mode (or default) styles
+        stage.getScene().getRoot().setStyle("-fx-base: #FFF; -fx-background-color: #F0F0F0; -fx-text-fill: black;");
+    }
+
+    private void clearAllFields() {
+        logger.info("Clearing all input fields.");
+        tf_email.clear();
+        pf_password.clear();
+        pf_password_confirm.clear();
+        tf_name.clear();
+        tf_street.clear();
+        tf_city.clear();
+        tf_zip.clear();
+        chb_active.setSelected(false);
+        lbl_error.setText("");
     }
 
     private void handleSignUpButtonAction(ActionEvent event) {
@@ -96,7 +180,7 @@ public class SignUpController implements Initializable {
     }
 
     public void handleShowHidePasswordAction() {
-    
+
     }
 
     private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
@@ -189,9 +273,9 @@ public class SignUpController implements Initializable {
     private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
         try {
-            // UserDao userq = new UserDao();
-            // User insertedUser = userq.signUp(user);
-
+            //UserDao userq = new UserDao();
+            //User insertedUser =SignableFactory.getSignable().signUp(user) ;
+                
             // Log sign-up success
             logger.log(Level.INFO, "Sign-up successful for: {0}", email);
 

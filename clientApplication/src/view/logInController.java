@@ -21,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import exception.*;
+import java.io.IOException;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -81,6 +82,7 @@ public class logInController {
      * Indica si la contraseña es visible.
      */
     private boolean isPasswordVisible = false;
+    private Stage stage;
 
     /**
      * Método que se ejecuta al inicializar el controlador. Configura el campo
@@ -169,46 +171,19 @@ public class logInController {
      */
     private void navigateToScreen(String fxmlPath, String title) {
         try {
-            // Cargar el archivo FXML de la vista objetivo
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            // modal.
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/SignUpView.fxml"));
             Parent root = (Parent) loader.load();
-            Scene scene = new Scene(root);
-            // Obtener el escenario actual
-            Stage currentStage = (Stage) logInButton.getScene().getWindow();
-  MenuItem darkMode = new MenuItem("Dark Mode");
-            MenuItem lightMode = new MenuItem("Light Mode");
-
-           // Create the ContextMenu and add the MenuItems
-            ContextMenu contextMenu = new ContextMenu(darkMode, lightMode);
-
-            // Action for Dark Mode
-            darkMode.setOnAction(e -> {
-                // Load the dark theme CSS
-                //System.out.println("----" + getClass().getResource("css/dark-theme.css").toExternalForm().toString());
-                scene.getStylesheets().add(getClass().getResource("dark-theme.css").toExternalForm());
-                System.out.println("Dark Mode Activated");
-            });
-
-            // Action for Light Mode
-            lightMode.setOnAction(e -> {
-                // Load the light theme CSS
-                scene.getStylesheets().clear();  // Clear any existing stylesheets
-                scene.getStylesheets().add(getClass().getResource("css/light-theme.css").toExternalForm());
-                System.out.println("Light Mode Activated");
-            });
-
-            root.setOnContextMenuRequested(e -> contextMenu.show(root, e.getScreenX(), e.getScreenY()));
-
-            // Cambiar la escena del escenario actual a la nueva escena
-            currentStage.setScene(scene);
-            currentStage.setTitle(title); // Establecer el título de la nueva ventana
-            currentStage.show();
-
-            logger.log(Level.INFO, "Navigated to " + title + " screen.");
-
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
+            SignUpController controller = (SignUpController) loader.getController();
+            //Ventana modal.
+            Stage modalStage = new Stage();
+            controller.setStage(modalStage);
+            controller.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(logInController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+
+
 }
