@@ -13,7 +13,12 @@ import ISignable.Signable;
  */
 public class DaoFactory {
 
-    public Signable getSignable() {
-        return new UserDao();
+    private static Signable signable = null;
+
+    public synchronized static Signable getSignable() {
+        if (signable == null) 
+            signable = new UserDao();
+        return signable;
+
     }
 }

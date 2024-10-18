@@ -1,3 +1,4 @@
+package serverapplication;
 
 import Model.MyServerSocket;
 
@@ -25,7 +26,7 @@ public class ServerApplication {
      *
      * @param args the command-line arguments, where the first argument is expected to be the port number
      */
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         int port = 9999;  // Default port
 
         // Check if a port is provided via command-line arguments
@@ -33,12 +34,12 @@ public class ServerApplication {
             try {
                 port = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-               // System.out.println("Invalid port number. Using default port 9999.");
+                // Use default port 9999
             }
         }
         
         // Create a server instance
-        MyServerSocket server = new MyServerSocket(port);
+        MyServerSocket server = new MyServerSocket();
         
         // Start the server
         server.start();
