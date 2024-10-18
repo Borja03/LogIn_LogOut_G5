@@ -1,7 +1,5 @@
 package view;
 
-import ISignable.Signable;
-import Model.SignableFactory;
 import Model.User;
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
@@ -10,9 +8,10 @@ import exception.InvalidPasswordFormatException;
 import exception.InvalidStreetFormatException;
 import exception.InvalidZipFormatException;
 
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -20,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -29,46 +29,71 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
-
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class SignUpController {
 
     // Logger for logging events
-    private static final Logger logger = Logger.getLogger(SignUpController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SignUpController.class.getName());
 
     // UI Components
     @FXML
-    private TextField tf_email;
-    @FXML
-    private PasswordField pf_password;
-    @FXML
-    private PasswordField pf_password_confirm;
-    @FXML
-    private TextField tf_password;
-    @FXML
-    private TextField tf_name;
-    @FXML
-    private TextField tf_street;
-    @FXML
-    private TextField tf_city;
-    @FXML
-    private TextField tf_zip;
-    @FXML
-    private CheckBox chb_active;
+    private Button btn_show_password;
+
     @FXML
     private Button btn_signup;
-    //@FXML
-    private Button btn_show_password;
+
     @FXML
-    private Label lbl_error;
+    private CheckBox chb_active;
+
     @FXML
     private Hyperlink hl_login;
 
+    @FXML
+    private ImageView imgShowPassword;
+
+    @FXML
+    private Label lbl_error;
+
+    @FXML
+    private PasswordField pf_password;
+
+    @FXML
+    private PasswordField pf_password_confirm;
+
+    @FXML
+    private TextField tf_city;
+
+    @FXML
+    private TextField tf_email;
+
+    @FXML
+    private TextField tf_name;
+
+    @FXML
+    private TextField tf_password;
+
+    @FXML
+    private TextField tf_password_confirm;
+
+    @FXML
+    private TextField tf_street;
+
+    @FXML
+    private TextField tf_zip;
+
+    @FXML
+    private VBox vbx_card;
+
     private Stage stage;
-    private Signable signable;
-    private static final Logger LOGGER = Logger.getLogger("package view");
+    private boolean isPasswordVisible = false;
+
+    public Stage getStage() {
+        return stage;
+    }
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -77,7 +102,7 @@ public class SignUpController {
     void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
         Scene scene = new Scene(root);
-    
+
         stage.setScene(scene);
         stage.setTitle("SignUp");
         stage.setResizable(false);
@@ -86,8 +111,11 @@ public class SignUpController {
 
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
-        //signable = ClientFactory.getImplementation();
+        tf_password.setVisible(false);
+        btn_show_password.setOnAction(event -> handlePasswordImageButtonAction());
+        stage.setOnCloseRequest(this::handleOnActionExit);
 
+        // MENU
         MenuItem darkMode = new MenuItem("Dark Mode");
         MenuItem lightMode = new MenuItem("Light Mode");
         MenuItem clearFields = new MenuItem("Clear All Fields");
@@ -97,17 +125,18 @@ public class SignUpController {
 
         // Action for Dark Mode
         darkMode.setOnAction(e -> {
-            scene.getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
+           // scene.getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
             System.out.println("Dark Mode Activated");
+               applyDarkMode();
             contextMenu.hide();  // Hide the context menu
         });
 
         // Action for Light Mode
         lightMode.setOnAction(e -> {
-             // Remove all stylesheets
-            scene.getStylesheets().clear(); 
+            // Remove all stylesheets
+            scene.getStylesheets().clear();
             // Apply light mode stylesheet
-            scene.getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());  
+            //scene.getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());
             System.out.println("Light Mode Activated");
             contextMenu.hide();  // Hide the context menu
         });
@@ -116,43 +145,68 @@ public class SignUpController {
         clearFields.setOnAction(e -> {
             clearAllFields();  // Clear all input fields
             System.out.println("All Fields Cleared");
+         
+             applyLightMode() ;
             contextMenu.hide();  // Hide the context menu
         });
 
         // Show context menu on right-click (context menu request)
-          root.setOnContextMenuRequested(e -> {
-        System.out.println("Context menu requested at: " + e.getScreenX() + ", " + e.getScreenY());
-        contextMenu.show(root, e.getScreenX(), e.getScreenY());
-    });
-        logger.info("Window opened.");
+        root.setOnContextMenuRequested(e -> {
+            System.out.println("Context menu requested at: " + e.getScreenX() + ", " + e.getScreenY());
+            contextMenu.show(root, e.getScreenX(), e.getScreenY());
+        });
+        LOGGER.info("Window opened.");
         stage.showAndWait();
     }
 
-  
-
+    
     private void applyDarkMode() {
-        logger.info("Applying dark mode.");
+        LOGGER.info("Applying dark mode.");
         // Set dark mode styles (you can modify this to point to a stylesheet or CSS rules)
         stage.getScene().getRoot().setStyle("-fx-base: #333; -fx-background-color: #2B2B2B; -fx-text-fill: white;");
     }
 
     private void applyLightMode() {
-        logger.info("Applying light mode.");
+        LOGGER.info("Applying light mode.");
         // Reset to light mode (or default) styles
         stage.getScene().getRoot().setStyle("-fx-base: #FFF; -fx-background-color: #F0F0F0; -fx-text-fill: black;");
     }
 
     private void clearAllFields() {
-        logger.info("Clearing all input fields.");
+        LOGGER.info("Clearing all input fields.");
         tf_email.clear();
         pf_password.clear();
+        tf_password.clear();
         pf_password_confirm.clear();
+        tf_password_confirm.clear();
         tf_name.clear();
         tf_street.clear();
         tf_city.clear();
         tf_zip.clear();
         chb_active.setSelected(false);
         lbl_error.setText("");
+    }
+
+    @FXML
+    private void handlePasswordImageButtonAction() {
+        isPasswordVisible = !isPasswordVisible;
+        if (isPasswordVisible) {
+            imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png")));
+            pf_password.setVisible(false);
+            tf_password.setVisible(true);
+            tf_password.setText(pf_password.getText());
+            pf_password_confirm.setVisible(false);
+            tf_password_confirm.setVisible(true);
+            tf_password_confirm.setText(pf_password_confirm.getText());
+        } else {
+            imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png")));
+            pf_password.setVisible(true);
+            tf_password.setVisible(false);
+            pf_password.setText(tf_password.getText());
+            pf_password_confirm.setVisible(true);
+            tf_password_confirm.setVisible(false);
+            pf_password_confirm.setText(tf_password_confirm.getText());
+        }
     }
 
     private void handleSignUpButtonAction(ActionEvent event) {
@@ -172,15 +226,11 @@ public class SignUpController {
             validateInputs(email, password, confirmPassword, name, street, city, zip);
             // Proceed with sign-up logic
             performSignUp(email, password, name, 1, street, city, Integer.parseInt(zip), isActive);
-            logger.info("Performing signup");
+            LOGGER.info("Performing signup");
         } catch (Exception e) {
             lbl_error.setText(e.getMessage());
-            logger.log(Level.WARNING, e.getMessage(), e);
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
-    }
-
-    public void handleShowHidePasswordAction() {
-
     }
 
     private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
@@ -273,26 +323,13 @@ public class SignUpController {
     private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
         try {
-            //UserDao userq = new UserDao();
-            //User insertedUser =SignableFactory.getSignable().signUp(user) ;
-                
+        
+
             // Log sign-up success
-            logger.log(Level.INFO, "Sign-up successful for: {0}", email);
+            LOGGER.log(Level.INFO, "Sign-up successful for: {0}", email);
 
             // Inform the user of successful sign-up using an Alert
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Sign-up Successful");
-            alert.setHeaderText(null);
-            alert.setContentText("Your account has been created successfully!");
-
-            // Handle alert button click
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    // Navigate to another screen after the user clicks OK
-                    navigateToScreen("/view/LogIn.fxml", "LogIn");
-                }
-            });
-
+            showAlert();
         } catch (Exception ex) {
             Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -316,10 +353,48 @@ public class SignUpController {
             currentStage.setTitle(windowTitle); // Set the title of the new window
             currentStage.show();
 
-            logger.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
+            LOGGER.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
+            LOGGER.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
         }
+    }
+
+    public void handleOnActionExit(Event event) {
+        try {
+            //Ask user for confirmation on exit
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Are you sure you want to exit the application?",
+                            ButtonType.OK, ButtonType.CANCEL);
+            Optional<ButtonType> result = alert.showAndWait();
+            //If OK to exit
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                Platform.exit();
+            } else {
+                event.consume();
+            }
+        } catch (Exception e) {
+            String errorMsg = "Error exiting application:" + e.getMessage();
+            Alert alert = new Alert(Alert.AlertType.ERROR,
+                            errorMsg,
+                            ButtonType.OK);
+            alert.showAndWait();
+            LOGGER.log(Level.SEVERE, errorMsg);
+        }
+    }
+    
+    public void showAlert(){
+           Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Sign-up Successful");
+            alert.setHeaderText(null);
+            alert.setContentText("Your account has been created successfully!");
+
+            // Handle alert button click
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    // Navigate to another screen after the user clicks OK
+                    navigateToScreen("/view/LogIn.fxml", "LogIn");
+                }
+            });
     }
 
 }
