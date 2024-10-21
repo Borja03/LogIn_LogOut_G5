@@ -32,7 +32,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class SignUpController {
@@ -103,21 +102,16 @@ public class SignUpController {
     void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
 
-       // Scene scene = new Scene(root);
-
+        // Scene scene = new Scene(root);
         // Set the stage properties
         //stage.setScene(scene);
         //        stage.setTitle("SignUp");
         //stage.setResizable(false);
-       // stage.initModality(Modality.APPLICATION_MODAL);
-
+        // stage.initModality(Modality.APPLICATION_MODAL);
         // Set the icon (if needed)
-       // stage.getIcons().add(new Image("/Images/userIcon.png"));
-
+        // stage.getIcons().add(new Image("/Images/userIcon.png"));
         // Set the close request handler
-       // stage.setOnCloseRequest(this::handleOnActionExit); // Here is where you add it
-
-
+        // stage.setOnCloseRequest(this::handleOnActionExit); // Here is where you add it
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
 
@@ -250,8 +244,9 @@ public class SignUpController {
     private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
                     throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
                     InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
-
+         // check empty fileds
         checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
+        //check fields format 
         checkFieldsFormat(email, password, confirmPassword, name, street, city, zip);
 
     }
@@ -303,7 +298,7 @@ public class SignUpController {
         if (!password.equals(confirmPassword)) {
             throw new InvalidPasswordFormatException("Passwords do not match.");
         }
-        // Example: check that city only contains letters (basic validation)
+        //  check that city only contains letters (basic validation)
         if (!city.matches("[a-zA-Z\\s]+")) {
             throw new InvalidCityFormatException("City must only contain letters.");
         }
@@ -338,7 +333,7 @@ public class SignUpController {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
         try {
 
-            //  User users =SignableFactory.getSignable().signUp(user);
+              User usera =SignableFactory.getSignable().signUp(user);
             // Log sign-up success
             LOGGER.log(Level.INFO, "Calling user from Signable");
             // Inform the user of successful sign-up using an Alert

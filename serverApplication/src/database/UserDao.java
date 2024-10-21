@@ -1,18 +1,20 @@
 package database;
 
 import ISignable.Signable;
+import static Model.TipoMensaje.SERVER_ERROR;
 import Model.User;
 import exception.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Clase UserDao que implementa la interfaz Signable para gestionar 
- * el inicio de sesión y el registro de usuarios en el sistema.
- * Realiza operaciones en las tablas 'res_partner' y 'res_users'.
+ * Clase UserDao que implementa la interfaz Signable para gestionar el inicio de
+ * sesión y el registro de usuarios en el sistema. Realiza operaciones en las
+ * tablas 'res_partner' y 'res_users'.
  *
  * @author Omar y Alder
  */
@@ -21,36 +23,38 @@ public class UserDao implements Signable {
     /**
      * Logger utilizado para registrar la actividad de la clase.
      */
-    private static final Logger logger = Logger.getLogger(UserDao.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UserDao.class.getName());
 
     /**
      * Consulta SQL para insertar un nuevo registro en la tabla 'res_partner'.
      */
     private static final String INSERT_USER_PARTNERS_TABLE = "INSERT INTO public.res_partner (name, email, display_name, is_company, company_id, street, city, zip, active) "
-            + "VALUES (?, ?, ?, FALSE, 1, ?, ?, ?, ?) RETURNING id";
+                    + "VALUES (?, ?, ?, FALSE, 1, ?, ?, ?, ?) RETURNING id";
 
     /**
      * Consulta SQL para insertar un nuevo registro en la tabla 'res_users'.
      */
     private static final String INSERT_USER_USERS_TABLE = "INSERT INTO public.res_users (login, password, partner_id, company_id, notification_type) "
-            + "VALUES (?, ?, ?, ?, 'email')";
+                    + "VALUES (?, ?, ?, ?, 'email')";
 
     /**
-     * Consulta SQL para obtener un usuario por su login (email) desde la tabla 'res_users'.
+     * Consulta SQL para obtener un usuario por su login (email) desde la tabla
+     * 'res_users'.
      */
     private static final String SELECT_RES_USERS = "SELECT * FROM public.res_users WHERE login = ?";
 
     /**
-     * Consulta SQL para obtener un partner por su email desde la tabla 'res_partner'.
+     * Consulta SQL para obtener un partner por su email desde la tabla
+     * 'res_partner'.
      */
     private static final String SELECT_RES_PARTNER = "SELECT * FROM public.res_partner WHERE email = ?";
 
     /**
      * Método auxiliar para realizar el hash de una contraseña.
-     * 
+     *
      * @param password La contraseña en texto plano.
      * @return La contraseña en su forma hash (en este caso sin hash para demo).
-     *         Se recomienda implementar un algoritmo de hash como bcrypt o SHA-512.
+     * Se recomienda implementar un algoritmo de hash como bcrypt o SHA-512.
      */
     private String hashPassword(String password) {
         // Para demostración, devolver la contraseña tal como está.
@@ -58,14 +62,19 @@ public class UserDao implements Signable {
     }
 
     /**
-     * Método para realizar el inicio de sesión de un usuario.
-     * Verifica si el usuario está activo en la tabla 'res_partner' y si las credenciales coinciden en 'res_users'.
-     * 
+     * Método para realizar el inicio de sesión de un usuario. Verifica si el
+     * usuario está activo en la tabla 'res_partner' y si las credenciales
+     * coinciden en 'res_users'.
+     *
      * @author Alder
-     * @param user El objeto User que contiene el email y la contraseña proporcionados por el usuario.
-     * @return El objeto User con los datos adicionales obtenidos de la base de datos, como nombre, dirección, etc.
-     * @throws Exception Si el usuario no está activo, si las credenciales son incorrectas o si ocurre algún error con la base de datos.
-     * @throws IncorrectCredentialsException Si el usuario está inactivo o si las credenciales son incorrectas.
+     * @param user El objeto User que contiene el email y la contraseña
+     * proporcionados por el usuario.
+     * @return El objeto User con los datos adicionales obtenidos de la base de
+     * datos, como nombre, dirección, etc.
+     * @throws Exception Si el usuario no está activo, si las credenciales son
+     * incorrectas o si ocurre algún error con la base de datos.
+     * @throws IncorrectCredentialsException Si el usuario está inactivo o si
+     * las credenciales son incorrectas.
      */
     @Override
     public synchronized User signIn(User user) throws Exception {
@@ -144,13 +153,16 @@ public class UserDao implements Signable {
     }
 
     /**
-     * Método para registrar un nuevo usuario en las tablas 'res_partner' y 'res_users'.
-     * Utiliza una transacción para garantizar que ambos registros se realicen correctamente.
-     * 
+     * Método para registrar un nuevo usuario en las tablas 'res_partner' y
+     * 'res_users'. Utiliza una transacción para garantizar que ambos registros
+     * se realicen correctamente.
+     *
      * @author Omar
-     * @param user El objeto User que contiene los datos del usuario a registrar (nombre, email, contraseña, dirección, etc.).
+     * @param user El objeto User que contiene los datos del usuario a registrar
+     * (nombre, email, contraseña, dirección, etc.).
      * @return El objeto User con los datos registrados en la base de datos.
-     * @throws Exception Si se produce un error en la inserción de los datos o en la transacción.
+     * @throws Exception Si se produce un error en la inserción de los datos o
+     * en la transacción.
      */
     @Override
     public synchronized User signUp(User user) throws Exception {
@@ -161,7 +173,15 @@ public class UserDao implements Signable {
 
         try {
             // Establecer conexión desde el pool
-            conn = DBConnectionPool.getConnection();
+
+            // Open the connection to DB
+         
+                conn = DBConnectionPool.getConnection();
+//                   if(conn == null){
+//                        throw new ServerErrorException("Server error "); 
+//                   }
+              
+            
 
             // Inicia la transacción
             conn.setAutoCommit(false);
@@ -221,4 +241,5 @@ public class UserDao implements Signable {
             }
         }
     }
+
 }

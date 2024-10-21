@@ -178,9 +178,12 @@ public class logInController {
             controller.initStage(root);  // Call initStage after the scene is set
             // Change the current stage's scene to the new scene
             Scene scene = new Scene(root);
+            currentStage.setResizable(false);
+            currentStage.getIcons().add(new Image("/Images/userIcon.png"));
             currentStage.setScene(scene);
             currentStage.setTitle(title); // Set the title of the new window
             currentStage.show();
+          
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to load SignUp screen: " + e.getMessage(), e);

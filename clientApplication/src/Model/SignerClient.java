@@ -69,7 +69,49 @@ public class SignerClient implements Signable {
      */
     @Override
     public User signUp(User user) throws Exception {
-        return null;
+        ObjectOutputStream oos = null;
+        ObjectInputStream ois = null;
+
+        try {
+            //Instanciamos el socket
+            LOGGER.info("Iniciando Sesión...");
+            Socket socketCliente = new Socket(HOST, PUERTO);
+            //Creamos el output y preparamos el encapsulador para enviarlo al servidor
+            oos = new ObjectOutputStream(socketCliente.getOutputStream());
+            msg = new Message();
+            msg.setUser(user);
+            msg.setTipo(TipoMensaje.SIGN_UP_REQUEST);
+            oos.writeObject(msg);
+
+            
+            //Recibimos el objeto encapsulado del servidor
+            ois = new ObjectInputStream(socketCliente.getInputStream());
+            msg = (Message) ois.readObject();
+            user = msg.getUser();
+            
+            //Cerramos las conexiones
+            oos.close();
+            ois.close();
+            socketCliente.close();
+            //Dependiendo de el mensaje que reciva lanza o escribe un mensaje nuevo
+            switch (msg.getTipo()) {
+                case OK_RESPONSE:
+                    return user;
+                case INCORRECT_CREDENTIALS_RESPONSE:
+                    throw new IncorrectCredentialsException("Email o contraseña incorrectos.");
+                case SERVER_ERROR:
+                    throw new ConnectionException("Ha ocurrido un error en el servidor.");
+            }
+            //Control de excepciones
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //Devuelve un obejto user
+        return user;
     }
 
     /**
@@ -134,7 +176,5 @@ public class SignerClient implements Signable {
         //Devuelve un obejto user
         return user;
     }
-    
 
 }
-

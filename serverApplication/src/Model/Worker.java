@@ -66,6 +66,7 @@ public class Worker implements Runnable {
     @Override
     public void run() {
         try {
+              LOGGER.info("Start run ");
             objectReader = new ObjectInputStream(socket.getInputStream());
             DaoFactory factory = new DaoFactory();
             signable = factory.getSignable();
