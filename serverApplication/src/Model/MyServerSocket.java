@@ -1,10 +1,21 @@
 package Model;
 
+import ISignable.Signable;
+import database.*;
+import exception.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import ISignable.Signable;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,9 +87,8 @@ public class MyServerSocket implements Runnable {
                             // Increment the number of connected clients
                             addClient();
 
-                            // Create a Worker to handle communication with the client
-                            Worker worker = new Worker(clientSocket);
-                            new Thread(worker).start(); // Start the worker thread
+                            // Create a new thread to handle communication with the client
+                            new Thread(() -> handleClient(clientSocket)).start(); // Start the worker thread
                         } else {
                             logger.warning("Max users reached, rejecting new connection.");
                             Socket tempSocket = serverSocket.accept();
@@ -95,6 +105,78 @@ public class MyServerSocket implements Runnable {
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Server exception: " + e.getMessage(), e);
+        }
+    }
+
+    private void handleClient(Socket socket) {
+        ObjectInputStream objectReader = null;
+        ObjectOutputStream objectWriter = null;
+        Signable signable = new DaoFactory().getSignable();
+        Message msg = null;
+
+        try {
+            objectReader = new ObjectInputStream(socket.getInputStream());
+            msg = (Message) objectReader.readObject();
+
+            // Log the entire message received for debugging
+            logger.info("Mensaje recibido: " + msg);
+
+            // Check if the user object is not null
+            if (msg.getUser() != null) {
+                String userEmail = msg.getUser().getEmail();
+                switch (msg.getTipo()) {
+                    case SIGN_IN_REQUEST:
+                        logger.info("Iniciando sesión para el usuario: " + userEmail); // This log should happen before the sign-in
+                        User user = signable.signIn(msg.getUser());
+                        msg.setUser(user);
+                        msg.setTipo(user == null ? TipoMensaje.SERVER_ERROR : TipoMensaje.OK_RESPONSE);
+                        break;
+
+                    case SIGN_UP_REQUEST:
+                        logger.info("Registrando usuario: " + userEmail);
+                        user = signable.signUp(msg.getUser());
+                        msg.setUser(user);
+                        msg.setTipo(user == null ? TipoMensaje.SERVER_ERROR : TipoMensaje.OK_RESPONSE);
+                        break;
+
+                    default:
+                        logger.warning("Tipo de mensaje desconocido: " + msg.getTipo());
+                        msg.setTipo(TipoMensaje.SERVER_ERROR);
+                        break;
+                }
+            } else {
+                logger.warning("Mensaje recibido sin usuario asociado.");
+            }
+
+        } catch (IncorrectCredentialsException e) {
+            msg.setTipo(TipoMensaje.INCORRECT_CREDENTIALS_RESPONSE);
+            logger.log(Level.SEVERE, "Credenciales incorrectas para el usuario: " + (msg.getUser() != null ? msg.getUser().getEmail() : "Usuario no especificado"), e);
+        } catch (UserAlreadyExistsException e) {
+            msg.setTipo(TipoMensaje.EMAIL_EXISTS);
+            logger.log(Level.SEVERE, "El usuario ya existe: " + (msg.getUser() != null ? msg.getUser().getEmail() : "Usuario no especificado"), e);
+        } catch (ConnectionException e) {
+            msg.setTipo(TipoMensaje.SERVER_ERROR);
+            logger.log(Level.SEVERE, "Error de conexión", e);
+        } catch (ClassNotFoundException e) {
+            msg.setTipo(TipoMensaje.SERVER_ERROR);
+            logger.log(Level.SEVERE, "Clase no encontrada", e);
+        } catch (IOException e) {
+            msg.setTipo(TipoMensaje.SERVER_ERROR);
+            logger.log(Level.SEVERE, "Error de entrada/salida", e);
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "Error inesperado", ex);
+        } finally {
+            try {
+                logger.info("Cerrando conexiones");
+                objectWriter = new ObjectOutputStream(socket.getOutputStream());
+                objectWriter.writeObject(msg);
+                objectReader.close();
+                objectWriter.close();
+                socket.close();
+            } catch (IOException ex) {
+                logger.log(Level.SEVERE, "Error al cerrar las conexiones", ex);
+            }
+            removeClient(); // Remove the client from the counter
         }
     }
 

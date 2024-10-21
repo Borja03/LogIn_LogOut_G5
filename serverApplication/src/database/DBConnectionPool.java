@@ -34,7 +34,7 @@ public class DBConnectionPool {
         dataSource.setUrl(dburl);
         dataSource.setUsername(rsbundle.getString("db_user"));
         dataSource.setPassword(rsbundle.getString("db_password"));
-        dataSource.setDriverClassName(rsbundle.getString("driver"));
+        dataSource.setDriverClassName(rsbundle.getString("db_driver"));
         // Initial connections
         dataSource.setInitialSize(Integer.parseInt(rsbundle.getString("pool_int_size")));
         // Maximum total connections
