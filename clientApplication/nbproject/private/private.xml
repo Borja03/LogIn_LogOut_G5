@@ -2,17 +2,32 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/Model/SignerClient.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/Main.fxml</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/MainController.java</file>
-        </group>
         <group name="Group Reto">
             <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/view/SignUpController.java</file>
             <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/view/logInController.java</file>
             <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/view/SignUpView.fxml</file>
             <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/eye-slash-solid.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/passwordNotVisible.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/location-dot-solid.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/userIcon.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Model/SignerClient.java</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/city-solid.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/user-solid.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/view/logInController.java</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/css/dark-styles.css</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/passwordVisible.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/key-solid.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/css/light-styles.css</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Model/SignableFactory.java</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/OdooLogo.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/view/SignUpController.java</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/eye-solid.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/Images/envelope-solid.png</file>
+            <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/view/SignUpView.fxml</file>
         </group>
     </open-files>
 </project-private>

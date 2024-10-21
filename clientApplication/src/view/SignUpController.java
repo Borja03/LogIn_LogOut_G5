@@ -42,6 +42,9 @@ public class SignUpController {
 
     // UI Components
     @FXML
+    private Parent root;
+
+    @FXML
     private Button btn_show_password;
 
     @FXML
@@ -103,24 +106,19 @@ public class SignUpController {
     void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
 
-       // Scene scene = new Scene(root);
-
+        // Scene scene = new Scene(root);
         // Set the stage properties
         //stage.setScene(scene);
         //        stage.setTitle("SignUp");
         //stage.setResizable(false);
-       // stage.initModality(Modality.APPLICATION_MODAL);
-
+        // stage.initModality(Modality.APPLICATION_MODAL);
         // Set the icon (if needed)
-       // stage.getIcons().add(new Image("/Images/userIcon.png"));
-
+        // stage.getIcons().add(new Image("/Images/userIcon.png"));
         // Set the close request handler
-       // stage.setOnCloseRequest(this::handleOnActionExit); // Here is where you add it
-
-
+        // stage.setOnCloseRequest(this::handleOnActionExit); // Here is where you add it
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
-
+        this.root = root;
         tf_password.setVisible(false);
         btn_show_password.setOnAction(event -> handlePasswordImageButtonAction());
         //stage.setOnCloseRequest(this::handleOnActionExit);
@@ -144,7 +142,7 @@ public class SignUpController {
         darkMode.setOnAction(e -> {
             // scene.getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
             System.out.println("Dark Mode Activated");
-            applyDarkMode();
+            applyDarkMode(root);
             contextMenu.hide();  // Hide the context menu
         });
 
@@ -163,7 +161,7 @@ public class SignUpController {
             clearAllFields();  // Clear all input fields
             System.out.println("All Fields Cleared");
 
-            applyLightMode();
+            applyLightMode(root);
             contextMenu.hide();  // Hide the context menu
         });
 
@@ -174,16 +172,22 @@ public class SignUpController {
 
     }
 
-    private void applyDarkMode() {
+    private void applyDarkMode(Parent root) {
         LOGGER.info("Applying dark mode.");
-        // Set dark mode styles (you can modify this to point to a stylesheet or CSS rules)
-        stage.getScene().getRoot().setStyle("-fx-base: #333; -fx-background-color: #2B2B2B; -fx-text-fill: white;");
+        root.getScene().getStylesheets().clear();
+        root.getScene().getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
+        root.applyCss();
+        root.layout();
+
     }
 
-    private void applyLightMode() {
+    private void applyLightMode(Parent root) {
         LOGGER.info("Applying light mode.");
-        // Reset to light mode (or default) styles
-        stage.getScene().getRoot().setStyle("-fx-base: #FFF; -fx-background-color: #F0F0F0; -fx-text-fill: black;");
+        root.getScene().getStylesheets().clear();
+        root.getScene().getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());
+        root.applyCss();
+        root.layout();   
+
     }
 
     private void clearAllFields() {
@@ -202,7 +206,8 @@ public class SignUpController {
     }
 
     @FXML
-    private void handlePasswordImageButtonAction() {
+    private boolean handlePasswordImageButtonAction() {
+        boolean isVisible = false;
         isPasswordVisible = !isPasswordVisible;
         if (isPasswordVisible) {
             imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png")));
@@ -212,6 +217,8 @@ public class SignUpController {
             pf_password_confirm.setVisible(false);
             tf_password_confirm.setVisible(true);
             tf_password_confirm.setText(pf_password_confirm.getText());
+            isVisible = true;
+            return isVisible;
         } else {
             imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png")));
             pf_password.setVisible(true);
@@ -220,19 +227,32 @@ public class SignUpController {
             pf_password_confirm.setVisible(true);
             tf_password_confirm.setVisible(false);
             pf_password_confirm.setText(tf_password_confirm.getText());
+            isVisible = false;
+            return isVisible;
         }
     }
 
     private void handleSignUpButtonAction(ActionEvent event) {
         try {
             String email = tf_email.getText();
-            String password = pf_password.getText();
-            String confirmPassword = pf_password_confirm.getText();
+            String password;
+            String confirmPassword;
+
+            // Revisar qué campos de contraseña están activos y usarlos
+            if (pf_password.isVisible()) {
+                password = pf_password.getText();
+                confirmPassword = pf_password_confirm.getText();
+            } else {
+                password = tf_password.getText();
+                confirmPassword = tf_password_confirm.getText();
+            }
+
             String name = tf_name.getText();
             String street = tf_street.getText();
             String city = tf_city.getText();
             String zip = tf_zip.getText();
             boolean isActive = chb_active.isSelected();
+
             // Clear previous error messages            
             lbl_error.setText("");
 
@@ -248,8 +268,8 @@ public class SignUpController {
     }
 
     private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
-                    throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
-                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+            throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+            InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
 
         checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
         checkFieldsFormat(email, password, confirmPassword, name, street, city, zip);
@@ -289,7 +309,7 @@ public class SignUpController {
     }
 
     public void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
-                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+            InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
         // Regex pattern for a valid email format
         String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
         if (!email.matches(emailRegex)) {
@@ -376,8 +396,8 @@ public class SignUpController {
         try {
             //Ask user for confirmation on exit
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                            "Are you sure you want to exit the application?",
-                            ButtonType.OK, ButtonType.CANCEL);
+                    "Are you sure you want to exit the application?",
+                    ButtonType.OK, ButtonType.CANCEL);
             Optional<ButtonType> result = alert.showAndWait();
             //If OK to exit
             if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -388,8 +408,8 @@ public class SignUpController {
         } catch (Exception e) {
             String errorMsg = "Error exiting application:" + e.getMessage();
             Alert alert = new Alert(Alert.AlertType.ERROR,
-                            errorMsg,
-                            ButtonType.OK);
+                    errorMsg,
+                    ButtonType.OK);
             alert.showAndWait();
             LOGGER.log(Level.SEVERE, errorMsg);
         }
