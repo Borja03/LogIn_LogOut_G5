@@ -27,7 +27,7 @@ public class DBConnectionPool {
         dataSource = new BasicDataSource();
 
         // add this info to file of configuration 
-        //dataSource.setUrl("jdbc:postgresql://192.168.56.128:5432/odoo_db_16");  
+        dataSource.setUrl("jdbc:postgresql://192.168.140.130:5432/odoooo");  
         String dburl = rsbundle.getString("db_url") + rsbundle.getString("db_ip")
                         + rsbundle.getString("db_port") + rsbundle.getString("db_name");
 
