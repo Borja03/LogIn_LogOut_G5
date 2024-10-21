@@ -21,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import exception.*;
+import javafx.scene.Parent;
 
 /**
  * Controlador para la interfaz de inicio de sesión. Este controlador maneja la
@@ -84,8 +85,12 @@ public class logInController {
      * email cuando pierde el foco.
      */
     @FXML
-    public void initialize() {
+    public void initialize(Stage stage, Parent root) {
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        passwordField.setVisible(true);
         visiblePasswordField.setVisible(false); // Inicialmente, el campo de texto visible está oculto
+        passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png")));
     }
 
     /**
