@@ -1,14 +1,14 @@
 package Model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+
 
 /**
  * This class represents a custom server socket that listens for client connections,
@@ -21,22 +21,26 @@ import java.util.logging.Logger;
  * 
  * @author Borja
  */
-public class MyServerSocket {
+public class MyServerSocket implements Runnable {
 
     // Logger for logging server activities
     private static final Logger logger = Logger.getLogger(MyServerSocket.class.getName());
 
-    // Port number for the server to listen on
-    private int port;
+    // Load configuration settings
+    private static final ResourceBundle config = ResourceBundle.getBundle("Utils.socketConfig");
+    private static final int MAX_USERS = Integer.parseInt(config.getString("MAX_USERS"));
+    private static final int PORT = Integer.parseInt(config.getString("PORT"));
+
+    // Server state variables
+    private static boolean serverOn = true;
     private ServerSocket serverSocket;
+    private static Integer connectedClients = 0;  // Client counter, synchronized for thread-safety
 
     /**
-     * Constructor for initializing the server with a specified port.
-     * 
-     * @param port the port number the server will listen on
+     * Constructor for initializing the server with the port from configuration.
      */
-    public MyServerSocket(int port) {
-        this.port = port;
+    public MyServerSocket() {
+        this.start();
     }
 
     /**
@@ -47,54 +51,109 @@ public class MyServerSocket {
      * <p>Each client is handled in a separate thread to ensure the server can
      * accept multiple clients concurrently.</p>
      */
-    public void start() {
-        try {
-            // Create the ServerSocket to accept client connections
-            serverSocket = new ServerSocket(port);
-            logger.info("Server is listening on port " + port);
+public void start() {
+    try {
+        serverSocket = new ServerSocket(PORT);
+        logger.info("Server is listening on port " + PORT);
 
-            // Infinite loop to accept clients continuously
-            while (true) {
-                Socket clientSocket = serverSocket.accept(); // Wait for a client connection
-                logger.info("New client connected");
-
-                // Handle communication with the client in a new thread
-                new Thread(() -> handleClient(clientSocket)).start(); // Each client in a separate thread
+        // Start thread to listen for 'q' input to close the server
+        Thread keyboardThread = new Thread(() -> {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            logger.info("Press 'q' to stop the server.");
+            try {
+                while (true) {
+                    String input = reader.readLine();
+                    if (input != null && input.equalsIgnoreCase("q")) {
+                        stopServer();
+                        break;
+                    }
+                }
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "Error reading input", e);
             }
+        });
+        keyboardThread.start();
+
+        // Accept clients continuously while server is on
+        while (serverOn) {
+            logger.info("Listening for new connections...");
+            try {
+                synchronized (connectedClients) {
+                    if (connectedClients < MAX_USERS) {
+                        // Accept client connections
+                        Socket clientSocket = serverSocket.accept(); // Wait for a client connection
+                        logger.info("New client connected");
+
+                        // Increment the number of connected clients
+                        addClient();
+
+                        // Handle communication with the client in a new thread
+                        new Thread(() -> handleClient(clientSocket)).start();
+                    } else {
+                        logger.warning("Max users reached, rejecting new connection.");
+                        Socket tempSocket = serverSocket.accept();
+                        tempSocket.close(); // Close the connection
+                    }
+                }
+            } catch (SocketException e) {
+                // If the socket is closed, exit the loop gracefully
+                logger.warning("Server socket closed. Stopping accept loop.");
+                break;
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "IO Exception: " + e.getMessage(), e);
+            }
+        }
+    } catch (IOException e) {
+        logger.log(Level.SEVERE, "Server exception: " + e.getMessage(), e);
+    }
+}
+
+
+    private void stopServer() {
+        try {
+            serverOn = false; // Set serverOn to false
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close(); // Close the server socket
+            }
+            logger.info("Server has been stopped.");
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Server exception: " + e.getMessage(), e);
+            logger.log(Level.SEVERE, "Error stopping the server: " + e.getMessage(), e);
         }
     }
 
+
+
     /**
      * Handles communication with a connected client.
-     * <p>This method processes incoming messages from the client, and based on the
-     * message type, it performs appropriate actions. For example, a sign-up request
-     * is processed, and a response is sent back to the client. The client connection
-     * is closed after the communication is completed.</p>
      * 
      * @param clientSocket the socket representing the client's connection
      */
-    private void handleClient(Socket clientSocket) {
-        try {
-            // Input and output streams for communication with the client
-            InputStream input = clientSocket.getInputStream();
-            ObjectInputStream objectReader = new ObjectInputStream(input);
+  private void handleClient(Socket clientSocket) {
+    try {
+        // Input and output streams for communication with the client
+        InputStream input = clientSocket.getInputStream();
+        ObjectInputStream objectReader = new ObjectInputStream(input);
 
-            OutputStream output = clientSocket.getOutputStream();
-            ObjectOutputStream objectWriter = new ObjectOutputStream(output);
+        OutputStream output = clientSocket.getOutputStream();
+        ObjectOutputStream objectWriter = new ObjectOutputStream(output);
 
-            // Read the message object sent by the client
-            Message clientMessage = (Message) objectReader.readObject();
-            logger.info("Received message from client: " + clientMessage);
+        // Read the message object sent by the client
+        Message clientMessage = (Message) objectReader.readObject();
+        
+        // Log the received message
+        logger.info("Received message from client: " + clientMessage);
 
-            // Example of processing the received message
-            if (clientMessage != null && clientMessage.getTipo() == TipoMensaje.SIGN_UP_REQUEST) {
+        // Example of processing the received message
+        if (clientMessage != null) {
+            // Log the type of message received
+            logger.info("Message type: " + clientMessage.getTipo());
+
+            // Process specific message types
+            if (clientMessage.getTipo() == TipoMensaje.SIGN_UP_REQUEST) {
                 logger.info("Processing sign-up request...");
+                // Process sign-up request...
 
-                // You can perform any operations like user registration here.
-                // For now, let's send back a response to the client.
-
+                // Example response
                 clientMessage.setTipo(TipoMensaje.OK_RESPONSE); // Set response type as OK
                 clientMessage.getUser().setName("Server Response"); // Add example user response
 
@@ -102,15 +161,65 @@ public class MyServerSocket {
                 objectWriter.writeObject(clientMessage);
                 logger.info("Response sent to client");
             }
-
-            // Clean up: close the client socket and streams
-            objectReader.close();
-            objectWriter.close();
-            clientSocket.close();
-            logger.info("Client connection closed");
-
-        } catch (IOException | ClassNotFoundException e) {
-            logger.log(Level.SEVERE, "Client handling exception: " + e.getMessage(), e);
+            // Add additional message handling logic as needed
         }
+
+        // Clean up: close the client socket and streams
+        objectReader.close();
+        objectWriter.close();
+        clientSocket.close();
+        logger.info("Client connection closed");
+
+        // Decrement the number of connected clients
+        removeClient();
+
+    } catch (IOException | ClassNotFoundException e) {
+        logger.log(Level.SEVERE, "Client handling exception: " + e.getMessage(), e);
+    }
+}
+
+
+    /**
+     * Sends a message to the client when the server has reached its maximum user limit.
+     * 
+     * @param clientSocket the client's socket that will receive the message
+     */
+   /* private void sendMaxUserMessage(Socket clientSocket) {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
+            Message maxUserMessage = new Message();
+            maxUserMessage.setMsg(TipoMensaje.MAX_THREAD_USER); // Assuming a MAX_THREAD_USER enum value
+            oos.writeObject(maxUserMessage);
+            logger.info("Max user limit message sent to client.");
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error sending max user message: " + e.getMessage(), e);
+        }
+    }*/
+
+    /**
+     * Synchronized method to add a client (increment client counter).
+     */
+    public static synchronized void addClient() {
+        connectedClients++;
+        logger.info("Client added. Current number of connected clients: " + connectedClients);
+    }
+
+    /**
+     * Synchronized method to remove a client (decrement client counter).
+     */
+    public static synchronized void removeClient() {
+        connectedClients--;
+        logger.info("Client removed. Current number of connected clients: " + connectedClients);
+    }
+
+
+
+    @Override
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public static void main(String[] args) {
+        new MyServerSocket();
     }
 }

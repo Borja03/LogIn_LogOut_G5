@@ -102,40 +102,56 @@ public class SignUpController {
 
     void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
-        Scene scene = new Scene(root);
 
-        stage.setScene(scene);
-        stage.setTitle("SignUp");
-        stage.setResizable(false);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.getIcons().add(new Image("Images/userIcon.png"));
+       // Scene scene = new Scene(root);
+
+        // Set the stage properties
+        //stage.setScene(scene);
+        //        stage.setTitle("SignUp");
+        //stage.setResizable(false);
+       // stage.initModality(Modality.APPLICATION_MODAL);
+
+        // Set the icon (if needed)
+       // stage.getIcons().add(new Image("/Images/userIcon.png"));
+
+        // Set the close request handler
+       // stage.setOnCloseRequest(this::handleOnActionExit); // Here is where you add it
+
 
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
+
         tf_password.setVisible(false);
         btn_show_password.setOnAction(event -> handlePasswordImageButtonAction());
-        stage.setOnCloseRequest(this::handleOnActionExit);
+        //stage.setOnCloseRequest(this::handleOnActionExit);
+        //stage.showAndWait(); // Show the stage and wait until it is closed
 
         // MENU
+        initMenu(root);
+
+        LOGGER.info("Window opened.");
+    }
+
+    private void initMenu(Parent root) {
+        LOGGER.info("Initialising Sign Up window menu .");
         MenuItem darkMode = new MenuItem("Dark Mode");
         MenuItem lightMode = new MenuItem("Light Mode");
         MenuItem clearFields = new MenuItem("Clear All Fields");
-
-        // Create the ContextMenu and add the MenuItems
         ContextMenu contextMenu = new ContextMenu(darkMode, lightMode, clearFields);
+        // Create the ContextMenu and add the MenuItems
 
         // Action for Dark Mode
         darkMode.setOnAction(e -> {
-           // scene.getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
+            // scene.getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
             System.out.println("Dark Mode Activated");
-               applyDarkMode();
+            applyDarkMode();
             contextMenu.hide();  // Hide the context menu
         });
 
         // Action for Light Mode
         lightMode.setOnAction(e -> {
             // Remove all stylesheets
-            scene.getStylesheets().clear();
+            // scene.getStylesheets().clear();
             // Apply light mode stylesheet
             //scene.getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());
             System.out.println("Light Mode Activated");
@@ -146,21 +162,18 @@ public class SignUpController {
         clearFields.setOnAction(e -> {
             clearAllFields();  // Clear all input fields
             System.out.println("All Fields Cleared");
-         
-             applyLightMode() ;
+
+            applyLightMode();
             contextMenu.hide();  // Hide the context menu
         });
 
         // Show context menu on right-click (context menu request)
         root.setOnContextMenuRequested(e -> {
-            System.out.println("Context menu requested at: " + e.getScreenX() + ", " + e.getScreenY());
             contextMenu.show(root, e.getScreenX(), e.getScreenY());
         });
-        LOGGER.info("Window opened.");
-        stage.showAndWait();
+
     }
 
-    
     private void applyDarkMode() {
         LOGGER.info("Applying dark mode.");
         // Set dark mode styles (you can modify this to point to a stylesheet or CSS rules)
@@ -324,8 +337,8 @@ public class SignUpController {
     private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
         try {
-                
-          //  User users =SignableFactory.getSignable().signUp(user);
+
+            //  User users =SignableFactory.getSignable().signUp(user);
             // Log sign-up success
             LOGGER.log(Level.INFO, "Calling user from Signable");
             // Inform the user of successful sign-up using an Alert
@@ -381,20 +394,20 @@ public class SignUpController {
             LOGGER.log(Level.SEVERE, errorMsg);
         }
     }
-    
-    public void showAlert(){
-           Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Sign-up Successful");
-            alert.setHeaderText(null);
-            alert.setContentText("Your account has been created successfully!");
 
-            // Handle alert button click
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    // Navigate to another screen after the user clicks OK
-                    navigateToScreen("/view/LogIn.fxml", "LogIn");
-                }
-            });
+    public void showAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Sign-up Successful");
+        alert.setHeaderText(null);
+        alert.setContentText("Your account has been created successfully!");
+
+        // Handle alert button click
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // Navigate to another screen after the user clicks OK
+                navigateToScreen("/view/LogIn.fxml", "LogIn");
+            }
+        });
     }
 
 }
