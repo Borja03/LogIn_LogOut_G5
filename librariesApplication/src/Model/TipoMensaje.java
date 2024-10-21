@@ -17,14 +17,15 @@ package Model;
  * </ul>
  * 
  * @author Alder
- */
+ */ 
 public enum TipoMensaje {
 
     SIGN_IN_REQUEST,  // Solicitud de inicio de sesión
     SIGN_UP_REQUEST,   // Solicitud de registro
     EMAIL_EXISTS,      // Email ya existe
     SERVER_ERROR,       // Error en el servidor
-    MAX_THREAD_USER,    // Número máximo de usuarios en hilo alcanzado
-    OK_RESPONSE,        // Respuesta exitosa
-    INCORRECT_CREDENTIALS_RESPONSE // Credenciales incorrectas
+    MAX_THREAD_USER,
+    OK_RESPONSE,
+    INCORRECT_CREDENTIALS_RESPONSE
+
 }
