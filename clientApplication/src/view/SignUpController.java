@@ -1,182 +1,318 @@
 package view;
 
+import Model.SignableFactory;
 import Model.User;
 import exception.EmptyFieldException;
+import exception.InvalidCityFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
-import exception.InvalidPhoneNumberFormatException;
+import exception.InvalidStreetFormatException;
+import exception.InvalidZipFormatException;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-/**
- * SignUpController is responsible for handling user interactions in the sign-up
- * UI. It validates user inputs and triggers actions like sign-up and navigating
- * to the login screen.
- */
-public class SignUpController implements Initializable {
+public class SignUpController {
 
     // Logger for logging events
-    private static final Logger logger = Logger.getLogger(SignUpController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SignUpController.class.getName());
 
     // UI Components
     @FXML
-    private TextField tf_email;
-
-    @FXML
-    private PasswordField tf_password;
-
-    @FXML
-    private PasswordField tf_password_confirm;
-
-    @FXML
-    private TextField tf_name;
-
-    @FXML
-    private TextField tf_dni;
-
-    @FXML
-    private TextField tf_phone_number;
-
-    @FXML
-    private ComboBox<String> cb_company;
+    private Button btn_show_password;
 
     @FXML
     private Button btn_signup;
 
     @FXML
-    private Label lbl_error;
+    private CheckBox chb_active;
 
     @FXML
     private Hyperlink hl_login;
 
-    /**
-     * Initializes the controller class and sets up any necessary logic.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        initializeCompanyComboBox();
+    @FXML
+    private ImageView imgShowPassword;
+
+    @FXML
+    private Label lbl_error;
+
+    @FXML
+    private PasswordField pf_password;
+
+    @FXML
+    private PasswordField pf_password_confirm;
+
+    @FXML
+    private TextField tf_city;
+
+    @FXML
+    private TextField tf_email;
+
+    @FXML
+    private TextField tf_name;
+
+    @FXML
+    private TextField tf_password;
+
+    @FXML
+    private TextField tf_password_confirm;
+
+    @FXML
+    private TextField tf_street;
+
+    @FXML
+    private TextField tf_zip;
+
+    @FXML
+    private VBox vbx_card;
+
+    private Stage stage;
+    private boolean isPasswordVisible = false;
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    void initStage(Parent root) {
+        LOGGER.info("Initialising Sign Up window.");
+
+       // Scene scene = new Scene(root);
+
+        // Set the stage properties
+        //stage.setScene(scene);
+        //        stage.setTitle("SignUp");
+        //stage.setResizable(false);
+       // stage.initModality(Modality.APPLICATION_MODAL);
+
+        // Set the icon (if needed)
+       // stage.getIcons().add(new Image("/Images/userIcon.png"));
+
+        // Set the close request handler
+       // stage.setOnCloseRequest(this::handleOnActionExit); // Here is where you add it
+
 
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
+
+        tf_password.setVisible(false);
+        btn_show_password.setOnAction(event -> handlePasswordImageButtonAction());
+        //stage.setOnCloseRequest(this::handleOnActionExit);
+        //stage.showAndWait(); // Show the stage and wait until it is closed
+
+        // MENU
+        initMenu(root);
+
+        LOGGER.info("Window opened.");
     }
 
-    /**
-     * Handles the sign-up button action. It validates user inputs and 
-     * performs the sign-up process if all inputs are valid.
-     *
-     * @param event the ActionEvent triggered by the button click
-     */
-    private void handleSignUpButtonAction(ActionEvent event) {
-        try {
-            String email = tf_email.getText();
-            String password = tf_password.getText();
-            String confirmPassword = tf_password_confirm.getText();
-            String name = tf_name.getText();
-            String dni = tf_dni.getText();
-            String phoneNumber = tf_phone_number.getText();
-            String company = cb_company.getValue();
+    private void initMenu(Parent root) {
+        LOGGER.info("Initialising Sign Up window menu .");
+        MenuItem darkMode = new MenuItem("Dark Mode");
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem clearFields = new MenuItem("Clear All Fields");
+        ContextMenu contextMenu = new ContextMenu(darkMode, lightMode, clearFields);
+        // Create the ContextMenu and add the MenuItems
 
-            validateInputs(email, password, confirmPassword, name, dni, phoneNumber, company);
-            lbl_error.setText("");  // Clear previous error messages
-            performSignUp(email, password, name, dni, phoneNumber, 1);
-        } catch (Exception e) {
-            lbl_error.setText(e.getMessage());  // Display the error message
-            logger.log(Level.WARNING, e.getMessage(), e);  // Log the warning
+        // Action for Dark Mode
+        darkMode.setOnAction(e -> {
+            // scene.getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
+            System.out.println("Dark Mode Activated");
+            applyDarkMode();
+            contextMenu.hide();  // Hide the context menu
+        });
+
+        // Action for Light Mode
+        lightMode.setOnAction(e -> {
+            // Remove all stylesheets
+            // scene.getStylesheets().clear();
+            // Apply light mode stylesheet
+            //scene.getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());
+            System.out.println("Light Mode Activated");
+            contextMenu.hide();  // Hide the context menu
+        });
+
+        // Action for Clear All Fields
+        clearFields.setOnAction(e -> {
+            clearAllFields();  // Clear all input fields
+            System.out.println("All Fields Cleared");
+
+            applyLightMode();
+            contextMenu.hide();  // Hide the context menu
+        });
+
+        // Show context menu on right-click (context menu request)
+        root.setOnContextMenuRequested(e -> {
+            contextMenu.show(root, e.getScreenX(), e.getScreenY());
+        });
+
+    }
+
+    private void applyDarkMode() {
+        LOGGER.info("Applying dark mode.");
+        // Set dark mode styles (you can modify this to point to a stylesheet or CSS rules)
+        stage.getScene().getRoot().setStyle("-fx-base: #333; -fx-background-color: #2B2B2B; -fx-text-fill: white;");
+    }
+
+    private void applyLightMode() {
+        LOGGER.info("Applying light mode.");
+        // Reset to light mode (or default) styles
+        stage.getScene().getRoot().setStyle("-fx-base: #FFF; -fx-background-color: #F0F0F0; -fx-text-fill: black;");
+    }
+
+    private void clearAllFields() {
+        LOGGER.info("Clearing all input fields.");
+        tf_email.clear();
+        pf_password.clear();
+        tf_password.clear();
+        pf_password_confirm.clear();
+        tf_password_confirm.clear();
+        tf_name.clear();
+        tf_street.clear();
+        tf_city.clear();
+        tf_zip.clear();
+        chb_active.setSelected(false);
+        lbl_error.setText("");
+    }
+
+    @FXML
+    private void handlePasswordImageButtonAction() {
+        isPasswordVisible = !isPasswordVisible;
+        if (isPasswordVisible) {
+            imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png")));
+            pf_password.setVisible(false);
+            tf_password.setVisible(true);
+            tf_password.setText(pf_password.getText());
+            pf_password_confirm.setVisible(false);
+            tf_password_confirm.setVisible(true);
+            tf_password_confirm.setText(pf_password_confirm.getText());
+        } else {
+            imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png")));
+            pf_password.setVisible(true);
+            tf_password.setVisible(false);
+            pf_password.setText(tf_password.getText());
+            pf_password_confirm.setVisible(true);
+            tf_password_confirm.setVisible(false);
+            pf_password_confirm.setText(tf_password_confirm.getText());
         }
     }
 
-    /**
-     * Validates the user inputs for email, password, phone number, and other fields.
-     *
-     * @param email the email entered by the user
-     * @param password the password entered by the user
-     * @param confirmPassword the confirmed password entered by the user
-     * @param name the name entered by the user
-     * @param dni the DNI entered by the user
-     * @param phoneNumber the phone number entered by the user
-     * @param company the selected company from the ComboBox
-     * @throws EmptyFieldException if any required fields are empty
-     * @throws InvalidEmailFormatException if the email format is invalid
-     * @throws InvalidPasswordFormatException if the password does not meet the criteria
-     * @throws InvalidPhoneNumberFormatException if the phone number is invalid
-     */
-    private void validateInputs(String email, String password, String confirmPassword, String name, String dni, String phoneNumber, String company)
-        throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException, InvalidPhoneNumberFormatException {
+    private void handleSignUpButtonAction(ActionEvent event) {
+        try {
+            String email = tf_email.getText();
+            String password = pf_password.getText();
+            String confirmPassword = pf_password_confirm.getText();
+            String name = tf_name.getText();
+            String street = tf_street.getText();
+            String city = tf_city.getText();
+            String zip = tf_zip.getText();
+            boolean isActive = chb_active.isSelected();
+            // Clear previous error messages            
+            lbl_error.setText("");
 
-    // Validate email
-    if (email == null || email.isEmpty()) {
-        throw new EmptyFieldException("Email cannot be empty.");
-    }
-    // Regex pattern for a valid email format
-    String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
-    if (!email.matches(emailRegex)) {
-        throw new InvalidEmailFormatException("Email must be in a valid format (e.g., example@domain.com).");
+            // Validate inputs
+            validateInputs(email, password, confirmPassword, name, street, city, zip);
+            // Proceed with sign-up logic
+            performSignUp(email, password, name, 1, street, city, Integer.parseInt(zip), isActive);
+            LOGGER.info("Performing signup");
+        } catch (Exception e) {
+            lbl_error.setText(e.getMessage());
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
-    // Validate password
-    if (password == null || password.isEmpty()) {
-        throw new EmptyFieldException("Password cannot be empty.");
-    }
-    if (!validatePassword(password)) {
-        throw new InvalidPasswordFormatException("Password must be at least 6 characters, with lowercase, uppercase, numbers, and special characters.");
+    private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
+                    throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+
+        checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
+        checkFieldsFormat(email, password, confirmPassword, name, street, city, zip);
+
     }
 
-    // Validate password confirmation
-    if (confirmPassword == null || confirmPassword.isEmpty()) {
-        throw new EmptyFieldException("Password confirmation cannot be empty.");
-    }
-    if (!password.equals(confirmPassword)) {
-        throw new InvalidPasswordFormatException("Passwords do not match.");
+    public void checkEmptyFields(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException {
+        // Validate email
+        if (email == null || email.isEmpty()) {
+            throw new EmptyFieldException("Email cannot be empty.");
+        }
+        // Validate password
+        if (password == null || password.isEmpty()) {
+            throw new EmptyFieldException("Password cannot be empty.");
+        }
+        // Validate password confirmation empty 
+        if (confirmPassword == null || confirmPassword.isEmpty()) {
+            throw new EmptyFieldException("Password confirmation cannot be empty.");
+        }
+        // Validate name is empty 
+        if (name == null || name.isEmpty()) {
+            throw new EmptyFieldException("Name cannot be empty.");
+        }
+        // Validate street
+        if (street == null || street.isEmpty()) {
+            throw new EmptyFieldException("Street cannot be empty.");
+        }
+        // You can add any additional format checks for street if needed
+        // Validate city
+        if (city == null || city.isEmpty()) {
+            throw new EmptyFieldException("City cannot be empty.");
+        }
+        // Validate zip
+        if (zip == null || zip.isEmpty()) {
+            throw new EmptyFieldException("Zip code cannot be empty.");
+        }
     }
 
-    // Validate name
-    if (name == null || name.isEmpty()) {
-        throw new EmptyFieldException("Name cannot be empty.");
+    public void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+        // Regex pattern for a valid email format
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
+        if (!email.matches(emailRegex)) {
+            throw new InvalidEmailFormatException("Email must be in a valid format (e.g., example@domain.com).");
+        }
+        // Validate password format
+        if (!validatePassword(password)) {
+            throw new InvalidPasswordFormatException("Password must be at least 6 characters, with lowercase, uppercase, numbers, and special characters.");
+        }
+        // Validate password format equals
+        if (!password.equals(confirmPassword)) {
+            throw new InvalidPasswordFormatException("Passwords do not match.");
+        }
+        // Example: check that city only contains letters (basic validation)
+        if (!city.matches("[a-zA-Z\\s]+")) {
+            throw new InvalidCityFormatException("City must only contain letters.");
+        }
+        // Example: check that zip contains exactly 5 digits
+        if (!zip.matches("\\d{5}")) {
+            throw new InvalidZipFormatException("Zip code must be exactly 5 digits.");
+        }
     }
 
-    // Validate DNI
-    if (dni == null || dni.isEmpty()) {
-        throw new EmptyFieldException("DNI cannot be empty.");
-    }
-
-    // Validate phone number
-    if (phoneNumber == null || phoneNumber.isEmpty()) {
-        throw new EmptyFieldException("Phone number cannot be empty.");
-    }
-    if (!validatePhoneNumber(phoneNumber)) {
-        throw new InvalidPhoneNumberFormatException("Phone number must be exactly 9 digits.");
-    }
-
-    // Validate company
-    if (company == null || company.isEmpty()) {
-        throw new EmptyFieldException("Company cannot be empty.");
-    }
-}
-
-
-
-    /**
-     * Validates the password based on specified criteria.
-     *
-     * @param password the password to validate
-     * @return true if the password is valid, false otherwise
-     */
     private boolean validatePassword(String password) {
         if (password.length() < 6) {
             return false;
@@ -198,58 +334,24 @@ public class SignUpController implements Initializable {
         return hasUppercase && hasDigit && hasSpecialChar;
     }
 
-    /**
-     * Validates the phone number to ensure it is exactly 9 digits.
-     *
-     * @param phoneNumber the phone number to validate
-     * @return true if the phone number is valid, false otherwise
-     */
-    private boolean validatePhoneNumber(String phoneNumber) {
-        return phoneNumber.matches("\\d{9}");
+    private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
+        User user = new User(email, password, name, isActive, companyID, street, city, zip);
+        try {
+
+            //  User users =SignableFactory.getSignable().signUp(user);
+            // Log sign-up success
+            LOGGER.log(Level.INFO, "Calling user from Signable");
+            // Inform the user of successful sign-up using an Alert
+            showAlert();
+        } catch (Exception ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    /**
-     * Performs the sign-in logic, typically involves calling a backend service.
-     *
-     * @param email the email entered by the user
-     * @param password the password entered by the user
-     * @param name the name entered by the user
-     * @param dni the DNI entered by the user
-     * @param phoneNumber the phone number entered by the user
-     * @param company the selected company from the ComboBox
-     */
-   
-
-    
-    private void performSignUp(String email, String password, String name, String dni, String phoneNumber, int companyID) {
-        // Lógica de registro de usuario
-        navigateToScreen("/view/Main.fxml", "Main");
-        logger.log(Level.INFO, "Sign-up successful for: {0}", email);
-    }
-
-    /**
-     * Populates the ComboBox with company names (simulated data).
-     */
-    private void initializeCompanyComboBox() {
-        cb_company.getItems().addAll("Company A", "Company B", "Company C");
-    }
-
-    /**
-     * Action handler for navigating to the login screen.
-     *
-     * @param event the ActionEvent triggered by the hyperlink click
-     */
     private void handleLoginHyperlinkAction(ActionEvent event) {
         navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
 
-    /**
-     * General method to navigate to different screens.
-     *
-     * @param fxmlPath the path to the FXML file of the target screen
-     * @param windowTitle the title to set for the window
-     * @author Borja
-     */
     private void navigateToScreen(String fxmlPath, String windowTitle) {
         try {
             // Load the FXML file of the target view
@@ -264,9 +366,48 @@ public class SignUpController implements Initializable {
             currentStage.setTitle(windowTitle); // Set the title of the new window
             currentStage.show();
 
-            logger.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
+            LOGGER.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
+            LOGGER.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
         }
     }
+
+    public void handleOnActionExit(Event event) {
+        try {
+            //Ask user for confirmation on exit
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Are you sure you want to exit the application?",
+                            ButtonType.OK, ButtonType.CANCEL);
+            Optional<ButtonType> result = alert.showAndWait();
+            //If OK to exit
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                Platform.exit();
+            } else {
+                event.consume();
+            }
+        } catch (Exception e) {
+            String errorMsg = "Error exiting application:" + e.getMessage();
+            Alert alert = new Alert(Alert.AlertType.ERROR,
+                            errorMsg,
+                            ButtonType.OK);
+            alert.showAndWait();
+            LOGGER.log(Level.SEVERE, errorMsg);
+        }
+    }
+
+    public void showAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Sign-up Successful");
+        alert.setHeaderText(null);
+        alert.setContentText("Your account has been created successfully!");
+
+        // Handle alert button click
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // Navigate to another screen after the user clicks OK
+                navigateToScreen("/view/LogIn.fxml", "LogIn");
+            }
+        });
+    }
+
 }

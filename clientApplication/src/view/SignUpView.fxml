@@ -2,80 +2,179 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.29797979797979796" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.SignUpController">
-  <items>
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="598.0" prefWidth="213.0" />
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../css/light-styles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.SignUpController">
+    
+              
          <children>
-            <VBox layoutX="16.0" layoutY="12.0" prefHeight="565.0" prefWidth="529.0">
+            <VBox fx:id="vbx_card" layoutX="16.0" layoutY="12.0" prefHeight="580.0" prefWidth="529.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="10.0">
                <children>
-                  <HBox prefHeight="60.0" prefWidth="520.0">
+                  <HBox alignment="TOP_CENTER" prefHeight="40.0" prefWidth="520.0">
                      <children>
-                        <Label prefHeight="56.0" prefWidth="525.0" text="SIGN UP" textAlignment="CENTER">
+                        <Label fx:id="lbl_signup" contentDisplay="CENTER" prefHeight="58.0" prefWidth="550.0" text="SIGN UP" textAlignment="CENTER">
                            <font>
-                              <Font size="30.0" />
+                              <Font size="60.0" />
                            </font>
-                           <padding>
-                              <Insets left="200.0" />
-                           </padding>
                            <HBox.margin>
-                              <Insets top="20.0" />
+                              <Insets />
                            </HBox.margin>
                         </Label>
                      </children>
+               <opaqueInsets>
+                  <Insets bottom="5.0" />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
                   </HBox>
                   <HBox prefHeight="50.0" prefWidth="520.0">
                      <children>
-                        <Label fx:id="lbl_email" prefHeight="40.0" prefWidth="170.0" text="Email" textAlignment="CENTER">
+                        <Label fx:id="lbl_txt" prefHeight="40.0" prefWidth="170.0" text="Email" textAlignment="CENTER">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <TextField id="tf_dni" fx:id="tf_email" prefHeight="40.0" prefWidth="300.0" promptText="Enter your email">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/envelope-solid.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="10.0" top="3.0" />
+                     </HBox.margin>
+                  </ImageView>
+                        <TextField id="tf_dni" fx:id="tf_email" prefHeight="40.0" prefWidth="350.0" promptText="Enter your email">
                            <font>
                               <Font size="14.0" />
-                           </font></TextField>
+                           </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </TextField>
                      </children>
                      <VBox.margin>
-                        <Insets top="20.0" />
+                        <Insets bottom="5.0" />
                      </VBox.margin>
+               <opaqueInsets>
+                  <Insets bottom="5.0" />
+               </opaqueInsets>
                   </HBox>
                   <HBox layoutX="10.0" layoutY="70.0" prefHeight="50.0" prefWidth="520.0">
                      <children>
-                        <Label id="lbl_email" prefHeight="40.0" prefWidth="170.0" text="Password" textAlignment="CENTER">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                        <PasswordField fx:id="tf_password" prefHeight="40.0" prefWidth="300.0" promptText="Enter your password">
+                  <GridPane>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                              <Label id="lbl_email" prefHeight="40.0" prefWidth="170.0" text="Password" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <PasswordField fx:id="pf_password" prefHeight="40.0" prefWidth="350.0" promptText="Enter your password" GridPane.columnIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                        </PasswordField>
+                        <TextField id="tf_phone_number" fx:id="tf_password" prefHeight="40.0" prefWidth="350.0" promptText="Enter your password" GridPane.columnIndex="3">
                            <font>
                               <Font size="14.0" />
-                           </font></PasswordField>
+                           </font>
+                        </TextField>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                           <image>
+                              <Image url="@../Images/lock-solid.png" />
+                           </image>
+                           <GridPane.margin>
+                              <Insets right="5.0" top="3.0" />
+                           </GridPane.margin>
+                        </ImageView>
                      </children>
+                     <HBox.margin>
+                        <Insets bottom="5.0" />
+                     </HBox.margin>
+                  </GridPane>
+                  <Button fx:id="btn_show_password" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
+                     <graphic>
+                        <ImageView fx:id="imgShowPassword" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/eye-solid.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                     </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
                   </HBox>
                   <HBox layoutX="10.0" layoutY="120.0" prefHeight="50.0" prefWidth="520.0">
                      <children>
-                        <Label id="lbl_email" prefHeight="40.0" prefWidth="170.0" text="Password" textAlignment="CENTER">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                        <PasswordField fx:id="tf_password_confirm" prefHeight="40.0" prefWidth="300.0" promptText="confirm your password">
+                  <GridPane>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                              <Label id="lbl_email" prefHeight="40.0" prefWidth="170.0" text="Confirm Password" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <PasswordField fx:id="pf_password_confirm" prefHeight="40.0" prefWidth="350.0" promptText="Confirm your password" GridPane.columnIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                        </PasswordField>
+                        <TextField id="tf_dni" fx:id="tf_password_confirm" prefHeight="40.0" prefWidth="350.0" promptText="Confirm your password" GridPane.columnIndex="2">
                            <font>
                               <Font size="14.0" />
-                           </font></PasswordField>
+                           </font>
+                        </TextField>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                           <image>
+                              <Image url="@../Images/key-solid.png" />
+                           </image>
+                           <GridPane.margin>
+                              <Insets right="10.0" top="3.0" />
+                           </GridPane.margin>
+                        </ImageView>
                      </children>
+                  </GridPane>
+                     </children>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+               <opaqueInsets>
+                  <Insets bottom="7.0" />
+               </opaqueInsets>
                   </HBox>
                   <HBox layoutX="10.0" layoutY="165.0" prefHeight="50.0" prefWidth="520.0">
                      <children>
@@ -84,86 +183,187 @@
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <TextField id="tf_dni" fx:id="tf_name" prefHeight="40.0" prefWidth="300.0" promptText="Enter your name">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets right="14.0" top="3.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@../Images/user-solid.png" />
+                     </image>
+                  </ImageView>
+                        <TextField id="tf_dni" fx:id="tf_name" prefHeight="40.0" prefWidth="350.0" promptText="Enter your full name">
                            <font>
                               <Font size="14.0" />
-                           </font></TextField>
+                           </font>
+                     <HBox.margin>
+                        <Insets bottom="5.0" />
+                     </HBox.margin>
+                  </TextField>
                      </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <opaqueInsets>
+                  <Insets bottom="7.0" />
+               </opaqueInsets>
                   </HBox>
                   <HBox layoutX="10.0" layoutY="215.0" prefHeight="50.0" prefWidth="520.0">
                      <children>
-                        <Label id="lbl_dni" prefHeight="40.0" prefWidth="170.0" text="DNI" textAlignment="CENTER">
+                        <Label id="lbl_phone_number" prefHeight="40.0" prefWidth="170.0" text="Street" textAlignment="CENTER">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <TextField id="tf_dni" fx:id="tf_dni" prefHeight="40.0" prefWidth="300.0" promptText="Enter your DNI">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets right="19.0" top="3.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@../Images/location-dot-solid.png" />
+                     </image>
+                  </ImageView>
+                        <TextField id="tf_phone_number" fx:id="tf_street" prefHeight="40.0" prefWidth="350.0" promptText="Enter your street">
                            <font>
                               <Font size="14.0" />
-                           </font></TextField>
+                           </font>
+                     <HBox.margin>
+                        <Insets bottom="5.0" />
+                     </HBox.margin>
+                        </TextField>
                      </children>
-                  </HBox>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <opaqueInsets>
+                  <Insets bottom="7.0" />
+               </opaqueInsets>
+               <padding>
+                  <Insets right="7.0" />
+               </padding>
+            </HBox>
                   <HBox layoutX="10.0" layoutY="265.0" prefHeight="50.0" prefWidth="520.0">
                      <children>
-                        <Label id="lbl_phone_number" prefHeight="40.0" prefWidth="170.0" text="Tel number" textAlignment="CENTER">
+                        <Label id="lbl_phone_number" prefHeight="40.0" prefWidth="169.0" text="City" textAlignment="CENTER">
                            <font>
                               <Font size="20.0" />
                            </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
                         </Label>
-                        <TextField id="tf_phone_number" fx:id="tf_phone_number" prefHeight="40.0" prefWidth="300.0" promptText="Enter your phone number">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/city-solid.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="10.0" top="3.0" />
+                     </HBox.margin>
+                  </ImageView>
+                        <TextField id="tf_phone_number" fx:id="tf_city" prefHeight="40.0" prefWidth="350.0" promptText="Enter your city">
                            <font>
                               <Font size="14.0" />
-                           </font></TextField>
+                           </font>
+                     <HBox.margin>
+                        <Insets bottom="5.0" />
+                     </HBox.margin>
+                  </TextField>
                      </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <opaqueInsets>
+                  <Insets bottom="7.0" />
+               </opaqueInsets>
                   </HBox>
                   <HBox layoutX="10.0" layoutY="315.0" prefHeight="50.0" prefWidth="520.0">
                      <children>
-                        <Label id="lbl_company" prefHeight="40.0" prefWidth="170.0" text="Company" textAlignment="CENTER">
+                        <Label id="lbl_phone_number" prefHeight="40.0" prefWidth="172.0" text="ZIP" textAlignment="CENTER">
                            <font>
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <ComboBox fx:id="cb_company" prefHeight="40.0" prefWidth="300.0" promptText="Choose your company" />
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets right="10.0" top="3.0" />
+                     </HBox.margin>
+                     <image>
+                        <Image url="@../Images/imgZIP.png" />
+                     </image>
+                  </ImageView>
+                        <TextField id="tf_phone_number" fx:id="tf_zip" prefHeight="40.0" prefWidth="350.0" promptText="Enter your ZIP number">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
                      </children>
-                  </HBox>
-                  <HBox layoutX="10.0" layoutY="365.0" prefHeight="50.0" prefWidth="520.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <opaqueInsets>
+                  <Insets bottom="7.0" />
+               </opaqueInsets>
+            </HBox>
+                  <HBox prefHeight="50.0" prefWidth="520.0">
                      <children>
-                        <Button id="btn_signin" fx:id="btn_signup" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="SingUp">
+                        <Label id="lbl_phone_number" prefHeight="40.0" prefWidth="170.0" text="Active" textAlignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="chb_active" mnemonicParsing="false">
+                           <HBox.margin>
+                              <Insets top="15.0" />
+                           </HBox.margin>
+                        </CheckBox>
+                     </children>
+               <opaqueInsets>
+                  <Insets bottom="7.0" />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="425.0" prefHeight="50.0" prefWidth="520.0">
+                     <children>
+                        <Button id="btn_signin" fx:id="btn_signup" mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="SignUp">
                            <font>
                               <Font size="20.0" />
                            </font>
                            <HBox.margin>
-                              <Insets left="350.0" top="20.0" />
+                              <Insets left="400.0" />
                            </HBox.margin>
                         </Button>
                      </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
+               <opaqueInsets>
+                  <Insets bottom="7.0" />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
                   </HBox>
-                  <HBox prefHeight="50.0" prefWidth="520.0">
+                  <HBox alignment="TOP_CENTER" layoutX="10.0" layoutY="475.0" prefHeight="80.0" prefWidth="520.0">
                      <children>
-                        <Label fx:id="lbl_error" prefHeight="20.0" textAlignment="CENTER" textFill="#df0e0e">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
+                        <Label fx:id="lbl_error" contentDisplay="CENTER" prefHeight="54.0" prefWidth="544.0" textAlignment="CENTER" textFill="#df0e0e" textOverrun="CLIP" wrapText="true">
                            <HBox.margin>
-                              <Insets left="50.0" />
+                              <Insets top="10.0" />
                            </HBox.margin>
-                           <padding>
-                              <Insets top="20.0" />
-                           </padding>
                         </Label>
                      </children>
+               <opaqueInsets>
+                  <Insets bottom="7.0" />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
                   </HBox>
-                  <HBox layoutX="10.0" layoutY="496.0" prefHeight="50.0" prefWidth="520.0">
+                  <HBox layoutX="10.0" layoutY="525.0" prefHeight="50.0" prefWidth="520.0">
                      <children>
                         <Label prefHeight="40.0" text="Already have an account ?">
                            <font>
                               <Font size="20.0" />
                            </font>
                            <HBox.margin>
-                              <Insets left="120.0" top="20.0" />
+                              <Insets left="100.0" top="20.0" />
                            </HBox.margin>
                         </Label>
                         <Hyperlink fx:id="hl_login" prefHeight="40.0" text="Login now">
@@ -175,9 +375,14 @@
                            </HBox.margin>
                         </Hyperlink>
                      </children>
+               <opaqueInsets>
+                  <Insets bottom="7.0" />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
                   </HBox>
                </children>
             </VBox>
-         </children></AnchorPane>
-  </items>
-</SplitPane>
+         </children>
+</AnchorPane>

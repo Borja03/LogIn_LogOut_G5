@@ -60,6 +60,10 @@ public class MainController {
 
         // Initialize the context menu for copy functionality
         createContextMenu();
+
+        // Link event handlers using this::
+        logOutButton.setOnAction(this::logOut);
+        eyeButton.setOnAction(this::togglePasswordVisibility);
     }
 
     /**
@@ -70,7 +74,7 @@ public class MainController {
         MenuItem copyItem = new MenuItem("Copy");
 
         // Set action for the copy menu item
-        copyItem.setOnAction(event -> copySelectedText());
+        copyItem.setOnAction(this::handleCopyAction);
 
         // Add the copy option to the context menu
         contextMenu.getItems().add(copyItem);
@@ -78,6 +82,15 @@ public class MainController {
         // Attach the context menu to relevant text fields
         attachContextMenuToTextField(passwordField);
         attachContextMenuToTextField(plainPasswordField);
+    }
+
+    /**
+     * Handles the copy action from the context menu.
+     * 
+     * @param event The action event triggered by the context menu.
+     */
+    private void handleCopyAction(javafx.event.ActionEvent event) {
+        copySelectedText();
     }
 
     /**
@@ -94,7 +107,7 @@ public class MainController {
      */
     private void copySelectedText() {
         String selectedText = "";
-        
+
         if (passwordField.isVisible() && passwordField.getSelectedText() != null) {
             selectedText = passwordField.getSelectedText();
         } else if (plainPasswordField.isVisible() && plainPasswordField.getSelectedText() != null) {
@@ -109,13 +122,23 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the log out action and navigates to the login screen.
+     * 
+     * @param event The action event triggered by the log out button.
+     */
     @FXML
-    private void logOut() {
+    private void logOut(javafx.event.ActionEvent event) {
         navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
 
+    /**
+     * Toggles the password visibility between masked and plain text.
+     * 
+     * @param event The action event triggered by the eye button.
+     */
     @FXML
-    private void togglePasswordVisibility() {
+    private void togglePasswordVisibility(javafx.event.ActionEvent event) {
         if (passwordIsVisible) {
             passwordField.setVisible(true);
             plainPasswordField.setVisible(false);
@@ -129,6 +152,12 @@ public class MainController {
         passwordIsVisible = !passwordIsVisible;
     }
 
+    /**
+     * Navigates to a different screen based on the provided FXML path and title.
+     * 
+     * @param fxmlPath The path to the FXML file for the new screen.
+     * @param windowTitle The title for the new window.
+     */
     private void navigateToScreen(String fxmlPath, String windowTitle) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));

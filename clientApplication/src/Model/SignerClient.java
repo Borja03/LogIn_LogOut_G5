@@ -44,8 +44,7 @@ public class SignerClient implements Signable {
     /**
      * Dirección IP del servidor.
      */
-   private static final String HOST = archivo.getString("IP");
-
+    private static final String HOST = archivo.getString("IP");
     /**
      * Logger para registrar eventos y mensajes.
      */
@@ -136,4 +135,6 @@ public class SignerClient implements Signable {
         return user;
     }
     
+
 }
+

@@ -21,7 +21,6 @@ public class Application extends javafx.application.Application {
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LogIn.fxml"));
 
-
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle("SignUp/SignIn"); // Título de la ventana
         primaryStage.setScene(scene); // Establece la escena en el escenario principal
