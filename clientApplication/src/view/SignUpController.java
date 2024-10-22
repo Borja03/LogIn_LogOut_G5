@@ -93,7 +93,9 @@ public class SignUpController {
     private VBox vbx_card;
 
     private Stage stage;
+
     private boolean isPasswordVisible = false;
+    private boolean isDarkMode = false;
 
     public Stage getStage() {
         return stage;
@@ -131,28 +133,23 @@ public class SignUpController {
     }
 
     private void initMenu(Parent root) {
-        LOGGER.info("Initialising Sign Up window menu .");
+        LOGGER.info("Initialising Sign Up window menu.");
         MenuItem darkMode = new MenuItem("Dark Mode");
         MenuItem lightMode = new MenuItem("Light Mode");
         MenuItem clearFields = new MenuItem("Clear All Fields");
         ContextMenu contextMenu = new ContextMenu(darkMode, lightMode, clearFields);
-        // Create the ContextMenu and add the MenuItems
 
         // Action for Dark Mode
         darkMode.setOnAction(e -> {
-            // scene.getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
-            System.out.println("Dark Mode Activated");
-            applyDarkMode(root);
+            applyDarkMode(stage, root);
+            isDarkMode = true;  // Actualizar el estado
             contextMenu.hide();  // Hide the context menu
         });
 
         // Action for Light Mode
         lightMode.setOnAction(e -> {
-            // Remove all stylesheets
-            // scene.getStylesheets().clear();
-            // Apply light mode stylesheet
-            //scene.getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());
-            System.out.println("Light Mode Activated");
+            applyLightMode(root);
+            isDarkMode = false;  // Actualizar el estado
             contextMenu.hide();  // Hide the context menu
         });
 
@@ -161,7 +158,11 @@ public class SignUpController {
             clearAllFields();  // Clear all input fields
             System.out.println("All Fields Cleared");
 
-            applyLightMode(root);
+            if (isDarkMode) {
+                applyDarkMode(stage, root);  // Mantener modo oscuro
+            } else {
+                applyLightMode(root);  // Aplicar modo claro
+            }
             contextMenu.hide();  // Hide the context menu
         });
 
@@ -169,16 +170,14 @@ public class SignUpController {
         root.setOnContextMenuRequested(e -> {
             contextMenu.show(root, e.getScreenX(), e.getScreenY());
         });
-
     }
 
-    private void applyDarkMode(Parent root) {
+    private void applyDarkMode(Stage stage, Parent root) {
         LOGGER.info("Applying dark mode.");
         root.getScene().getStylesheets().clear();
         root.getScene().getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
         root.applyCss();
         root.layout();
-
     }
 
     private void applyLightMode(Parent root) {
@@ -186,8 +185,7 @@ public class SignUpController {
         root.getScene().getStylesheets().clear();
         root.getScene().getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());
         root.applyCss();
-        root.layout();   
-
+        root.layout();
     }
 
     private void clearAllFields() {
