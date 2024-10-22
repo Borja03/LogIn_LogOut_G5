@@ -121,8 +121,6 @@ public void start() {
         }
     }
 
-
-
     /**
      * Handles communication with a connected client.
      * 

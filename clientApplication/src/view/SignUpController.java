@@ -2,14 +2,21 @@ package view;
 
 import Model.SignableFactory;
 import Model.User;
+import static Utils.UtilsMethods.logger;
+
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidStreetFormatException;
 import exception.InvalidZipFormatException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -31,8 +38,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class SignUpController {
@@ -41,9 +48,6 @@ public class SignUpController {
     private static final Logger LOGGER = Logger.getLogger(SignUpController.class.getName());
 
     // UI Components
-    @FXML
-    private Parent root;
-
     @FXML
     private Button btn_show_password;
 
@@ -55,9 +59,30 @@ public class SignUpController {
 
     @FXML
     private Hyperlink hl_login;
+    
+     @FXML
+    private ImageView imgCity;
+
+    @FXML
+    private ImageView imgEmail;
+
+    @FXML
+    private ImageView imgKey;
+
+    @FXML
+    private ImageView imgLock;
 
     @FXML
     private ImageView imgShowPassword;
+
+    @FXML
+    private ImageView imgStreet;
+
+    @FXML
+    private ImageView imgUser;
+
+    @FXML
+    private ImageView imgZIP;
 
     @FXML
     private Label lbl_error;
@@ -95,7 +120,6 @@ public class SignUpController {
     private Stage stage;
 
     private boolean isPasswordVisible = false;
-    private boolean isDarkMode = false;
 
     public Stage getStage() {
         return stage;
@@ -104,89 +128,134 @@ public class SignUpController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
+    private ContextMenu contextMenu;
+    private String currentTheme = "light";
 
-    void initStage(Parent root) {
+    public void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
 
-        // Scene scene = new Scene(root);
+        Scene scene = new Scene(root);
         // Set the stage properties
-        //stage.setScene(scene);
-        //        stage.setTitle("SignUp");
-        //stage.setResizable(false);
+        stage.setScene(scene);
+        stage.setTitle("SignUp2");
+        stage.setResizable(false);
         // stage.initModality(Modality.APPLICATION_MODAL);
+        stage.centerOnScreen();
         // Set the icon (if needed)
-        // stage.getIcons().add(new Image("/Images/userIcon.png"));
+        stage.getIcons().add(new Image("/Images/userIcon.png"));
+
+        tf_password.setVisible(false);
+        tf_password_confirm.setVisible(false);
         // Set the close request handler
-        // stage.setOnCloseRequest(this::handleOnActionExit); // Here is where you add it
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
-        this.root = root;
-        tf_password.setVisible(false);
-        btn_show_password.setOnAction(event -> handlePasswordImageButtonAction());
-        //stage.setOnCloseRequest(this::handleOnActionExit);
-        //stage.showAndWait(); // Show the stage and wait until it is closed
+        btn_show_password.setOnAction(this::handlePasswordImageButtonAction);
+        stage.setOnCloseRequest(this::handleOnActionExit);
 
-        // MENU
-        initMenu(root);
+        // menu
+        // Initialize context menu
+        initializeContextMenu();
 
+        // Add context menu to the scene
+        root.setOnContextMenuRequested(this::showContextMenu);
+
+        // Load default theme
+        currentTheme = loadThemePreference();
+        loadTheme(currentTheme);
         LOGGER.info("Window opened.");
+        // Show the stage
+        stage.show();
     }
 
-    private void initMenu(Parent root) {
-        LOGGER.info("Initialising Sign Up window menu.");
-        MenuItem darkMode = new MenuItem("Dark Mode");
+    //menu and theme
+    private void initializeContextMenu() {
+        contextMenu = new ContextMenu();
+
         MenuItem lightMode = new MenuItem("Light Mode");
-        MenuItem clearFields = new MenuItem("Clear All Fields");
-        ContextMenu contextMenu = new ContextMenu(darkMode, lightMode, clearFields);
+        MenuItem darkMode = new MenuItem("Dark Mode");
+        MenuItem clearFields = new MenuItem("Clear Fields");
 
-        // Action for Dark Mode
-        darkMode.setOnAction(e -> {
-            applyDarkMode(stage, root);
-            isDarkMode = true;  // Actualizar el estado
-            contextMenu.hide();  // Hide the context menu
-        });
+        lightMode.setOnAction(e -> switchTheme("light"));
+        darkMode.setOnAction(e -> switchTheme("dark"));
+        clearFields.setOnAction(e -> clearAllFields());
 
-        // Action for Light Mode
-        lightMode.setOnAction(e -> {
-            applyLightMode(root);
-            isDarkMode = false;  // Actualizar el estado
-            contextMenu.hide();  // Hide the context menu
-        });
+        contextMenu.getItems().addAll(lightMode, darkMode, clearFields);
+    }
 
-        // Action for Clear All Fields
-        clearFields.setOnAction(e -> {
-            clearAllFields();  // Clear all input fields
-            System.out.println("All Fields Cleared");
+    private void showContextMenu(ContextMenuEvent event) {
+        contextMenu.show(vbx_card, event.getScreenX(), event.getScreenY());
+    }
 
-            if (isDarkMode) {
-                applyDarkMode(stage, root);  // Mantener modo oscuro
-            } else {
-                applyLightMode(root);  // Aplicar modo claro
+    private void saveThemePreference(String theme) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("theme", theme);
+            File file = new File("config.properties");
+            props.store(new FileOutputStream(file), "Theme Settings");
+        } catch (IOException e) {
+            logger.severe("Error saving theme preference: " + e.getMessage());
+        }
+    }
+
+    private String loadThemePreference() {
+        try {
+            Properties props = new Properties();
+            File file = new File("config.properties");
+            if (file.exists()) {
+                props.load(new FileInputStream(file));
+                return props.getProperty("theme", "light");
             }
-            contextMenu.hide();  // Hide the context menu
-        });
-
-        // Show context menu on right-click (context menu request)
-        root.setOnContextMenuRequested(e -> {
-            contextMenu.show(root, e.getScreenX(), e.getScreenY());
-        });
+        } catch (IOException e) {
+            logger.severe("Error loading theme preference: " + e.getMessage());
+        }
+        return "light";
     }
 
-    private void applyDarkMode(Stage stage, Parent root) {
-        LOGGER.info("Applying dark mode.");
-        root.getScene().getStylesheets().clear();
-        root.getScene().getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
-        root.applyCss();
-        root.layout();
+    private void switchTheme(String theme) {
+        currentTheme = theme;
+        loadTheme(theme);
+        saveThemePreference(theme);
     }
 
-    private void applyLightMode(Parent root) {
-        LOGGER.info("Applying light mode.");
-        root.getScene().getStylesheets().clear();
-        root.getScene().getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());
-        root.applyCss();
-        root.layout();
+  private void loadTheme(String theme) {
+    Scene scene = stage.getScene();
+    scene.getStylesheets().clear();
+
+    if (theme.equals("dark")) {
+        // Código adicional para el tema oscuro
+        
+        String cssFile = "/css/dark-styles.css";
+        scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+        imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid-white.png")));
+        imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid-white.png")));
+        imgKey.setImage(new Image(getClass().getResourceAsStream("/Images/key-solid-white.png")));
+        imgUser.setImage(new Image(getClass().getResourceAsStream("/Images/user-solid-white.png")));
+        imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid-white.png")));
+        imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid-white.png")));
+        imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP-white.png")));
+      
+      
+        
+
+        // Aquí puedes agregar más acciones específicas para el tema oscuro
+
+    } else if (theme.equals("light")) {
+        // Código adicional para el tema claro
+    
+        String cssFile = "/css/light-styles.css";
+        scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+        imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid.png")));
+        imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid.png")));
+        imgKey.setImage(new Image(getClass().getResourceAsStream("/Images/key-solid.png")));
+        imgUser.setImage(new Image(getClass().getResourceAsStream("/Images/user-solid.png")));
+        imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid.png")));
+        imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid.png")));
+        imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP.png")));
+
+        // Aquí puedes agregar más acciones específicas para el tema claro
     }
+}
+
 
     private void clearAllFields() {
         LOGGER.info("Clearing all input fields.");
@@ -203,9 +272,7 @@ public class SignUpController {
         lbl_error.setText("");
     }
 
-    @FXML
-    private boolean handlePasswordImageButtonAction() {
-        boolean isVisible = false;
+    private void handlePasswordImageButtonAction(ActionEvent event) {
         isPasswordVisible = !isPasswordVisible;
         if (isPasswordVisible) {
             imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png")));
@@ -215,8 +282,6 @@ public class SignUpController {
             pf_password_confirm.setVisible(false);
             tf_password_confirm.setVisible(true);
             tf_password_confirm.setText(pf_password_confirm.getText());
-            isVisible = true;
-            return isVisible;
         } else {
             imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png")));
             pf_password.setVisible(true);
@@ -225,16 +290,15 @@ public class SignUpController {
             pf_password_confirm.setVisible(true);
             tf_password_confirm.setVisible(false);
             pf_password_confirm.setText(tf_password_confirm.getText());
-            isVisible = false;
-            return isVisible;
         }
     }
 
     private void handleSignUpButtonAction(ActionEvent event) {
         try {
-            String email = tf_email.getText();
+
             String password;
             String confirmPassword;
+            String email = tf_email.getText();
 
             // Revisar qué campos de contraseña están activos y usarlos
             if (pf_password.isVisible()) {
@@ -250,7 +314,6 @@ public class SignUpController {
             String city = tf_city.getText();
             String zip = tf_zip.getText();
             boolean isActive = chb_active.isSelected();
-
             // Clear previous error messages            
             lbl_error.setText("");
 
@@ -266,15 +329,16 @@ public class SignUpController {
     }
 
     private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
-            throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
-            InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
-
+                    throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+        // check empty fileds
         checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
+        //check fields format 
         checkFieldsFormat(email, password, confirmPassword, name, street, city, zip);
 
     }
 
-    public void checkEmptyFields(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException {
+    private void checkEmptyFields(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException {
         // Validate email
         if (email == null || email.isEmpty()) {
             throw new EmptyFieldException("Email cannot be empty.");
@@ -306,8 +370,8 @@ public class SignUpController {
         }
     }
 
-    public void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
-            InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+    private void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
         // Regex pattern for a valid email format
         String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
         if (!email.matches(emailRegex)) {
@@ -321,7 +385,7 @@ public class SignUpController {
         if (!password.equals(confirmPassword)) {
             throw new InvalidPasswordFormatException("Passwords do not match.");
         }
-        // Example: check that city only contains letters (basic validation)
+        //  check that city only contains letters (basic validation)
         if (!city.matches("[a-zA-Z\\s]+")) {
             throw new InvalidCityFormatException("City must only contain letters.");
         }
@@ -355,8 +419,9 @@ public class SignUpController {
     private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
         try {
-
-            //  User users =SignableFactory.getSignable().signUp(user);
+            //UserDao userdao = new UserDao();
+            //userdao.signUp(user);
+            User usera = SignableFactory.getSignable().signUp(user);
             // Log sign-up success
             LOGGER.log(Level.INFO, "Calling user from Signable");
             // Inform the user of successful sign-up using an Alert
@@ -390,12 +455,12 @@ public class SignUpController {
         }
     }
 
-    public void handleOnActionExit(Event event) {
+    private void handleOnActionExit(Event event) {
         try {
             //Ask user for confirmation on exit
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                    "Are you sure you want to exit the application?",
-                    ButtonType.OK, ButtonType.CANCEL);
+                            "Are you sure you want to exit the application?",
+                            ButtonType.OK, ButtonType.CANCEL);
             Optional<ButtonType> result = alert.showAndWait();
             //If OK to exit
             if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -406,14 +471,14 @@ public class SignUpController {
         } catch (Exception e) {
             String errorMsg = "Error exiting application:" + e.getMessage();
             Alert alert = new Alert(Alert.AlertType.ERROR,
-                    errorMsg,
-                    ButtonType.OK);
+                            errorMsg,
+                            ButtonType.OK);
             alert.showAndWait();
             LOGGER.log(Level.SEVERE, errorMsg);
         }
     }
 
-    public void showAlert() {
+    private void showAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Sign-up Successful");
         alert.setHeaderText(null);

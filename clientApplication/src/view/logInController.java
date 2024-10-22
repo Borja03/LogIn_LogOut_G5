@@ -73,7 +73,15 @@ public class logInController {
 
     @FXML
     private Pane centralPane;
+    private Stage stage;
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public Stage getStage() {
+        return this.stage;
+    }
     /**
      * Indica si la contraseña es visible.
      */
@@ -166,24 +174,35 @@ public class logInController {
      */
     private void navigateToScreen(String fxmlPath, String title) {
         try {
+            // Cargar el archivo FXML de la vista objetivo
 
-            // Load the FXML file of the target view
+            // Cargar el archivo FXML de la vista objetivo
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+//            Scene scene = new Scene(loader.load());
+//
+//            // Obtener el escenario actual
+//            Stage currentStage = (Stage) logInButton.getScene().getWindow();
+//
+//            // Cambiar la escena del escenario actual a la nueva escena
+//            currentStage.setScene(scene);
+//            currentStage.setTitle(title); // Establecer el título de la nueva ventana
+//            currentStage.show();
+//
+//            logger.log(Level.INFO, "Navigated to " + title + " screen.");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();  
-         
-
+            Parent root = loader.load();
             // Get the current stage
-            Stage currentStage = (Stage) logInButton.getScene().getWindow();
             SignUpController controller = loader.getController();
-            controller.initStage(root);  // Call initStage after the scene is set
-            // Change the current stage's scene to the new scene
-            Scene scene = new Scene(root);
-            currentStage.setScene(scene);
-            currentStage.setTitle(title); // Set the title of the new window
-            currentStage.show();
+            Stage newStage = new Stage();
+            controller.setStage(newStage);
+            controller.initStage(root);
+            stage = (Stage) logInButton.getScene().getWindow();
+            //stage.hide();
+            stage.close();
+            logger.log(Level.SEVERE, "Stage closed");
 
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to load SignUp screen: " + e.getMessage(), e);
+            logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
         }
     }
 }

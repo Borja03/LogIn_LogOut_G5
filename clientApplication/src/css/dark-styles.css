@@ -1,86 +1,52 @@
+/*
+    Created on: 13-Oct-2024, 11:16:14
+    Author: Omar
+*/
+
 /* General styles */
+/* dark-theme.css */
+/* dark-theme.css */
+
+/* Background colors */
 .root {
-    -fx-background-color: #121212; /* Fondo oscuro para toda la ventana */
-    -fx-font-family: 'Cochin', Arial, sans-serif;
+    -fx-background-color: #2c2f33;
 }
 
-/* Card-like appearance for the SignUp form */
-.anchor-pane {
-    -fx-background-color: #1e1e1e;  /* Fondo oscuro para el formulario */
-    -fx-background-radius: 15px;    /* Esquinas redondeadas */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 5); /* Sombra */
-    -fx-padding: 20px;              /* Espaciado interno */
-    -fx-border-color: #333;         /* Borde oscuro */
-    -fx-border-radius: 15px;        /* Bordes redondeados */
+.label, .text-field, .button {
+    -fx-text-fill: #ffffff; /* White text */
 }
 
-/* Label styles */
-.label {
-    -fx-font-family: 'Helvetica', Arial, sans-serif;
-    -fx-font-size: 18px;
-    -fx-text-fill: #e0e0e0;         /* Texto claro en modo oscuro */
-    -fx-padding: 0 0 0 15px;
+.text-field {
+    -fx-background-color: #23272a;
+    -fx-border-color: #99aab5;
+    -fx-border-width: 1px;
 }
 
-#lbl_signup {
-    -fx-text-alignment: center;
-}
-
-/* Input fields */
-.text-field, .password-field {
-    -fx-background-color: #2e2e2e;  /* Fondo oscuro para los campos de texto */
-    -fx-text-fill: #ffffff;         /* Texto blanco */
-    -fx-background-radius: 5px;
-    -fx-border-color: #555555;      /* Bordes más oscuros */
-    -fx-border-radius: 5px;
-    -fx-padding: 5px;
-    -fx-font-size: 14px;
-}
-
-.text-field:focused, .password-field:focused {
-    -fx-border-color: #4a90e2;      /* Color de borde al enfoque */
-}
-
-/* Botón */
 .button {
-    -fx-background-color: #3a7fcf;  /* Botón en color azul oscuro */
-    -fx-text-fill: #ffffff;         /* Texto en blanco */
+    -fx-background-color: #7289da;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
 }
 
 .button:hover {
-    -fx-background-color: #4a90e2;  /* Cambia a un azul más claro al pasar el mouse */
+    -fx-background-color: #677bc4;
 }
 
-.button:pressed {
-    -fx-background-color: #2a6ebf;  /* Azul más oscuro al presionar */
+/* Style for any additional components */
+.combo-box, .password-field {
+    -fx-background-color: #23272a;
+    -fx-text-fill: #ffffff;
 }
 
-/* Hyperlink styles */
-.hyperlink {
-    -fx-text-fill: #4a90e2;         /* Texto azul para enlaces */
-    -fx-border-color: transparent;
+.combo-box-popup .list-cell {
+    -fx-background-color: #23272a;
+    -fx-text-fill: #ffffff;
 }
 
-.hyperlink:hover {
-    -fx-text-fill: #3a7fcf;
+.combo-box .arrow {
+    -fx-background-color: #99aab5;
 }
 
-/* Checkbox styles */
-.check-box {
-    -fx-font-size: 14px;
-    -fx-text-fill: #e0e0e0;         /* Texto claro para el checkbox */
-}
-
-/* Error label styles */
-#lbl_error {
-    -fx-text-fill: #df0e0e;         /* Texto rojo para errores */
-    -fx-font-size: 14px;
-    -fx-text-alignment: center;
-}
-
-/* Card background */
-#vbx_card {
-    -fx-background-color: #1e1e1e;  /* Fondo oscuro para el cuadro */
-    -fx-border-radius: 100px;
-    -fx-background-radius: 15px;
+.menu-bar {
+    -fx-background-color: #2c2f33;
 }
