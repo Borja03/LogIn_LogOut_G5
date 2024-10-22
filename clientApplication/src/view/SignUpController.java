@@ -2,14 +2,21 @@ package view;
 
 import Model.SignableFactory;
 import Model.User;
+import static Utils.UtilsMethods.logger;
+
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidStreetFormatException;
 import exception.InvalidZipFormatException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -31,8 +38,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class SignUpController {
@@ -90,6 +97,7 @@ public class SignUpController {
     private VBox vbx_card;
 
     private Stage stage;
+
     private boolean isPasswordVisible = false;
 
     public Stage getStage() {
@@ -99,91 +107,104 @@ public class SignUpController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
+    private ContextMenu contextMenu;
+    private String currentTheme = "light";
 
-    void initStage(Parent root) {
+    public void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
 
-       // Scene scene = new Scene(root);
-
+        Scene scene = new Scene(root);
         // Set the stage properties
-        //stage.setScene(scene);
-        //        stage.setTitle("SignUp");
-        //stage.setResizable(false);
-       // stage.initModality(Modality.APPLICATION_MODAL);
-
+        stage.setScene(scene);
+        stage.setTitle("SignUp2");
+        stage.setResizable(false);
+        // stage.initModality(Modality.APPLICATION_MODAL);
+        stage.centerOnScreen();
         // Set the icon (if needed)
-       // stage.getIcons().add(new Image("/Images/userIcon.png"));
-
-        // Set the close request handler
-       // stage.setOnCloseRequest(this::handleOnActionExit); // Here is where you add it
-
-
-        btn_signup.setOnAction(this::handleSignUpButtonAction);
-        hl_login.setOnAction(this::handleLoginHyperlinkAction);
+        stage.getIcons().add(new Image("/Images/userIcon.png"));
 
         tf_password.setVisible(false);
-        btn_show_password.setOnAction(event -> handlePasswordImageButtonAction());
-        //stage.setOnCloseRequest(this::handleOnActionExit);
-        //stage.showAndWait(); // Show the stage and wait until it is closed
+        tf_password_confirm.setVisible(false);
+        // Set the close request handler
+        btn_signup.setOnAction(this::handleSignUpButtonAction);
+        hl_login.setOnAction(this::handleLoginHyperlinkAction);
+        btn_show_password.setOnAction(this::handlePasswordImageButtonAction);
+        stage.setOnCloseRequest(this::handleOnActionExit);
 
-        // MENU
-        initMenu(root);
+        // menu
+        // Initialize context menu
+        initializeContextMenu();
 
+        // Add context menu to the scene
+        root.setOnContextMenuRequested(this::showContextMenu);
+
+        // Load default theme
+        currentTheme = loadThemePreference();
+        loadTheme(currentTheme);
         LOGGER.info("Window opened.");
+        // Show the stage
+        stage.show();
     }
 
-    private void initMenu(Parent root) {
-        LOGGER.info("Initialising Sign Up window menu .");
-        MenuItem darkMode = new MenuItem("Dark Mode");
+    //menu and theme
+    private void initializeContextMenu() {
+        contextMenu = new ContextMenu();
+
         MenuItem lightMode = new MenuItem("Light Mode");
-        MenuItem clearFields = new MenuItem("Clear All Fields");
-        ContextMenu contextMenu = new ContextMenu(darkMode, lightMode, clearFields);
-        // Create the ContextMenu and add the MenuItems
+        MenuItem darkMode = new MenuItem("Dark Mode");
+        MenuItem clearFields = new MenuItem("Clear Fields");
 
-        // Action for Dark Mode
-        darkMode.setOnAction(e -> {
-            // scene.getStylesheets().add(getClass().getResource("/css/dark-styles.css").toExternalForm());
-            System.out.println("Dark Mode Activated");
-            applyDarkMode();
-            contextMenu.hide();  // Hide the context menu
-        });
+        lightMode.setOnAction(e -> switchTheme("light"));
+        darkMode.setOnAction(e -> switchTheme("dark"));
+        clearFields.setOnAction(e -> clearAllFields());
 
-        // Action for Light Mode
-        lightMode.setOnAction(e -> {
-            // Remove all stylesheets
-            // scene.getStylesheets().clear();
-            // Apply light mode stylesheet
-            //scene.getStylesheets().add(getClass().getResource("/css/light-styles.css").toExternalForm());
-            System.out.println("Light Mode Activated");
-            contextMenu.hide();  // Hide the context menu
-        });
-
-        // Action for Clear All Fields
-        clearFields.setOnAction(e -> {
-            clearAllFields();  // Clear all input fields
-            System.out.println("All Fields Cleared");
-
-            applyLightMode();
-            contextMenu.hide();  // Hide the context menu
-        });
-
-        // Show context menu on right-click (context menu request)
-        root.setOnContextMenuRequested(e -> {
-            contextMenu.show(root, e.getScreenX(), e.getScreenY());
-        });
-
+        contextMenu.getItems().addAll(lightMode, darkMode, clearFields);
     }
 
-    private void applyDarkMode() {
-        LOGGER.info("Applying dark mode.");
-        // Set dark mode styles (you can modify this to point to a stylesheet or CSS rules)
-        stage.getScene().getRoot().setStyle("-fx-base: #333; -fx-background-color: #2B2B2B; -fx-text-fill: white;");
+    private void showContextMenu(ContextMenuEvent event) {
+        contextMenu.show(vbx_card, event.getScreenX(), event.getScreenY());
     }
 
-    private void applyLightMode() {
-        LOGGER.info("Applying light mode.");
-        // Reset to light mode (or default) styles
-        stage.getScene().getRoot().setStyle("-fx-base: #FFF; -fx-background-color: #F0F0F0; -fx-text-fill: black;");
+    private void saveThemePreference(String theme) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("theme", theme);
+            File file = new File("config.properties");
+            props.store(new FileOutputStream(file), "Theme Settings");
+        } catch (IOException e) {
+            logger.severe("Error saving theme preference: " + e.getMessage());
+        }
+    }
+
+    private String loadThemePreference() {
+        try {
+            Properties props = new Properties();
+            File file = new File("config.properties");
+            if (file.exists()) {
+                props.load(new FileInputStream(file));
+                return props.getProperty("theme", "light");
+            }
+        } catch (IOException e) {
+            logger.severe("Error loading theme preference: " + e.getMessage());
+        }
+        return "light";
+    }
+
+    private void switchTheme(String theme) {
+        currentTheme = theme;
+        loadTheme(theme);
+        saveThemePreference(theme);
+    }
+
+    private void loadTheme(String theme) {
+        Scene scene = stage.getScene();
+        scene.getStylesheets().clear();
+        String cssFile = theme.equals("dark")
+                        ? "/css/dark-styles.css"
+                        : "/css/light-styles.css";
+
+        scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm()
+        );
     }
 
     private void clearAllFields() {
@@ -201,8 +222,7 @@ public class SignUpController {
         lbl_error.setText("");
     }
 
-    @FXML
-    private void handlePasswordImageButtonAction() {
+    private void handlePasswordImageButtonAction(ActionEvent event) {
         isPasswordVisible = !isPasswordVisible;
         if (isPasswordVisible) {
             imgShowPassword.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png")));
@@ -225,9 +245,20 @@ public class SignUpController {
 
     private void handleSignUpButtonAction(ActionEvent event) {
         try {
+
+            String password;
+            String confirmPassword;
             String email = tf_email.getText();
-            String password = pf_password.getText();
-            String confirmPassword = pf_password_confirm.getText();
+
+            // Revisar qué campos de contraseña están activos y usarlos
+            if (pf_password.isVisible()) {
+                password = pf_password.getText();
+                confirmPassword = pf_password_confirm.getText();
+            } else {
+                password = tf_password.getText();
+                confirmPassword = tf_password_confirm.getText();
+            }
+
             String name = tf_name.getText();
             String street = tf_street.getText();
             String city = tf_city.getText();
@@ -250,13 +281,14 @@ public class SignUpController {
     private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
                     throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
                     InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
-
+        // check empty fileds
         checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
+        //check fields format 
         checkFieldsFormat(email, password, confirmPassword, name, street, city, zip);
 
     }
 
-    public void checkEmptyFields(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException {
+    private void checkEmptyFields(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException {
         // Validate email
         if (email == null || email.isEmpty()) {
             throw new EmptyFieldException("Email cannot be empty.");
@@ -288,7 +320,7 @@ public class SignUpController {
         }
     }
 
-    public void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+    private void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
                     InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
         // Regex pattern for a valid email format
         String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
@@ -303,7 +335,7 @@ public class SignUpController {
         if (!password.equals(confirmPassword)) {
             throw new InvalidPasswordFormatException("Passwords do not match.");
         }
-        // Example: check that city only contains letters (basic validation)
+        //  check that city only contains letters (basic validation)
         if (!city.matches("[a-zA-Z\\s]+")) {
             throw new InvalidCityFormatException("City must only contain letters.");
         }
@@ -337,8 +369,9 @@ public class SignUpController {
     private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
         try {
-
-            //  User users =SignableFactory.getSignable().signUp(user);
+            //UserDao userdao = new UserDao();
+            //userdao.signUp(user);
+            User usera = SignableFactory.getSignable().signUp(user);
             // Log sign-up success
             LOGGER.log(Level.INFO, "Calling user from Signable");
             // Inform the user of successful sign-up using an Alert
@@ -372,7 +405,7 @@ public class SignUpController {
         }
     }
 
-    public void handleOnActionExit(Event event) {
+    private void handleOnActionExit(Event event) {
         try {
             //Ask user for confirmation on exit
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
@@ -395,7 +428,7 @@ public class SignUpController {
         }
     }
 
-    public void showAlert() {
+    private void showAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Sign-up Successful");
         alert.setHeaderText(null);

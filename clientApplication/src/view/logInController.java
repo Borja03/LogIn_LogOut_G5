@@ -73,7 +73,15 @@ public class logInController {
 
     @FXML
     private Pane centralPane;
+    private Stage stage;
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public Stage getStage() {
+        return this.stage;
+    }
     /**
      * Indica si la contraseña es visible.
      */
@@ -85,12 +93,8 @@ public class logInController {
      * email cuando pierde el foco.
      */
     @FXML
-    public void initialize(Stage stage, Parent root) {
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        passwordField.setVisible(true);
+    public void initialize() {
         visiblePasswordField.setVisible(false); // Inicialmente, el campo de texto visible está oculto
-        passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png")));
     }
 
     /**
@@ -100,34 +104,34 @@ public class logInController {
      */
     @FXML
     private void handleLogInButtonAction() throws InvalidEmailFormatException {
-            utils.validateEmail(emailTextField.getText());
-            String email = emailTextField.getText();
-            String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
+        utils.validateEmail(emailTextField.getText());
+        String email = emailTextField.getText();
+        String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
 
-            User user = new User();
-            user.setEmail(email);
-            user.setPassword(password);
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
 
-            try {
-                User loggedInUser = SignableFactory.getSignable().signIn(user);
+        try {
+            User loggedInUser = SignableFactory.getSignable().signIn(user);
 
-                if (loggedInUser != null) {
-                    // Si el inicio de sesión es exitoso, navega a la pantalla principal
-                    navigateToScreen("/view/Main.fxml", "Main");
-                } else {
-                    // Manejar el caso en que el usuario no se devuelve
-                    utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
-                }
-            } catch (UserAlreadyExistsException e) {
-                utils.showAlert("Error", "El usuario ya existe.");
-                logger.warning(e.getMessage());
-            } catch (ConnectionException e) {
-                utils.showAlert("Error", "Problemas de conexión con el servidor.");
-                logger.warning(e.getMessage());
-            } catch (Exception e) {
-                utils.showAlert("Error", "Ocurrió un error inesperado.");
-                logger.severe(e.getMessage());
+            if (loggedInUser != null) {
+                // Si el inicio de sesión es exitoso, navega a la pantalla principal
+                navigateToScreen("/view/Main.fxml", "Main");
+            } else {
+                // Manejar el caso en que el usuario no se devuelve
+                utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
             }
+        } catch (UserAlreadyExistsException e) {
+            utils.showAlert("Error", "El usuario ya existe.");
+            logger.warning(e.getMessage());
+        } catch (ConnectionException e) {
+            utils.showAlert("Error", "Problemas de conexión con el servidor.");
+            logger.warning(e.getMessage());
+        } catch (Exception e) {
+            utils.showAlert("Error", "Ocurrió un error inesperado.");
+            logger.severe(e.getMessage());
+        }
     }
 
     /**
@@ -171,18 +175,31 @@ public class logInController {
     private void navigateToScreen(String fxmlPath, String title) {
         try {
             // Cargar el archivo FXML de la vista objetivo
+
+            // Cargar el archivo FXML de la vista objetivo
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+//            Scene scene = new Scene(loader.load());
+//
+//            // Obtener el escenario actual
+//            Stage currentStage = (Stage) logInButton.getScene().getWindow();
+//
+//            // Cambiar la escena del escenario actual a la nueva escena
+//            currentStage.setScene(scene);
+//            currentStage.setTitle(title); // Establecer el título de la nueva ventana
+//            currentStage.show();
+//
+//            logger.log(Level.INFO, "Navigated to " + title + " screen.");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Scene scene = new Scene(loader.load());
-
-            // Obtener el escenario actual
-            Stage currentStage = (Stage) logInButton.getScene().getWindow();
-
-            // Cambiar la escena del escenario actual a la nueva escena
-            currentStage.setScene(scene);
-            currentStage.setTitle(title); // Establecer el título de la nueva ventana
-            currentStage.show();
-
-            logger.log(Level.INFO, "Navigated to " + title + " screen.");
+            Parent root = loader.load();
+            // Get the current stage
+            SignUpController controller = loader.getController();
+            Stage newStage = new Stage();
+            controller.setStage(newStage);
+            controller.initStage(root);
+            stage = (Stage) logInButton.getScene().getWindow();
+            //stage.hide();
+            stage.close();
+            logger.log(Level.SEVERE, "Stage closed");
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);

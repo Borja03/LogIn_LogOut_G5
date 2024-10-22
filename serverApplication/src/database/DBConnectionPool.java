@@ -21,30 +21,23 @@ public class DBConnectionPool {
 
     private static BasicDataSource dataSource;
 
-    private static final ResourceBundle rsbundle = ResourceBundle.getBundle("config.db_config");
+   // private static final ResourceBundle rsbundle = ResourceBundle.getBundle("config.db_config");
+
 
     static {
         dataSource = new BasicDataSource();
-
-        // add this info to file of configuration 
-        dataSource.setUrl("jdbc:postgresql://192.168.140.130:5432/odoooo");  
-        String dburl = rsbundle.getString("db_url") + rsbundle.getString("db_ip")
-                        + rsbundle.getString("db_port") + rsbundle.getString("db_name");
-
-        dataSource.setUrl(dburl);
-        dataSource.setUsername(rsbundle.getString("db_user"));
-        dataSource.setPassword(rsbundle.getString("db_password"));
-        dataSource.setDriverClassName(rsbundle.getString("db_driver"));
-        // Initial connections
-        dataSource.setInitialSize(Integer.parseInt(rsbundle.getString("pool_int_size")));
-        // Maximum total connections
-        dataSource.setMaxTotal(Integer.parseInt(rsbundle.getString("pool_max_total")));
+        //ip + port + db name
+        dataSource.setUrl("jdbc:postgresql://192.168.56.128:5432/odoo_db_16");
+        dataSource.setUsername("odoo16");
+        dataSource.setPassword("abcd*1234");
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setInitialSize(5); // Initial connections
+        dataSource.setMaxTotal(10);    // Maximum total connections
         dataSource.setMinIdle(2);      // Minimum idle connections
         dataSource.setMaxIdle(5);      // Maximum idle connections
     }
 
     public static Connection getConnection() throws SQLException {
-        logger.info("Connection created ");
         return dataSource.getConnection();
     }
 }
