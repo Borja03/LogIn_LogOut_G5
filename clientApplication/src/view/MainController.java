@@ -4,6 +4,7 @@ import static Utils.UtilsMethods.logger;
 import java.util.logging.Level;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -15,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
+import javafx.event.ActionEvent;
 
 /**
  * The MainController handles the main functionalities of the main screen of the application.
@@ -51,19 +53,44 @@ public class MainController {
     // Context menus for copying selected text
     private ContextMenu contextMenu;
 
-    @FXML
-    public void initialize() {
-        // Set the eye icon to the closed eye by default
-        eyeImageView.setImage(eyeClosed);
+    // Stage to manage the current window
+    private Stage stage;
+
+    // Getter and Setter for Stage
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    /**
+     * Initializes the controller with the provided root element.
+     * 
+     * @param root The root element of the scene.
+     */
+    public void initStage(Parent root) {
+        logger.info("Initializing MainController stage.");
+
+        // Set initial visibility of password fields
         passwordField.setVisible(true);
         plainPasswordField.setVisible(false);
+        eyeImageView.setImage(eyeClosed);
 
         // Initialize the context menu for copy functionality
         createContextMenu();
 
-        // Link event handlers using this::
+        // Link event handlers
         logOutButton.setOnAction(this::logOut);
         eyeButton.setOnAction(this::togglePasswordVisibility);
+
+        // Set up the stage if needed, e.g., adding close request handler
+        if (stage != null) {
+            stage.setOnCloseRequest(event -> handleOnCloseRequest(event));
+        }
+
+        logger.info("MainController initialized.");
     }
 
     /**
@@ -89,7 +116,7 @@ public class MainController {
      * 
      * @param event The action event triggered by the context menu.
      */
-    private void handleCopyAction(javafx.event.ActionEvent event) {
+    private void handleCopyAction(ActionEvent event) {
         copySelectedText();
     }
 
@@ -128,7 +155,7 @@ public class MainController {
      * @param event The action event triggered by the log out button.
      */
     @FXML
-    private void logOut(javafx.event.ActionEvent event) {
+    private void logOut(ActionEvent event) {
         navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
 
@@ -138,7 +165,7 @@ public class MainController {
      * @param event The action event triggered by the eye button.
      */
     @FXML
-    private void togglePasswordVisibility(javafx.event.ActionEvent event) {
+    private void togglePasswordVisibility(ActionEvent event) {
         if (passwordIsVisible) {
             passwordField.setVisible(true);
             plainPasswordField.setVisible(false);
@@ -161,14 +188,26 @@ public class MainController {
     private void navigateToScreen(String fxmlPath, String windowTitle) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Scene scene = new Scene(loader.load());
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
 
-            Stage currentStage = (Stage) logOutButton.getScene().getWindow();
+            // Get the current stage
+            Stage currentStage = stage != null ? stage : (Stage) logOutButton.getScene().getWindow();
             currentStage.setScene(scene);
             currentStage.setTitle(windowTitle);
             currentStage.show();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
         }
+    }
+
+    /**
+     * Handles the close request action to confirm exit or perform other tasks.
+     * 
+     * @param event The event triggered on close request.
+     */
+    private void handleOnCloseRequest(javafx.event.Event event) {
+        // Handle close request logic (e.g., show confirmation dialog)
+        logger.info("Handling close request.");
     }
 }

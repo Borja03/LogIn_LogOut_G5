@@ -41,4 +41,3 @@ public class DBConnectionPool {
         return dataSource.getConnection();
     }
 }
-

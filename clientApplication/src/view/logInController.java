@@ -151,13 +151,14 @@ public class logInController {
     @FXML
     private void handlePasswordImageButtonAction() {
         isPasswordVisible = !isPasswordVisible;
+
         if (isPasswordVisible) {
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png")));
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordVisible.png")));
             passwordField.setVisible(false);
             visiblePasswordField.setVisible(true);
             visiblePasswordField.setText(passwordField.getText());
         } else {
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordVisible.png")));
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png")));
             passwordField.setVisible(true);
             visiblePasswordField.setVisible(false);
             passwordField.setText(visiblePasswordField.getText());
@@ -173,8 +174,9 @@ public class logInController {
      */
     private void navigateToScreen(String fxmlPath, String title) {
         try {
-            
-              // Cargar el archivo FXML de la vista objetivo
+            // Cargar el archivo FXML de la vista objetivo
+
+            // Cargar el archivo FXML de la vista objetivo
 //            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
 //            Scene scene = new Scene(loader.load());
 //
@@ -187,8 +189,6 @@ public class logInController {
 //            currentStage.show();
 //
 //            logger.log(Level.INFO, "Navigated to " + title + " screen.");
-            
-            
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             // Get the current stage
@@ -196,7 +196,7 @@ public class logInController {
             Stage newStage = new Stage();
             controller.setStage(newStage);
             controller.initStage(root);
-             stage = (Stage) logInButton.getScene().getWindow();
+            stage = (Stage) logInButton.getScene().getWindow();
             //stage.hide();
             stage.close();
             logger.log(Level.SEVERE, "Stage closed");
