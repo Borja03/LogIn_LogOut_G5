@@ -1,6 +1,6 @@
 package serverapplication;
 
-import Model.MyServerSocket;
+import Model.Worker;
 
 /**
  * The main class for the server application. This class initializes the server
@@ -8,7 +8,7 @@ import Model.MyServerSocket;
  * It then creates and starts an instance of the server using the specified port.
  * 
  * <p>The server listens for incoming connections from clients, handling requests
- * as defined in the {@link MyServerSocket} class.</p>
+ * as defined in the {@link Worker} class.</p>
  * 
  * @author Borja
  */
@@ -21,7 +21,7 @@ public class ServerApplication {
      * If the port is provided and is a valid integer, the server will use that port.
      * Otherwise, it will default to port 9999.
      * 
-     * <p>The method creates a {@link MyServerSocket} instance with the specified port
+     * <p>The method creates a {@link Worker} instance with the specified port
      * and starts the server to listen for incoming connections.</p>
      *
      * @param args the command-line arguments, where the first argument is expected to be the port number
@@ -39,7 +39,7 @@ public class ServerApplication {
         }
         
         // Create a server instance
-        MyServerSocket server = new MyServerSocket();
+        Worker server = new Worker();
         
         // Start the server
         server.start();
