@@ -1,6 +1,6 @@
 package serverapplication;
 
-import Model.MyServerSocket;
+import Model.Worker;
 
 /**
  * The main class for the server application. This class initializes the server
@@ -39,7 +39,7 @@ public class ServerApplication {
         }
         
         // Create a server instance
-        MyServerSocket server = new MyServerSocket();
+        Worker server = new Worker();
         
         // Start the server
         server.start();

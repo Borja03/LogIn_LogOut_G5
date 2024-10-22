@@ -4,88 +4,49 @@
 */
 
 /* General styles */
+/* dark-theme.css */
+/* dark-theme.css */
+
+/* Background colors */
 .root {
-
-    -fx-background-color: #2a6ebf;
-
-    -fx-font-family: 'Cochin', Arial, sans-serif;
+    -fx-background-color: #2c2f33;
 }
 
-/* Card-like appearance for the SignUp form */
-.anchor-pane {
-
-    -fx-background-color: #2a6ebf;      /* White background for the card */
-    -fx-background-color: white;      /* White background for the card */
-    -fx-background-radius: 15px;      /* Rounded corners */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 5); /* Drop shadow effect */
-    -fx-padding: 20px;                /* Padding inside the card */
-    -fx-border-radius: 15px;          /* Rounded borders matching the background */
+.label, .text-field, .button {
+    -fx-text-fill: #ffffff; /* White text */
 }
 
-/* Label styles */
-.label {
-    -fx-font-family: 'Helvetica', Arial, sans-serif;
-    -fx-font-size: 18px;
-    -fx-text-fill: #333333;
-    -fx-padding:0 0 0 15px;
-
-}
-#lbl_signup{
-    -fx-text-alignment: center;
-
+.text-field {
+    -fx-background-color: #23272a;
+    -fx-border-color: #99aab5;
+    -fx-border-width: 1px;
 }
 
-.text-field, .password-field {
-    -fx-background-color: white;
-    -fx-background-radius: 5px;
-    -fx-border-color: #cccccc;
-    -fx-border-radius: 5px;
-    -fx-padding: 5px;
-    -fx-font-size: 14px;
+.button {
+    -fx-background-color: #7289da;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
 }
-
-.text-field:focused, .password-field:focused {
-    -fx-border-color: #4a90e2;
-}
-
 
 .button:hover {
-    -fx-background-color: #3a7fcf;
-    -fx-effect: none; /* Remove shadow on hover */
+    -fx-background-color: #677bc4;
 }
 
-.button:pressed {
-    -fx-background-color: #2a6ebf;
+/* Style for any additional components */
+.combo-box, .password-field {
+    -fx-background-color: #23272a;
+    -fx-text-fill: #ffffff;
 }
 
-
-/* Hyperlink styles */
-.hyperlink {
-    -fx-text-fill: #4a90e2;
-    -fx-border-color: transparent;
+.combo-box-popup .list-cell {
+    -fx-background-color: #23272a;
+    -fx-text-fill: #ffffff;
 }
 
-.hyperlink:hover {
-    -fx-text-fill: #3a7fcf;
+.combo-box .arrow {
+    -fx-background-color: #99aab5;
 }
 
-/* Checkbox styles */
-.check-box {
-    -fx-font-size: 14px;
-}
-
-/* Error label styles */
-#lbl_error {
-    -fx-text-fill: #df0e0e;
-    -fx-font-size: 14px;
-        -fx-text-alignment: center;
-
-}
-
-
-#vbx_card {
-    -fx-background-color: #f2f2f2;
-    -fx-border-radius: 100px;
-    -fx-background-radius: 15px;
-
+.menu-bar {
+    -fx-background-color: #2c2f33;
 }

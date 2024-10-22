@@ -115,7 +115,7 @@ public class UserDao implements Signable {
                     if (passwordInDb.equals(user.getPassword())) {
                         // Login exitoso, retornamos el usuario con los datos de la base de datos
                         user.setEmail(userRs.getString("login"));
-                        user.setName(userRs.getString("name"));
+                        user.setName(partnerRs.getString("name"));
                         user.setPassword(userRs.getString("password"));
                         user.setActivo(isActive);
                         user.setCompanyID(userRs.getInt("company_id"));
@@ -152,7 +152,8 @@ public class UserDao implements Signable {
         }
     }
 
-    /**
+    
+      /**
      * Método para registrar un nuevo usuario en las tablas 'res_partner' y
      * 'res_users'. Utiliza una transacción para garantizar que ambos registros
      * se realicen correctamente.
@@ -166,57 +167,49 @@ public class UserDao implements Signable {
      */
     @Override
     public synchronized User signUp(User user) throws Exception {
-        Connection conn = null;
+  Connection conn = null;
         PreparedStatement psPartner = null;
         PreparedStatement psUser = null;
         ResultSet rs = null;
 
         try {
-            // Establecer conexión desde el pool
+            // Get a connection (Use a connection pool for scalability)
+            conn = DBConnectionPool.getConnection();
+            conn.setAutoCommit(false); // Start transaction
 
-            // Open the connection to DB
-         
-                conn = DBConnectionPool.getConnection();
-//                   if(conn == null){
-//                        throw new ServerErrorException("Server error "); 
-//                   }
-              
-            
-
-            // Inicia la transacción
-            conn.setAutoCommit(false);
-
-            // Inserta en la tabla res_partner
-            psPartner = conn.prepareStatement(INSERT_USER_PARTNERS_TABLE);
+            // Insert into res_partner
+            String sqlPartner = "INSERT INTO res_partner (name, email, display_name, is_company, company_id, street, city, zip, active) "
+                    + "VALUES (?, ?, ?, FALSE, 1, ?, ?, ?, ?) RETURNING id";
+            psPartner = conn.prepareStatement(sqlPartner);
             psPartner.setString(1, user.getName());
             psPartner.setString(2, user.getEmail());
-            psPartner.setString(3, user.getName());
+            psPartner.setString(3, user.getName()); // Assuming display_name is similar to the name field
             psPartner.setString(4, user.getStreet());
             psPartner.setString(5, user.getCity());
             psPartner.setInt(6, user.getZip());
-            psPartner.setBoolean(7, user.isActivo());
+            psPartner.setBoolean(7, user.isActivo()); 
             rs = psPartner.executeQuery();
-
-            // Obtiene el ID generado del partner
             int partnerId = 0;
             if (rs.next()) {
-                partnerId = rs.getInt("id");
+                partnerId = rs.getInt("id");  // Get generated partner_id
             }
 
-            // Inserta en la tabla res_users
-            psUser = conn.prepareStatement(INSERT_USER_USERS_TABLE);
+            // Insert into res_users
+            String sqlUser = "INSERT INTO res_users (login, password, partner_id, company_id, notification_type) "
+                    + "VALUES (?, ?, ?, ?, 'email')";
+            psUser = conn.prepareStatement(sqlUser);
             psUser.setString(1, user.getEmail());
-            psUser.setString(2, user.getPassword());
-            psUser.setInt(3, partnerId);
+            psUser.setString(2,user.getPassword()); 
+            psUser.setInt(3, partnerId);  // Use the partner ID from res_partner
             psUser.setInt(4, user.getCompanyID());
             psUser.executeUpdate();
 
-            // Confirma la transacción
+            // Commit the transaction
             conn.commit();
             return user;
 
         } catch (SQLException e) {
-            // Rollback en caso de error
+            // Rollback in case of error
             if (conn != null) {
                 try {
                     conn.rollback();
@@ -224,22 +217,21 @@ public class UserDao implements Signable {
                     rollbackEx.printStackTrace();
                 }
             }
-            throw new Exception("Error al registrar el usuario", e);
+            e.printStackTrace();
+            return null;
         } finally {
-            // Cerrar los recursos
-            if (rs != null) {
-                rs.close();
+            // Close all resources
+            try {
+                if (rs != null) rs.close();
+                if (psPartner != null) psPartner.close();
+                if (psUser != null) psUser.close();
+                if (conn != null) conn.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
             }
-            if (psPartner != null) {
-                psPartner.close();
-            }
-            if (psUser != null) {
-                psUser.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
-        }
-    }
+        }    }
+
+  
+   
 
 }
