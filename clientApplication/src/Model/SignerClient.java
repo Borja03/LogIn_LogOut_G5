@@ -174,7 +174,7 @@ public class SignerClient implements Signable {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         //Devuelve un obejto user
-        return user;
+        return null;
     }
 
 }

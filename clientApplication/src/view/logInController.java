@@ -117,7 +117,7 @@ public class logInController {
 
             if (loggedInUser != null) {
                 // Si el inicio de sesión es exitoso, navega a la pantalla principal
-                navigateToScreen("/view/Main.fxml", "Main", true);
+                navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
             } else {
                 // Manejar el caso en que el usuario no se devuelve
                 utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
@@ -141,7 +141,7 @@ public class logInController {
     @FXML
     private void handleCreateUserLinkAction() {
         logger.info("Abrir vista de registro.");
-        navigateToScreen("/view/SignUpView.fxml", "SignUp",false);
+        navigateToScreen("/view/SignUpView.fxml", "SignUp",false, null);
     }
 
     /**
@@ -172,7 +172,7 @@ public class logInController {
      * @param title el título a establecer para la ventana
      * @author Borja
      */
-    private void navigateToScreen(String fxmlPath, String title, boolean main) {
+    private void navigateToScreen(String fxmlPath, String title, boolean main, User user) {
         try {
             // Cargar el archivo FXML de la vista objetivo
 
@@ -202,7 +202,7 @@ public class logInController {
                 MainController controller = loader.getController();
                 Stage newStage = new Stage();
                 controller.setStage(newStage);
-                controller.initStage(root);
+                controller.initStage(root, user);
 
             }
 

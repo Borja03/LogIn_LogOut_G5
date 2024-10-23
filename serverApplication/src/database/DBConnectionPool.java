@@ -27,8 +27,8 @@ public class DBConnectionPool {
     static {
         dataSource = new BasicDataSource();
         //ip + port + db name
-        dataSource.setUrl("jdbc:postgresql://192.168.56.128:5432/odoo_db_016");
-        dataSource.setUsername("odoo16");
+        dataSource.setUrl("jdbc:postgresql://192.168.142.130:5432/odoooo");
+        dataSource.setUsername("odoo");
         dataSource.setPassword("abcd*1234");
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setInitialSize(5); // Initial connections
