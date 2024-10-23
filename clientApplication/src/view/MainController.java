@@ -1,5 +1,6 @@
 package view;
 
+import Model.User;
 import static Utils.UtilsMethods.logger;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -78,7 +79,7 @@ public class MainController {
      *
      * @param root The root element of the scene.
      */
-    public void initStage(Parent root) {
+    public void initStage(Parent root, User user) {
         logger.info("Initializing MainController stage.");
         Scene scene = new Scene(root);
         // Set the stage properties
