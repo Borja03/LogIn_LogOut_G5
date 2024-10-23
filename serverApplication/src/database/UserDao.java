@@ -152,8 +152,7 @@ public class UserDao implements Signable {
         }
     }
 
-    
-      /**
+    /**
      * Método para registrar un nuevo usuario en las tablas 'res_partner' y
      * 'res_users'. Utiliza una transacción para garantizar que ambos registros
      * se realicen correctamente.
@@ -166,8 +165,8 @@ public class UserDao implements Signable {
      * en la transacción.
      */
     @Override
-    public synchronized User signUp(User user) throws Exception {
-  Connection conn = null;
+    public synchronized User signUp(User user) throws ServerErrorException, UserAlreadyExistsException {
+        Connection conn = null;
         PreparedStatement psPartner = null;
         PreparedStatement psUser = null;
         ResultSet rs = null;
@@ -175,11 +174,14 @@ public class UserDao implements Signable {
         try {
             // Get a connection (Use a connection pool for scalability)
             conn = DBConnectionPool.getConnection();
+            if(conn == null){
+               throw new ServerErrorException("Erver not working");
+            }
             conn.setAutoCommit(false); // Start transaction
 
             // Insert into res_partner
             String sqlPartner = "INSERT INTO res_partner (name, email, display_name, is_company, company_id, street, city, zip, active) "
-                    + "VALUES (?, ?, ?, FALSE, 1, ?, ?, ?, ?) RETURNING id";
+                            + "VALUES (?, ?, ?, FALSE, 1, ?, ?, ?, ?) RETURNING id";
             psPartner = conn.prepareStatement(sqlPartner);
             psPartner.setString(1, user.getName());
             psPartner.setString(2, user.getEmail());
@@ -187,19 +189,21 @@ public class UserDao implements Signable {
             psPartner.setString(4, user.getStreet());
             psPartner.setString(5, user.getCity());
             psPartner.setInt(6, user.getZip());
-            psPartner.setBoolean(7, user.isActivo()); 
+            psPartner.setBoolean(7, user.isActivo());
             rs = psPartner.executeQuery();
             int partnerId = 0;
             if (rs.next()) {
                 partnerId = rs.getInt("id");  // Get generated partner_id
+            } else {
+                throw new UserAlreadyExistsException("Email already exist.");
             }
 
             // Insert into res_users
             String sqlUser = "INSERT INTO res_users (login, password, partner_id, company_id, notification_type) "
-                    + "VALUES (?, ?, ?, ?, 'email')";
+                            + "VALUES (?, ?, ?, ?, 'email')";
             psUser = conn.prepareStatement(sqlUser);
             psUser.setString(1, user.getEmail());
-            psUser.setString(2,user.getPassword()); 
+            psUser.setString(2, user.getPassword());
             psUser.setInt(3, partnerId);  // Use the partner ID from res_partner
             psUser.setInt(4, user.getCompanyID());
             psUser.executeUpdate();
@@ -222,16 +226,22 @@ public class UserDao implements Signable {
         } finally {
             // Close all resources
             try {
-                if (rs != null) rs.close();
-                if (psPartner != null) psPartner.close();
-                if (psUser != null) psUser.close();
-                if (conn != null) conn.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                if (psPartner != null) {
+                    psPartner.close();
+                }
+                if (psUser != null) {
+                    psUser.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-        }    }
-
-  
-   
+        }
+    }
 
 }

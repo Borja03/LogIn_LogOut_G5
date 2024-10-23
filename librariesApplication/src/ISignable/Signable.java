@@ -1,6 +1,8 @@
 package ISignable;
 
 import Model.User;
+import exception.ServerErrorException;
+import exception.UserAlreadyExistsException;
 
 /**
  * Interfaz que define las operaciones de registro e inicio de sesión para los usuarios.
@@ -18,7 +20,7 @@ public interface Signable {
      * @return User es el objeto que se retorna en el metodo
      * @throws Exception Si ocurre un error durante el registro.
      */
-    public User signUp(User user) throws Exception;
+    public User signUp(User user) throws ServerErrorException, UserAlreadyExistsException;
 
     /**
      * Método para iniciar sesión de un usuario existente.

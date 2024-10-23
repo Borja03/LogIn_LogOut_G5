@@ -10,6 +10,8 @@ import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidStreetFormatException;
 import exception.InvalidZipFormatException;
+import exception.ServerErrorException;
+import exception.UserAlreadyExistsException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -120,12 +122,12 @@ public class SignUpController {
         stage.setResizable(false);
         // stage.initModality(Modality.APPLICATION_MODAL);
         stage.centerOnScreen();
-        // Set the icon (if needed)
+        // Set the icon if needed
         stage.getIcons().add(new Image("/Images/userIcon.png"));
 
         tf_password.setVisible(false);
         tf_password_confirm.setVisible(false);
-        // Set the close request handler
+        //  handlers
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
         btn_show_password.setOnAction(this::handlePasswordImageButtonAction);
@@ -142,6 +144,7 @@ public class SignUpController {
         currentTheme = loadThemePreference();
         loadTheme(currentTheme);
         LOGGER.info("Window opened.");
+        
         // Show the stage
         stage.show();
     }
@@ -366,19 +369,25 @@ public class SignUpController {
         return hasUppercase && hasDigit && hasSpecialChar;
     }
 
-    private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
+    private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive)
+                    throws UserAlreadyExistsException, ServerErrorException {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
-        try {
-            //UserDao userdao = new UserDao();
-            //userdao.signUp(user);
-            User usera = SignableFactory.getSignable().signUp(user);
-            // Log sign-up success
-            LOGGER.log(Level.INFO, "Calling user from Signable");
-            // Inform the user of successful sign-up using an Alert
-            showAlert();
-        } catch (Exception ex) {
-            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+
+        //UserDao userdao = new UserDao();
+        //userdao.signUp(user);
+        try{
+            User nuevoUser = SignableFactory.getSignable().signUp(user);
+            LOGGER.log(Level.INFO, "User signed up successfully: {0}", nuevoUser.getEmail());
+        if (nuevoUser == null) {
+            throw new UserAlreadyExistsException("Email already exist.");
         }
+        }catch(ServerErrorException e){
+             LOGGER.log(Level.SEVERE, e.getMessage());
+        }
+
+        // Inform the user of successful sign-up using an Alert
+        showAlert();
+
     }
 
     private void handleLoginHyperlinkAction(ActionEvent event) {
