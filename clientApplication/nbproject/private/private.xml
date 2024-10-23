@@ -3,10 +3,20 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
             <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/Model/SignerClient.java</file>
+<<<<<<< HEAD
             <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
             <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/MainController.java</file>
             <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/SignUpController.java</file>
         </group>
+=======
+            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/MainController.java</file>
+            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/SignUpController.java</file>
+        </group>
+        <group name="Group Reto">
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
+        </group>
+>>>>>>> e5ac3ee9df82e5828bb372170db90e4d0a69b274
     </open-files>
 </project-private>

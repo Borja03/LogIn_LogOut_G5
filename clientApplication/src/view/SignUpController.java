@@ -10,6 +10,9 @@ import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidStreetFormatException;
 import exception.InvalidZipFormatException;
+import exception.ServerErrorException;
+import exception.UserAlreadyExistsException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -61,7 +64,28 @@ public class SignUpController {
     private Hyperlink hl_login;
 
     @FXML
+    private ImageView imgCity;
+
+    @FXML
+    private ImageView imgEmail;
+
+    @FXML
+    private ImageView imgKey;
+
+    @FXML
+    private ImageView imgLock;
+
+    @FXML
     private ImageView imgShowPassword;
+
+    @FXML
+    private ImageView imgStreet;
+
+    @FXML
+    private ImageView imgUser;
+
+    @FXML
+    private ImageView imgZIP;
 
     @FXML
     private Label lbl_error;
@@ -120,12 +144,12 @@ public class SignUpController {
         stage.setResizable(false);
         // stage.initModality(Modality.APPLICATION_MODAL);
         stage.centerOnScreen();
-        // Set the icon (if needed)
+
         stage.getIcons().add(new Image("/Images/userIcon.png"));
 
         tf_password.setVisible(false);
         tf_password_confirm.setVisible(false);
-        // Set the close request handler
+
         btn_signup.setOnAction(this::handleSignUpButtonAction);
         hl_login.setOnAction(this::handleLoginHyperlinkAction);
         btn_show_password.setOnAction(this::handlePasswordImageButtonAction);
@@ -142,6 +166,7 @@ public class SignUpController {
         currentTheme = loadThemePreference();
         loadTheme(currentTheme);
         LOGGER.info("Window opened.");
+
         // Show the stage
         stage.show();
     }
@@ -199,12 +224,36 @@ public class SignUpController {
     private void loadTheme(String theme) {
         Scene scene = stage.getScene();
         scene.getStylesheets().clear();
-        String cssFile = theme.equals("dark")
-                        ? "/css/dark-styles.css"
-                        : "/css/light-styles.css";
 
-        scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm()
-        );
+        if (theme.equals("dark")) {
+            // Código adicional para el tema oscuro
+
+            String cssFile = "/css/dark-styles.css";
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+            imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid-white.png")));
+            imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid-white.png")));
+            imgKey.setImage(new Image(getClass().getResourceAsStream("/Images/key-solid-white.png")));
+            imgUser.setImage(new Image(getClass().getResourceAsStream("/Images/user-solid-white.png")));
+            imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid-white.png")));
+            imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid-white.png")));
+            imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP-white.png")));
+
+            // Aquí puedes agregar más acciones específicas para el tema oscuro
+        } else if (theme.equals("light")) {
+            // Código adicional para el tema claro
+
+            String cssFile = "/css/light-styles.css";
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+            imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid.png")));
+            imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid.png")));
+            imgKey.setImage(new Image(getClass().getResourceAsStream("/Images/key-solid.png")));
+            imgUser.setImage(new Image(getClass().getResourceAsStream("/Images/user-solid.png")));
+            imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid.png")));
+            imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid.png")));
+            imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP.png")));
+
+            // Aquí puedes agregar más acciones específicas para el tema claro
+        }
     }
 
     private void clearAllFields() {
@@ -366,19 +415,25 @@ public class SignUpController {
         return hasUppercase && hasDigit && hasSpecialChar;
     }
 
-    private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
+    private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive)
+                    throws UserAlreadyExistsException, ServerErrorException {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
+
+        //UserDao userdao = new UserDao();
+        //userdao.signUp(user);
         try {
-            //UserDao userdao = new UserDao();
-            //userdao.signUp(user);
-            User usera = SignableFactory.getSignable().signUp(user);
-            // Log sign-up success
-            LOGGER.log(Level.INFO, "Calling user from Signable");
-            // Inform the user of successful sign-up using an Alert
-            showAlert();
-        } catch (Exception ex) {
-            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+            User nuevoUser = SignableFactory.getSignable().signUp(user);
+            LOGGER.log(Level.INFO, "User signed up successfully: {0}", nuevoUser.getEmail());
+            if (nuevoUser == null) {
+                throw new UserAlreadyExistsException("Email already exist.");
+            }
+        } catch (ServerErrorException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
+
+        // Inform the user of successful sign-up using an Alert
+        showAlert();
+
     }
 
     private void handleLoginHyperlinkAction(ActionEvent event) {
