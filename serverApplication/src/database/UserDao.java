@@ -124,13 +124,13 @@ public class UserDao implements Signable {
                         user.setZip(partnerRs.getInt("zip"));
                         return user;
                     } else {
-                        throw new IncorrectCredentialsException("Contraseña incorrecta.");
+                        return null;
                     }
                 } else {
-                    throw new IncorrectCredentialsException("Usuario no encontrado.");
+                    return null;
                 }
             } else {
-                throw new IncorrectCredentialsException("Email no encontrado en res_partner.");
+                return null;
             }
         } finally {
             // Cierra todos los recursos

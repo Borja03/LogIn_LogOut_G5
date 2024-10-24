@@ -38,6 +38,17 @@ import javafx.scene.control.ButtonType;
  */
 public class MainController {
 
+    // FXML components to display user details
+    @FXML
+    private TextField emailField;  // TextField to display user's email
+
+    @FXML
+    private TextField nameField;   // TextField to display user's name
+
+    @FXML
+    private TextField addressField; // TextField to display user's address
+
+    // Password-related fields
     @FXML
     private PasswordField passwordField; // The masked password input
 
@@ -72,22 +83,22 @@ public class MainController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-    }
+    }    
 
     /**
-     * Initializes the controller with the provided root element.
+     * Initializes the controller with the provided root element and the user data.
      *
      * @param root The root element of the scene.
+     * @param user The user object containing the user's details.
      */
     public void initStage(Parent root, User user) {
         logger.info("Initializing MainController stage.");
         Scene scene = new Scene(root);
-        // Set the stage properties
         stage.setScene(scene);
         stage.setTitle("Main");
         stage.setResizable(false);
         stage.getIcons().add(new Image("/Images/userIcon.png"));
-
+        
         // Set initial visibility of password fields
         passwordField.setVisible(true);
         plainPasswordField.setVisible(false);
@@ -100,12 +111,18 @@ public class MainController {
         logOutButton.setOnAction(this::logOut);
         eyeButton.setOnAction(this::togglePasswordVisibility);
 
-        // Set up the stage if needed, e.g., adding close request handler
-        stage.setOnCloseRequest(this::handleOnActionExit);
+        // Set user details in text fields
+        emailField.setText(user.getEmail());
+        nameField.setText(user.getName());
+
+        // Concatenate street, city, and zip for the address field
+        String address = String.format("%s, %s, %d", user.getStreet(), user.getCity(), user.getZip());
+        addressField.setText(address);
+        
+        // Set the user's password (ensure that this is a secure way of handling passwords)
+        passwordField.setText(user.getPassword()); // Asegúrate de que tengas acceso a la contraseña aquí
 
         logger.info("MainController initialized.");
-
-        //
         stage.show();
     }
 
@@ -139,8 +156,7 @@ public class MainController {
     /**
      * Attaches the context menu to a TextField or PasswordField.
      *
-     * @param textField The text field to which the context menu will be
-     * attached.
+     * @param textField The text field to which the context menu will be attached.
      */
     private void attachContextMenuToTextField(TextField textField) {
         textField.setContextMenu(contextMenu);
@@ -190,7 +206,7 @@ public class MainController {
         } else {
             passwordField.setVisible(false);
             plainPasswordField.setVisible(true);
-            plainPasswordField.setText(passwordField.getText());
+            plainPasswordField.setText(passwordField.getText()); // Mostrar la contraseña real
             eyeImageView.setImage(eyeOpen);
         }
         passwordIsVisible = !passwordIsVisible;
@@ -219,14 +235,19 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the exit action with confirmation dialog.
+     *
+     * @param event The event triggered when closing the stage.
+     */
     private void handleOnActionExit(Event event) {
         try {
-            //Ask user for confirmation on exit
+            // Ask user for confirmation on exit
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                            "Are you sure you want to exit the application?",
-                            ButtonType.OK, ButtonType.CANCEL);
+                    "Are you sure you want to exit the application?",
+                    ButtonType.OK, ButtonType.CANCEL);
             Optional<ButtonType> result = alert.showAndWait();
-            //If OK to exit
+            // If OK to exit
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 Platform.exit();
             } else {
@@ -235,10 +256,9 @@ public class MainController {
         } catch (Exception e) {
             String errorMsg = "Error exiting application:" + e.getMessage();
             Alert alert = new Alert(Alert.AlertType.ERROR,
-                            errorMsg,
-                            ButtonType.OK);
+                    errorMsg,
+                    ButtonType.OK);
             alert.showAndWait();
-            //LOGGER.log(Level.SEVERE, errorMsg);
         }
     }
 }
