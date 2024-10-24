@@ -118,12 +118,9 @@ public class logInController {
             if (loggedInUser != null) {
                 // Si el inicio de sesión es exitoso, navega a la pantalla principal
                 navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
-            } else {
-                // Manejar el caso en que el usuario no se devuelve
-                utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
             }
-        } catch (UserAlreadyExistsException e) {
-            utils.showAlert("Error", "El usuario ya existe.");
+        } catch (IncorrectCredentialsException e) {
+            utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
             logger.warning(e.getMessage());
         } catch (ConnectionException e) {
             utils.showAlert("Error", "Problemas de conexión con el servidor.");
