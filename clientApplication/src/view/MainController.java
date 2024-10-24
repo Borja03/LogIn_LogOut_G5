@@ -2,7 +2,12 @@ package view;
 
 import Model.User;
 import static Utils.UtilsMethods.logger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -23,6 +28,8 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.Pane;
 
 /**
  * The MainController handles the main functionalities of the main screen of the
@@ -61,6 +68,33 @@ public class MainController {
 
     // Context menus for copying selected text
     private ContextMenu contextMenu;
+    private String currentTheme = "light";
+
+    @FXML
+    private ImageView imgCity;
+
+    @FXML
+    private ImageView imgEmail;
+
+    @FXML
+    private ImageView imgKey;
+
+    @FXML
+    private ImageView imgLock;
+
+    @FXML
+    private ImageView imgShowPassword;
+
+    @FXML
+    private ImageView imgStreet;
+
+    @FXML
+    private ImageView imgUser;
+
+    @FXML
+    private ImageView imgZIP;
+    @FXML
+    private Pane mainPane;
 
     // Stage to manage the current window
     private Stage stage;
@@ -95,6 +129,7 @@ public class MainController {
 
         // Initialize the context menu for copy functionality
         createContextMenu();
+        root.setOnContextMenuRequested(this::showContextMenu);
 
         // Link event handlers
         logOutButton.setOnAction(this::logOut);
@@ -112,6 +147,10 @@ public class MainController {
     /**
      * Creates a context menu with a copy option for selected text.
      */
+    private void showContextMenu(ContextMenuEvent event) {
+        contextMenu.show(mainPane, event.getScreenX(), event.getScreenY());
+    }
+    
     private void createContextMenu() {
         contextMenu = new ContextMenu();
         MenuItem copyItem = new MenuItem("Copy");
@@ -119,12 +158,86 @@ public class MainController {
         // Set action for the copy menu item
         copyItem.setOnAction(this::handleCopyAction);
 
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem darkMode = new MenuItem("Dark Mode");
+        MenuItem clearFields = new MenuItem("Clear Fields");
+
+        lightMode.setOnAction(e -> switchTheme("light"));
+        darkMode.setOnAction(e -> switchTheme("dark"));
+
         // Add the copy option to the context menu
-        contextMenu.getItems().add(copyItem);
+        contextMenu.getItems().addAll(copyItem, lightMode, darkMode, clearFields);
 
         // Attach the context menu to relevant text fields
         attachContextMenuToTextField(passwordField);
         attachContextMenuToTextField(plainPasswordField);
+    }
+
+    private void saveThemePreference(String theme) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("theme", theme);
+            File file = new File("config.properties");
+            props.store(new FileOutputStream(file), "Theme Settings");
+        } catch (IOException e) {
+            logger.severe("Error saving theme preference: " + e.getMessage());
+        }
+    }
+
+    private String loadThemePreference() {
+        try {
+            Properties props = new Properties();
+            File file = new File("config.properties");
+            if (file.exists()) {
+                props.load(new FileInputStream(file));
+                return props.getProperty("theme", "light");
+            }
+        } catch (IOException e) {
+            logger.severe("Error loading theme preference: " + e.getMessage());
+        }
+        return "light";
+    }
+
+    private void switchTheme(String theme) {
+        currentTheme = theme;
+        loadTheme(theme);
+        saveThemePreference(theme);
+    }
+
+    private void loadTheme(String theme) {
+        Scene scene = stage.getScene();
+        scene.getStylesheets().clear();
+
+        if (theme.equals("dark")) {
+            // Código adicional para el tema oscuro
+
+            String cssFile = "/css/dark-styles.css";
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+            imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid-white.png")));
+            imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid-white.png")));
+            imgKey.setImage(new Image(getClass().getResourceAsStream("/Images/key-solid-white.png")));
+            imgUser.setImage(new Image(getClass().getResourceAsStream("/Images/user-solid-white.png")));
+            imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid-white.png")));
+            imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid-white.png")));
+            imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP-white.png")));
+
+            // Aquí puedes agregar más acciones específicas para el tema oscuro
+        } else if (theme.equals("light")) {
+            // Código adicional para el tema claro
+
+            String cssFile = "/css/CSSglobal.css";
+
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+            imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid.png")));
+            imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid.png")));
+            imgKey.setImage(new Image(getClass().getResourceAsStream("/Images/key-solid.png")));
+            imgUser.setImage(new Image(getClass().getResourceAsStream("/Images/user-solid.png")));
+            imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid.png")));
+            imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid.png")));
+            imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP.png")));
+
+            // Aquí puedes agregar más acciones específicas para el tema claro
+        }
     }
 
     /**
@@ -223,8 +336,8 @@ public class MainController {
         try {
             //Ask user for confirmation on exit
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                            "Are you sure you want to exit the application?",
-                            ButtonType.OK, ButtonType.CANCEL);
+                    "Are you sure you want to exit the application?",
+                    ButtonType.OK, ButtonType.CANCEL);
             Optional<ButtonType> result = alert.showAndWait();
             //If OK to exit
             if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -235,8 +348,8 @@ public class MainController {
         } catch (Exception e) {
             String errorMsg = "Error exiting application:" + e.getMessage();
             Alert alert = new Alert(Alert.AlertType.ERROR,
-                            errorMsg,
-                            ButtonType.OK);
+                    errorMsg,
+                    ButtonType.OK);
             alert.showAndWait();
             //LOGGER.log(Level.SEVERE, errorMsg);
         }

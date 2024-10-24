@@ -140,7 +140,7 @@ public class SignUpController {
         Scene scene = new Scene(root);
         // Set the stage properties
         stage.setScene(scene);
-        stage.setTitle("SignUp2");
+        stage.setTitle("Sign Up");
         stage.setResizable(false);
         // stage.initModality(Modality.APPLICATION_MODAL);
         stage.centerOnScreen();
