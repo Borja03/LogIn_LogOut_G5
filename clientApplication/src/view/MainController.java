@@ -61,8 +61,8 @@ public class MainController {
     private ImageView eyeImageView; // Eye icon for password visibility
 
     // Image paths for the eye icons
-    private final Image eyeClosed = new Image(getClass().getResourceAsStream("/Images/passwordVisible.png"));
-    private final Image eyeOpen = new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png"));
+    private final Image eyeClosed = new Image(getClass().getResourceAsStream("/Images/eye-solid.png"));
+    private final Image eyeOpen = new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png"));
 
     private boolean passwordIsVisible = false;
 

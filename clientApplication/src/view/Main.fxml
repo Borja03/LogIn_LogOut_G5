@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<Pane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"  xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
+<Pane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
     <children>
         <ImageView fitHeight="101.0" fitWidth="103.0" layoutX="45.0" layoutY="21.0">
             <image>
@@ -19,7 +19,7 @@
             </image>
         </ImageView>
       
-        <TextField fx:id="emailField" editable="false" layoutX="177.0" layoutY="29.0" minHeight="-Infinity" minWidth="-Infinity"  text="email@example.com" />
+        <TextField fx:id="emailField" editable="false" layoutX="177.0" layoutY="29.0" minHeight="-Infinity" minWidth="-Infinity" text="email@example.com" />
       
         <GridPane layoutX="53.0" layoutY="214.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="282.0" prefWidth="444.0">
             <columnConstraints>
@@ -40,7 +40,7 @@
         
             <Label style="-fx-font-size: 25;" text="PASSWORD" GridPane.rowIndex="2" />
         
-            <PasswordField id="passwordField" fx:id="passwordField" editable="false" prefHeight="27.0"  text="here goes the password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <PasswordField id="passwordField" fx:id="passwordField" editable="false" prefHeight="27.0" text="here goes the password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
             <TextField id="passwordTextField" fx:id="plainPasswordField" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
         </GridPane>
@@ -51,7 +51,7 @@
             <graphic>
                 <ImageView fx:id="eyeImageView" fitHeight="30.0" fitWidth="30.0">
                     <image>
-                        <Image url="@../Images/passwordNotVisible.png" />
+                        <Image url="@../Images/eye-solid.png" />
                     </image>
                 </ImageView>
             </graphic>
