@@ -1,7 +1,10 @@
 package view;
 
+import Model.User;
 import static Utils.UtilsMethods.logger;
+import java.util.Optional;
 import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,14 +20,20 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 /**
- * The MainController handles the main functionalities of the main screen of the application.
- * It includes actions for showing and hiding the password, as well as logging out.
- * This class is linked to the main FXML view where user interactions are handled.
- * 
- * <p>This controller allows the user to view the password in plain text, hide the password, and log out to the login screen.</p>
- * 
+ * The MainController handles the main functionalities of the main screen of the
+ * application. It includes actions for showing and hiding the password, as well
+ * as logging out. This class is linked to the main FXML view where user
+ * interactions are handled.
+ *
+ * <p>
+ * This controller allows the user to view the password in plain text, hide the
+ * password, and log out to the login screen.</p>
+ *
  * @author Borja
  */
 public class MainController {
@@ -67,11 +76,17 @@ public class MainController {
 
     /**
      * Initializes the controller with the provided root element.
-     * 
+     *
      * @param root The root element of the scene.
      */
-    public void initStage(Parent root) {
+    public void initStage(Parent root, User user) {
         logger.info("Initializing MainController stage.");
+        Scene scene = new Scene(root);
+        // Set the stage properties
+        stage.setScene(scene);
+        stage.setTitle("Main");
+        stage.setResizable(false);
+        stage.getIcons().add(new Image("/Images/userIcon.png"));
 
         // Set initial visibility of password fields
         passwordField.setVisible(true);
@@ -86,11 +101,12 @@ public class MainController {
         eyeButton.setOnAction(this::togglePasswordVisibility);
 
         // Set up the stage if needed, e.g., adding close request handler
-        if (stage != null) {
-            stage.setOnCloseRequest(event -> handleOnCloseRequest(event));
-        }
+        stage.setOnCloseRequest(this::handleOnActionExit);
 
         logger.info("MainController initialized.");
+
+        //
+        stage.show();
     }
 
     /**
@@ -113,7 +129,7 @@ public class MainController {
 
     /**
      * Handles the copy action from the context menu.
-     * 
+     *
      * @param event The action event triggered by the context menu.
      */
     private void handleCopyAction(ActionEvent event) {
@@ -122,8 +138,9 @@ public class MainController {
 
     /**
      * Attaches the context menu to a TextField or PasswordField.
-     * 
-     * @param textField The text field to which the context menu will be attached.
+     *
+     * @param textField The text field to which the context menu will be
+     * attached.
      */
     private void attachContextMenuToTextField(TextField textField) {
         textField.setContextMenu(contextMenu);
@@ -151,7 +168,7 @@ public class MainController {
 
     /**
      * Handles the log out action and navigates to the login screen.
-     * 
+     *
      * @param event The action event triggered by the log out button.
      */
     @FXML
@@ -161,7 +178,7 @@ public class MainController {
 
     /**
      * Toggles the password visibility between masked and plain text.
-     * 
+     *
      * @param event The action event triggered by the eye button.
      */
     @FXML
@@ -180,8 +197,9 @@ public class MainController {
     }
 
     /**
-     * Navigates to a different screen based on the provided FXML path and title.
-     * 
+     * Navigates to a different screen based on the provided FXML path and
+     * title.
+     *
      * @param fxmlPath The path to the FXML file for the new screen.
      * @param windowTitle The title for the new window.
      */
@@ -201,13 +219,26 @@ public class MainController {
         }
     }
 
-    /**
-     * Handles the close request action to confirm exit or perform other tasks.
-     * 
-     * @param event The event triggered on close request.
-     */
-    private void handleOnCloseRequest(javafx.event.Event event) {
-        // Handle close request logic (e.g., show confirmation dialog)
-        logger.info("Handling close request.");
+    private void handleOnActionExit(Event event) {
+        try {
+            //Ask user for confirmation on exit
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Are you sure you want to exit the application?",
+                            ButtonType.OK, ButtonType.CANCEL);
+            Optional<ButtonType> result = alert.showAndWait();
+            //If OK to exit
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                Platform.exit();
+            } else {
+                event.consume();
+            }
+        } catch (Exception e) {
+            String errorMsg = "Error exiting application:" + e.getMessage();
+            Alert alert = new Alert(Alert.AlertType.ERROR,
+                            errorMsg,
+                            ButtonType.OK);
+            alert.showAndWait();
+            //LOGGER.log(Level.SEVERE, errorMsg);
+        }
     }
 }

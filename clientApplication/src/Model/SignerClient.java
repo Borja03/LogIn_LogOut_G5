@@ -68,7 +68,7 @@ public class SignerClient implements Signable {
      * @throws Exception Si ocurre un error durante el registro.
      */
     @Override
-    public User signUp(User user) throws Exception {
+    public User signUp(User user) throws ServerErrorException, UserAlreadyExistsException {
         ObjectOutputStream oos = null;
         ObjectInputStream ois = null;
 
@@ -97,10 +97,10 @@ public class SignerClient implements Signable {
             switch (msg.getTipo()) {
                 case OK_RESPONSE:
                     return user;
-                case INCORRECT_CREDENTIALS_RESPONSE:
-                    throw new IncorrectCredentialsException("Email o contraseña incorrectos.");
+                case EMAIL_EXISTS:
+                    throw new UserAlreadyExistsException("Email already exist.");
                 case SERVER_ERROR:
-                    throw new ConnectionException("Ha ocurrido un error en el servidor.");
+                    throw new ServerErrorException("Server not working");
             }
             //Control de excepciones
         } catch (ClassNotFoundException ex) {
@@ -174,7 +174,7 @@ public class SignerClient implements Signable {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         //Devuelve un obejto user
-        return user;
+        return null;
     }
 
 }
