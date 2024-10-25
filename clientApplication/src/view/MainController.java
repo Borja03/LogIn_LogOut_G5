@@ -30,6 +30,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+
 
 /**
  * The MainController handles the main functionalities of the main screen of the
@@ -45,6 +47,17 @@ import javafx.scene.layout.Pane;
  */
 public class MainController {
 
+    // FXML components to display user details
+    @FXML
+    private TextField emailField;  // TextField to display user's email
+
+    @FXML
+    private TextField nameField;   // TextField to display user's name
+
+    @FXML
+    private TextField addressField; // TextField to display user's address
+
+    // Password-related fields
     @FXML
     private PasswordField passwordField; // The masked password input
 
@@ -59,6 +72,9 @@ public class MainController {
 
     @FXML
     private ImageView eyeImageView; // Eye icon for password visibility
+    
+    @FXML
+    private Pane mainPane;
 
     // Image paths for the eye icons
     private final Image eyeClosed = new Image(getClass().getResourceAsStream("/Images/eye-solid.png"));
@@ -68,33 +84,6 @@ public class MainController {
 
     // Context menus for copying selected text
     private ContextMenu contextMenu;
-    private String currentTheme = "light";
-
-    @FXML
-    private ImageView imgCity;
-
-    @FXML
-    private ImageView imgEmail;
-
-    @FXML
-    private ImageView imgKey;
-
-    @FXML
-    private ImageView imgLock;
-
-    @FXML
-    private ImageView imgShowPassword;
-
-    @FXML
-    private ImageView imgStreet;
-
-    @FXML
-    private ImageView imgUser;
-
-    @FXML
-    private ImageView imgZIP;
-    @FXML
-    private Pane mainPane;
 
     // Stage to manage the current window
     private Stage stage;
@@ -106,22 +95,24 @@ public class MainController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-    }
+    }    
+    
+    private String currentTheme = "light";
 
     /**
-     * Initializes the controller with the provided root element.
+     * Initializes the controller with the provided root element and the user data.
      *
      * @param root The root element of the scene.
+     * @param user The user object containing the user's details.
      */
     public void initStage(Parent root, User user) {
         logger.info("Initializing MainController stage.");
         Scene scene = new Scene(root);
-        // Set the stage properties
         stage.setScene(scene);
         stage.setTitle("Main");
         stage.setResizable(false);
         stage.getIcons().add(new Image("/Images/userIcon.png"));
-
+        
         // Set initial visibility of password fields
         passwordField.setVisible(true);
         plainPasswordField.setVisible(false);
@@ -129,48 +120,62 @@ public class MainController {
 
         // Initialize the context menu for copy functionality
         createContextMenu();
-        root.setOnContextMenuRequested(this::showContextMenu);
 
         // Link event handlers
         logOutButton.setOnAction(this::logOut);
         eyeButton.setOnAction(this::togglePasswordVisibility);
 
-        // Set up the stage if needed, e.g., adding close request handler
-        stage.setOnCloseRequest(this::handleOnActionExit);
+        // Set user details in text fields
+        //emailField.setText(user.getEmail());
+       //nameField.setText(user.getName());
+
+        // Concatenate street, city, and zip for the address field
+       // String address = String.format("%s, %s, %d", user.getStreet(), user.getCity(), user.getZip());
+        //addressField.setText(address);
+        
+        // Set the user's password (ensure that this is a secure way of handling passwords)
+        //passwordField.setText(user.getPassword()); // Asegúrate de que tengas acceso a la contraseña aquí
+        
+        // menu
+        // Initialize context menu
+        initializeContextMenu();
+
+        // Add context menu to the scene
+        root.setOnContextMenuRequested(this::showContextMenu);
+
+        // Load default theme
+        currentTheme = loadThemePreference();
+        loadTheme(currentTheme);
 
         logger.info("MainController initialized.");
-
-        //
         stage.show();
     }
 
     /**
      * Creates a context menu with a copy option for selected text.
      */
-    private void showContextMenu(ContextMenuEvent event) {
-        contextMenu.show(mainPane, event.getScreenX(), event.getScreenY());
-    }
-    
     private void createContextMenu() {
         contextMenu = new ContextMenu();
         MenuItem copyItem = new MenuItem("Copy");
-
-        // Set action for the copy menu item
-        copyItem.setOnAction(this::handleCopyAction);
-
         MenuItem lightMode = new MenuItem("Light Mode");
         MenuItem darkMode = new MenuItem("Dark Mode");
-        MenuItem clearFields = new MenuItem("Clear Fields");
+        
 
         lightMode.setOnAction(e -> switchTheme("light"));
         darkMode.setOnAction(e -> switchTheme("dark"));
 
+        // Set action for the copy menu item
+        copyItem.setOnAction(this::handleCopyAction);
+
         // Add the copy option to the context menu
-        contextMenu.getItems().addAll(copyItem, lightMode, darkMode, clearFields);
+        contextMenu.getItems().add(copyItem);
 
         // Attach the context menu to relevant text fields
         attachContextMenuToTextField(passwordField);
         attachContextMenuToTextField(plainPasswordField);
+    }
+    private void showContextMenu(ContextMenuEvent event) {
+        contextMenu.show(mainPane, event.getScreenX(), event.getScreenY());
     }
 
     private void saveThemePreference(String theme) {
@@ -213,13 +218,7 @@ public class MainController {
 
             String cssFile = "/css/dark-styles.css";
             scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
-            imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid-white.png")));
-            imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid-white.png")));
-            imgKey.setImage(new Image(getClass().getResourceAsStream("/Images/key-solid-white.png")));
-            imgUser.setImage(new Image(getClass().getResourceAsStream("/Images/user-solid-white.png")));
-            imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid-white.png")));
-            imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid-white.png")));
-            imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP-white.png")));
+             contextMenu.getStyleClass().add("context-menu-dark");
 
             // Aquí puedes agregar más acciones específicas para el tema oscuro
         } else if (theme.equals("light")) {
@@ -228,13 +227,7 @@ public class MainController {
             String cssFile = "/css/CSSglobal.css";
 
             scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
-            imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid.png")));
-            imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid.png")));
-            imgKey.setImage(new Image(getClass().getResourceAsStream("/Images/key-solid.png")));
-            imgUser.setImage(new Image(getClass().getResourceAsStream("/Images/user-solid.png")));
-            imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid.png")));
-            imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid.png")));
-            imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP.png")));
+             contextMenu.getStyleClass().remove("context-menu-dark");
 
             // Aquí puedes agregar más acciones específicas para el tema claro
         }
@@ -252,12 +245,31 @@ public class MainController {
     /**
      * Attaches the context menu to a TextField or PasswordField.
      *
-     * @param textField The text field to which the context menu will be
-     * attached.
+     * @param textField The text field to which the context menu will be attached.
      */
     private void attachContextMenuToTextField(TextField textField) {
         textField.setContextMenu(contextMenu);
     }
+    
+    //menu and theme
+    private void initializeContextMenu() {
+        contextMenu = new ContextMenu();
+
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem darkMode = new MenuItem("Dark Mode");
+
+        lightMode.setOnAction(e -> switchTheme("light"));
+        darkMode.setOnAction(e -> switchTheme("dark"));
+
+        contextMenu.getItems().addAll(lightMode, darkMode);
+    }
+
+ 
+
+   
+
+
+    
 
     /**
      * Copies the selected text from the active text field to the clipboard.
@@ -303,7 +315,7 @@ public class MainController {
         } else {
             passwordField.setVisible(false);
             plainPasswordField.setVisible(true);
-            plainPasswordField.setText(passwordField.getText());
+            plainPasswordField.setText(passwordField.getText()); // Mostrar la contraseña real
             eyeImageView.setImage(eyeOpen);
         }
         passwordIsVisible = !passwordIsVisible;
@@ -332,14 +344,19 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the exit action with confirmation dialog.
+     *
+     * @param event The event triggered when closing the stage.
+     */
     private void handleOnActionExit(Event event) {
         try {
-            //Ask user for confirmation on exit
+            // Ask user for confirmation on exit
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                     "Are you sure you want to exit the application?",
                     ButtonType.OK, ButtonType.CANCEL);
             Optional<ButtonType> result = alert.showAndWait();
-            //If OK to exit
+            // If OK to exit
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 Platform.exit();
             } else {
@@ -351,7 +368,6 @@ public class MainController {
                     errorMsg,
                     ButtonType.OK);
             alert.showAndWait();
-            //LOGGER.log(Level.SEVERE, errorMsg);
         }
     }
 }

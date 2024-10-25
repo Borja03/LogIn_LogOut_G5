@@ -3,7 +3,6 @@ package view;
 import Model.SignableFactory;
 import Model.User;
 import static Utils.UtilsMethods.logger;
-
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
 import exception.InvalidEmailFormatException;
@@ -12,12 +11,10 @@ import exception.InvalidStreetFormatException;
 import exception.InvalidZipFormatException;
 import exception.ServerErrorException;
 import exception.UserAlreadyExistsException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -237,6 +234,7 @@ public class SignUpController {
             imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid-white.png")));
             imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid-white.png")));
             imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP-white.png")));
+             contextMenu.getStyleClass().add("context-menu-dark");
 
             // Aquí puedes agregar más acciones específicas para el tema oscuro
         } else if (theme.equals("light")) {
@@ -252,6 +250,7 @@ public class SignUpController {
             imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid.png")));
             imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid.png")));
             imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP.png")));
+             contextMenu.getStyleClass().remove("context-menu-dark");
 
             // Aquí puedes agregar más acciones específicas para el tema claro
         }
@@ -441,23 +440,26 @@ public class SignUpController {
         navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
 
-    private void navigateToScreen(String fxmlPath, String windowTitle) {
+    private void navigateToScreen(String fxmlPath, String title) {
         try {
-            // Load the FXML file of the target view
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Scene scene = new Scene(loader.load());
-
+            Parent root = loader.load();
             // Get the current stage
-            Stage currentStage = (Stage) btn_signup.getScene().getWindow();
+            
+                logInController controller = loader.getController();
+                Stage newStage = new Stage();
+                controller.setStage(newStage);
+                controller.initialize(root);
 
-            // Change the current stage's scene to the new scene
-            currentStage.setScene(scene);
-            currentStage.setTitle(windowTitle); // Set the title of the new window
-            currentStage.show();
+            
 
-            LOGGER.log(Level.INFO, "Navigated to {0} screen.", windowTitle);
+            stage = (Stage) btn_signup.getScene().getWindow();
+            //stage.hide();
+            stage.close();
+            logger.log(Level.SEVERE, "Stage closed");
+
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
+            logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
         }
     }
 

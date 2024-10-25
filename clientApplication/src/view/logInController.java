@@ -21,7 +21,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import exception.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 import javafx.scene.Parent;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.BorderPane;
 
 /**
  * Controlador para la interfaz de inicio de sesión. Este controlador maneja la
@@ -70,7 +79,11 @@ public class logInController {
 
     @FXML
     private ImageView passwordImage; // Imagen que indica la visibilidad de la contraseña.
+    @FXML
+    private BorderPane borderPane;
 
+    private ContextMenu contextMenu;
+    private String currentTheme = "light";
     @FXML
     private Pane centralPane;
     private Stage stage;
@@ -91,10 +104,108 @@ public class logInController {
      * Método que se ejecuta al inicializar el controlador. Configura el campo
      * de texto visible para la contraseña y agrega un listener para validar el
      * email cuando pierde el foco.
+     *
+     * @param root
      */
     @FXML
-    public void initialize() {
-        visiblePasswordField.setVisible(false); // Inicialmente, el campo de texto visible está oculto
+    public void initialize(Parent root) {
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("SignIn");
+        stage.setResizable(false);
+        stage.centerOnScreen();
+
+        visiblePasswordField.setVisible(false);
+        initializeContextMenu();
+
+        // Asigna el menú contextual al BorderPane
+        borderPane.setOnContextMenuRequested(this::showContextMenu);
+
+        currentTheme = loadThemePreference();
+        loadTheme(currentTheme);
+        stage.show();
+    }
+
+    //menu and theme
+    private void initializeContextMenu() {
+        contextMenu = new ContextMenu();
+
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem darkMode = new MenuItem("Dark Mode");
+        MenuItem clearFields = new MenuItem("Clear Fields");
+
+        lightMode.setOnAction(e -> switchTheme("light"));
+        darkMode.setOnAction(e -> switchTheme("dark"));
+        clearFields.setOnAction(e -> clearAllFields());
+
+        contextMenu.getItems().addAll(lightMode, darkMode, clearFields);
+    }
+
+    private void showContextMenu(ContextMenuEvent event) {
+        contextMenu.show(centralPane, event.getScreenX(), event.getScreenY());
+    }
+
+    private void saveThemePreference(String theme) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("theme", theme);
+            File file = new File("config.properties");
+            props.store(new FileOutputStream(file), "Theme Settings");
+        } catch (IOException e) {
+            logger.severe("Error saving theme preference: " + e.getMessage());
+        }
+    }
+
+    private String loadThemePreference() {
+        try {
+            Properties props = new Properties();
+            File file = new File("config.properties");
+            if (file.exists()) {
+                props.load(new FileInputStream(file));
+                return props.getProperty("theme", "light");
+            }
+        } catch (IOException e) {
+            logger.severe("Error loading theme preference: " + e.getMessage());
+        }
+        return "light";
+    }
+
+    private void switchTheme(String theme) {
+        currentTheme = theme;
+        loadTheme(theme);
+        saveThemePreference(theme);
+    }
+
+    private void loadTheme(String theme) {
+        Scene scene = stage.getScene();
+        scene.getStylesheets().clear();
+
+        if (theme.equals("dark")) {
+            // Código adicional para el tema oscuro
+
+            String cssFile = "/css/dark-styles.css";
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+
+            contextMenu.getStyleClass().add("context-menu-dark");
+
+            // Aquí puedes agregar más acciones específicas para el tema oscuro
+        } else if (theme.equals("light")) {
+            // Código adicional para el tema claro
+
+            String cssFile = "/css/CSSglobal.css";
+
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+
+            contextMenu.getStyleClass().remove("context-menu-dark");
+
+            // Aquí puedes agregar más acciones específicas para el tema claro
+        }
+    }
+
+    private void clearAllFields() {
+        emailTextField.clear();
+        passwordField.clear();
+
     }
 
     /**
@@ -113,17 +224,16 @@ public class logInController {
         user.setPassword(password);
 
         try {
+            
             User loggedInUser = SignableFactory.getSignable().signIn(user);
-            navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
+             navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
+
             if (loggedInUser != null) {
                 // Si el inicio de sesión es exitoso, navega a la pantalla principal
-                //navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
-            } else {
-                // Manejar el caso en que el usuario no se devuelve
-                utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
+               // navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
             }
-        } catch (UserAlreadyExistsException e) {
-            utils.showAlert("Error", "El usuario ya existe.");
+        } catch (IncorrectCredentialsException e) {
+            utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
             logger.warning(e.getMessage());
         } catch (ConnectionException e) {
             utils.showAlert("Error", "Problemas de conexión con el servidor.");
@@ -141,7 +251,7 @@ public class logInController {
     @FXML
     private void handleCreateUserLinkAction() {
         logger.info("Abrir vista de registro.");
-        navigateToScreen("/view/SignUpView.fxml", "SignUp",false, null);
+        navigateToScreen("/view/SignUpView.fxml", "SignUp", false, null);
     }
 
     /**
@@ -153,12 +263,12 @@ public class logInController {
         isPasswordVisible = !isPasswordVisible;
 
         if (isPasswordVisible) {
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png")));
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordVisible.png")));
             passwordField.setVisible(false);
             visiblePasswordField.setVisible(true);
             visiblePasswordField.setText(passwordField.getText());
         } else {
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png")));
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png")));
             passwordField.setVisible(true);
             visiblePasswordField.setVisible(false);
             passwordField.setText(visiblePasswordField.getText());
@@ -174,21 +284,6 @@ public class logInController {
      */
     private void navigateToScreen(String fxmlPath, String title, boolean main, User user) {
         try {
-            // Cargar el archivo FXML de la vista objetivo
-
-            // Cargar el archivo FXML de la vista objetivo
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-//            Scene scene = new Scene(loader.load());
-//
-//            // Obtener el escenario actual
-//            Stage currentStage = (Stage) logInButton.getScene().getWindow();
-//
-//            // Cambiar la escena del escenario actual a la nueva escena
-//            currentStage.setScene(scene);
-//            currentStage.setTitle(title); // Establecer el título de la nueva ventana
-//            currentStage.show();
-//
-//            logger.log(Level.INFO, "Navigated to " + title + " screen.");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             // Get the current stage

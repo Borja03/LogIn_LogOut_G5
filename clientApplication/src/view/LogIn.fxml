@@ -18,7 +18,7 @@
             <TextField fx:id="emailTextField" layoutX="31.0" layoutY="79.0" prefHeight="42.0" prefWidth="518.0" />
             <PasswordField fx:id="passwordField" layoutX="31.0" layoutY="200.0" prefHeight="42.0" prefWidth="518.0" />
             <TextField fx:id="visiblePasswordField" layoutX="31.0" layoutY="200.0" prefHeight="42.0" prefWidth="518.0" visible="false" />
-            <Label fx:id="emailLabel" layoutX="31.0" layoutY="53.0" prefHeight="17.0" prefWidth="69.0" text="Email" />
+            <Label fx:id="labelEmail" layoutX="31.0" layoutY="53.0" prefHeight="17.0" prefWidth="69.0" text="Email" />
             <Label fx:id="passwordLabel" layoutX="31.0" layoutY="174.0" prefHeight="17.0" prefWidth="69.0" text="Password" />
 
             <VBox alignment="CENTER" layoutX="220.0" layoutY="270.0" spacing="5">
