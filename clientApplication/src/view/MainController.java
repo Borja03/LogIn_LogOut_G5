@@ -32,7 +32,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-
 /**
  * The MainController handles the main functionalities of the main screen of the
  * application. It includes actions for showing and hiding the password, as well
@@ -72,7 +71,7 @@ public class MainController {
 
     @FXML
     private ImageView eyeImageView; // Eye icon for password visibility
-    
+
     @FXML
     private Pane mainPane;
 
@@ -95,12 +94,13 @@ public class MainController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-    }    
-    
+    }
+
     private String currentTheme = "light";
 
     /**
-     * Initializes the controller with the provided root element and the user data.
+     * Initializes the controller with the provided root element and the user
+     * data.
      *
      * @param root The root element of the scene.
      * @param user The user object containing the user's details.
@@ -112,7 +112,7 @@ public class MainController {
         stage.setTitle("Main");
         stage.setResizable(false);
         stage.getIcons().add(new Image("/Images/userIcon.png"));
-        
+
         // Set initial visibility of password fields
         passwordField.setVisible(true);
         plainPasswordField.setVisible(false);
@@ -126,16 +126,16 @@ public class MainController {
         eyeButton.setOnAction(this::togglePasswordVisibility);
 
         // Set user details in text fields
-        //emailField.setText(user.getEmail());
-       //nameField.setText(user.getName());
+        emailField.setText(user.getEmail());
+        nameField.setText(user.getName());
 
         // Concatenate street, city, and zip for the address field
-       // String address = String.format("%s, %s, %d", user.getStreet(), user.getCity(), user.getZip());
-        //addressField.setText(address);
-        
+        String address = String.format("%s, %s, %d", user.getStreet(), user.getCity(), user.getZip());
+        addressField.setText(address);
+
         // Set the user's password (ensure that this is a secure way of handling passwords)
-        //passwordField.setText(user.getPassword()); // Asegúrate de que tengas acceso a la contraseña aquí
-        
+        passwordField.setText(user.getPassword()); // Asegúrate de que tengas acceso a la contraseña aquí
+
         // menu
         // Initialize context menu
         initializeContextMenu();
@@ -159,7 +159,6 @@ public class MainController {
         MenuItem copyItem = new MenuItem("Copy");
         MenuItem lightMode = new MenuItem("Light Mode");
         MenuItem darkMode = new MenuItem("Dark Mode");
-        
 
         lightMode.setOnAction(e -> switchTheme("light"));
         darkMode.setOnAction(e -> switchTheme("dark"));
@@ -174,6 +173,7 @@ public class MainController {
         attachContextMenuToTextField(passwordField);
         attachContextMenuToTextField(plainPasswordField);
     }
+
     private void showContextMenu(ContextMenuEvent event) {
         contextMenu.show(mainPane, event.getScreenX(), event.getScreenY());
     }
@@ -218,7 +218,7 @@ public class MainController {
 
             String cssFile = "/css/dark-styles.css";
             scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
-             contextMenu.getStyleClass().add("context-menu-dark");
+            contextMenu.getStyleClass().add("context-menu-dark");
 
             // Aquí puedes agregar más acciones específicas para el tema oscuro
         } else if (theme.equals("light")) {
@@ -227,7 +227,7 @@ public class MainController {
             String cssFile = "/css/CSSglobal.css";
 
             scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
-             contextMenu.getStyleClass().remove("context-menu-dark");
+            contextMenu.getStyleClass().remove("context-menu-dark");
 
             // Aquí puedes agregar más acciones específicas para el tema claro
         }
@@ -245,12 +245,13 @@ public class MainController {
     /**
      * Attaches the context menu to a TextField or PasswordField.
      *
-     * @param textField The text field to which the context menu will be attached.
+     * @param textField The text field to which the context menu will be
+     * attached.
      */
     private void attachContextMenuToTextField(TextField textField) {
         textField.setContextMenu(contextMenu);
     }
-    
+
     //menu and theme
     private void initializeContextMenu() {
         contextMenu = new ContextMenu();
@@ -263,13 +264,6 @@ public class MainController {
 
         contextMenu.getItems().addAll(lightMode, darkMode);
     }
-
- 
-
-   
-
-
-    
 
     /**
      * Copies the selected text from the active text field to the clipboard.

@@ -240,8 +240,7 @@ public class SignUpController {
         } else if (theme.equals("light")) {
             // Código adicional para el tema claro
 
-            String cssFile = "/css/CSSglobal.css";
-
+            String cssFile = "/css/light-styles.css";
             scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
             imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid.png")));
             imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid.png")));

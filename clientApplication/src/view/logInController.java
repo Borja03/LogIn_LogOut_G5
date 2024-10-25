@@ -224,13 +224,13 @@ public class logInController {
         user.setPassword(password);
 
         try {
-            
+
             User loggedInUser = SignableFactory.getSignable().signIn(user);
-             navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
+            navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
 
             if (loggedInUser != null) {
                 // Si el inicio de sesión es exitoso, navega a la pantalla principal
-               // navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
+                navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
             }
         } catch (IncorrectCredentialsException e) {
             utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
@@ -292,19 +292,15 @@ public class logInController {
                 Stage newStage = new Stage();
                 controller.setStage(newStage);
                 controller.initStage(root);
+                stage.close();
 
             } else {
                 MainController controller = loader.getController();
                 Stage newStage = new Stage();
                 controller.setStage(newStage);
                 controller.initStage(root, user);
-
+                stage.close();
             }
-
-            stage = (Stage) logInButton.getScene().getWindow();
-            //stage.hide();
-            stage.close();
-            logger.log(Level.SEVERE, "Stage closed");
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
