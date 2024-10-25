@@ -10,7 +10,7 @@ package Model;
  * @author Alder
  */
 public class numThread {
-    private Integer threadCount;
+     private Integer threadCount = 0;
 
     public synchronized void increment(){
             threadCount++;

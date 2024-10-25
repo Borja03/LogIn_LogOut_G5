@@ -1,5 +1,6 @@
 package serverapplication;
 
+import Model.Server;
 import Model.Worker;
 
 /**
@@ -39,7 +40,7 @@ public class ServerApplication {
         }
         
         // Create a server instance
-        Worker server = new Worker();
+        Server server = new Server();
         
         // Start the server
         server.start();
