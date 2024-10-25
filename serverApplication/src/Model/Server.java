@@ -9,9 +9,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class represents a custom server socket that listens for client connections,
- * processes incoming requests, and creates Worker instances to handle each client.
- * 
+ * This class represents a custom server socket that listens for client
+ * connections, processes incoming requests, and creates Worker instances to
+ * handle each client.
+ *
  * @Author Borja
  */
 public class Server {
@@ -21,13 +22,11 @@ public class Server {
 
     // Load configuration settings
     private static final ResourceBundle config = ResourceBundle.getBundle("Utils.socketConfig");
-    private static final int MAX_USERS = Integer.parseInt(config.getString("MAX_USERS"));
     private static final int PORT = Integer.parseInt(config.getString("PORT"));
 
     // Server state variables
     private static boolean serverOn = true;
     private ServerSocket serverSocket;
-    private static final numThread clientCounter = new numThread(); // Thread-safe client counting
 
     /**
      * Constructor for initializing the server with the port from configuration.
@@ -50,22 +49,14 @@ public class Server {
             // Accept clients continuously while server is on
             while (serverOn) {
                 logger.info("Listening for new connections...");
-                try {           
-                        if (clientCounter.value() < MAX_USERS) {
-                            // Accept client connections
-                            Socket clientSocket = serverSocket.accept();
-                            logger.info("New client connected");
+                try {
+                    // Accept client connections
+                    Socket clientSocket = serverSocket.accept();
+                    logger.info("New client connected");
 
-                            // Increment the number of connected clients
-                            clientCounter.increment();
+                    // Create a new thread to handle communication with the client
+                    new Thread(new Worker(clientSocket)).start();
 
-                            // Create a new thread to handle communication with the client
-                            new Thread(new Worker(clientSocket, clientCounter)).start();
-                        } else {
-                            logger.warning("Max users reached, rejecting new connection.");
-                            Socket tempSocket = serverSocket.accept();
-                            tempSocket.close();                      
-                    }
                 } catch (SocketException e) {
                     // If the socket is closed, exit the loop gracefully
                     logger.warning("Server socket closed. Stopping accept loop.");
@@ -110,4 +101,3 @@ public class Server {
         }
     }
 }
-   

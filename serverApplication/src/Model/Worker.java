@@ -5,27 +5,30 @@ import database.*;
 import exception.*;
 import java.io.*;
 import java.net.Socket;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class represents a worker that handles communication with a single client
- * in a separate thread.
- * 
+ * This class represents a worker that handles communication with a single
+ * client in a separate thread.
+ *
  * @Author Borja
  */
 public class Worker implements Runnable {
 
     private static final Logger logger = Logger.getLogger(Worker.class.getName());
     private Socket socket;
-    private numThread clientCounter;
+    private static final numThread clientCounter = new numThread(); // Thread-safe client counting
+    private static final ResourceBundle config = ResourceBundle.getBundle("Utils.socketConfig");
+    private static final int MAX_USERS = Integer.parseInt(config.getString("MAX_USERS"));
 
     /**
-     * Constructor to initialize the worker with the client socket and client counter.
+     * Constructor to initialize the worker with the client socket and client
+     * counter.
      */
-    public Worker(Socket socket, numThread clientCounter) {
+    public Worker(Socket socket) {
         this.socket = socket;
-        this.clientCounter = clientCounter;
     }
 
     /**
@@ -38,37 +41,44 @@ public class Worker implements Runnable {
         Message msg = null;
 
         try {
-            objectReader = new ObjectInputStream(socket.getInputStream());
-            msg = (Message) objectReader.readObject();
+            if (clientCounter.value() < MAX_USERS) {
+                clientCounter.increment();
+                logger.info("Numero de hilos de cliente: " + clientCounter.value());
+                objectReader = new ObjectInputStream(socket.getInputStream());
+                msg = (Message) objectReader.readObject();
 
-            // Log the entire message received for debugging
-            logger.info("Mensaje recibido: " + msg);
+                // Log the entire message received for debugging
+                logger.info("Mensaje recibido: " + msg);
 
-            // Check if the user object is not null
-            if (msg.getUser() != null) {
-                String userEmail = msg.getUser().getEmail();
-                switch (msg.getTipo()) {
-                    case SIGN_IN_REQUEST:
-                        logger.info("Iniciando sesión para el usuario: " + userEmail);
-                        User user = signable.signIn(msg.getUser());
-                        msg.setUser(user);
-                        msg.setTipo(user == null ? TipoMensaje.SERVER_ERROR : TipoMensaje.OK_RESPONSE);
-                        break;
+                // Check if the user object is not null
+                if (msg.getUser() != null) {
+                    String userEmail = msg.getUser().getEmail();
+                    switch (msg.getTipo()) {
+                        case SIGN_IN_REQUEST:
+                            logger.info("Iniciando sesión para el usuario: " + userEmail);
+                            User user = signable.signIn(msg.getUser());
+                            msg.setUser(user);
+                            msg.setTipo(user == null ? TipoMensaje.SERVER_ERROR : TipoMensaje.OK_RESPONSE);
+                            break;
 
-                    case SIGN_UP_REQUEST:
-                        logger.info("Registrando usuario: " + userEmail);
-                        user = signable.signUp(msg.getUser());
-                        msg.setUser(user);
-                        msg.setTipo(user == null ? TipoMensaje.SERVER_ERROR : TipoMensaje.OK_RESPONSE);
-                        break;
+                        case SIGN_UP_REQUEST:
+                            logger.info("Registrando usuario: " + userEmail);
+                            user = signable.signUp(msg.getUser());
+                            msg.setUser(user);
+                            msg.setTipo(user == null ? TipoMensaje.SERVER_ERROR : TipoMensaje.OK_RESPONSE);
+                            break;
 
-                    default:
-                        logger.warning("Tipo de mensaje desconocido: " + msg.getTipo());
-                        msg.setTipo(TipoMensaje.SERVER_ERROR);
-                        break;
+                        default:
+                            logger.warning("Tipo de mensaje desconocido: " + msg.getTipo());
+                            msg.setTipo(TipoMensaje.SERVER_ERROR);
+                            break;
+                    }
+                } else {
+                    msg.setTipo(TipoMensaje.MAX_THREAD_USER);
+                    logger.warning("Maximo de usuarios alcanzado.");
                 }
             } else {
-                logger.warning("Mensaje recibido sin usuario asociado.");
+                logger.warning("Max users reached, rejecting new connection.");
             }
 
         } catch (IncorrectCredentialsException e) {
