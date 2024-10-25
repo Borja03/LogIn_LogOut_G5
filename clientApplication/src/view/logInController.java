@@ -21,7 +21,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import exception.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 import javafx.scene.Parent;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.BorderPane;
 
 /**
  * Controlador para la interfaz de inicio de sesión. Este controlador maneja la
@@ -70,7 +79,11 @@ public class logInController {
 
     @FXML
     private ImageView passwordImage; // Imagen que indica la visibilidad de la contraseña.
+    @FXML
+    private BorderPane borderPane;
 
+    private ContextMenu contextMenu;
+    private String currentTheme = "light";
     @FXML
     private Pane centralPane;
     private Stage stage;
@@ -91,20 +104,108 @@ public class logInController {
      * Método que se ejecuta al inicializar el controlador. Configura el campo
      * de texto visible para la contraseña y agrega un listener para validar el
      * email cuando pierde el foco.
+     *
+     * @param root
      */
     @FXML
     public void initialize(Parent root) {
-         Scene scene = new Scene(root);
-        // Set the stage properties
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("SignIn");
         stage.setResizable(false);
-        // stage.initModality(Modality.APPLICATION_MODAL);
         stage.centerOnScreen();
-        
-        visiblePasswordField.setVisible(false); // Inicialmente, el campo de texto visible está oculto
-        
+
+        visiblePasswordField.setVisible(false);
+        initializeContextMenu();
+
+        // Asigna el menú contextual al BorderPane
+        borderPane.setOnContextMenuRequested(this::showContextMenu);
+
+        currentTheme = loadThemePreference();
+        loadTheme(currentTheme);
         stage.show();
+    }
+
+    //menu and theme
+    private void initializeContextMenu() {
+        contextMenu = new ContextMenu();
+
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem darkMode = new MenuItem("Dark Mode");
+        MenuItem clearFields = new MenuItem("Clear Fields");
+
+        lightMode.setOnAction(e -> switchTheme("light"));
+        darkMode.setOnAction(e -> switchTheme("dark"));
+        clearFields.setOnAction(e -> clearAllFields());
+
+        contextMenu.getItems().addAll(lightMode, darkMode, clearFields);
+    }
+
+    private void showContextMenu(ContextMenuEvent event) {
+        contextMenu.show(centralPane, event.getScreenX(), event.getScreenY());
+    }
+
+    private void saveThemePreference(String theme) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("theme", theme);
+            File file = new File("config.properties");
+            props.store(new FileOutputStream(file), "Theme Settings");
+        } catch (IOException e) {
+            logger.severe("Error saving theme preference: " + e.getMessage());
+        }
+    }
+
+    private String loadThemePreference() {
+        try {
+            Properties props = new Properties();
+            File file = new File("config.properties");
+            if (file.exists()) {
+                props.load(new FileInputStream(file));
+                return props.getProperty("theme", "light");
+            }
+        } catch (IOException e) {
+            logger.severe("Error loading theme preference: " + e.getMessage());
+        }
+        return "light";
+    }
+
+    private void switchTheme(String theme) {
+        currentTheme = theme;
+        loadTheme(theme);
+        saveThemePreference(theme);
+    }
+
+    private void loadTheme(String theme) {
+        Scene scene = stage.getScene();
+        scene.getStylesheets().clear();
+
+        if (theme.equals("dark")) {
+            // Código adicional para el tema oscuro
+
+            String cssFile = "/css/dark-styles.css";
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+
+            contextMenu.getStyleClass().add("context-menu-dark");
+
+            // Aquí puedes agregar más acciones específicas para el tema oscuro
+        } else if (theme.equals("light")) {
+            // Código adicional para el tema claro
+
+            String cssFile = "/css/CSSglobal.css";
+
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+
+            contextMenu.getStyleClass().remove("context-menu-dark");
+
+            // Aquí puedes agregar más acciones específicas para el tema claro
+        }
+    }
+
+    private void clearAllFields() {
+        emailTextField.clear();
+        passwordField.clear();
+
     }
 
     /**
@@ -123,7 +224,9 @@ public class logInController {
         user.setPassword(password);
 
         try {
+
             User loggedInUser = SignableFactory.getSignable().signIn(user);
+            navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
 
             if (loggedInUser != null) {
                 // Si el inicio de sesión es exitoso, navega a la pantalla principal
@@ -148,7 +251,7 @@ public class logInController {
     @FXML
     private void handleCreateUserLinkAction() {
         logger.info("Abrir vista de registro.");
-        navigateToScreen("/view/SignUpView.fxml", "SignUp",false, null);
+        navigateToScreen("/view/SignUpView.fxml", "SignUp", false, null);
     }
 
     /**
@@ -189,19 +292,15 @@ public class logInController {
                 Stage newStage = new Stage();
                 controller.setStage(newStage);
                 controller.initStage(root);
+                stage.close();
 
             } else {
                 MainController controller = loader.getController();
                 Stage newStage = new Stage();
                 controller.setStage(newStage);
                 controller.initStage(root, user);
-
+                stage.close();
             }
-
-            stage = (Stage) logInButton.getScene().getWindow();
-            //stage.hide();
-            stage.close();
-            logger.log(Level.SEVERE, "Stage closed");
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);

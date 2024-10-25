@@ -2,7 +2,12 @@ package view;
 
 import Model.User;
 import static Utils.UtilsMethods.logger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -23,6 +28,9 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 /**
  * The MainController handles the main functionalities of the main screen of the
@@ -64,9 +72,12 @@ public class MainController {
     @FXML
     private ImageView eyeImageView; // Eye icon for password visibility
 
+    @FXML
+    private Pane mainPane;
+
     // Image paths for the eye icons
-    private final Image eyeClosed = new Image(getClass().getResourceAsStream("/Images/passwordVisible.png"));
-    private final Image eyeOpen = new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png"));
+    private final Image eyeClosed = new Image(getClass().getResourceAsStream("/Images/eye-solid.png"));
+    private final Image eyeOpen = new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png"));
 
     private boolean passwordIsVisible = false;
 
@@ -83,10 +94,13 @@ public class MainController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-    }    
+    }
+
+    private String currentTheme = "light";
 
     /**
-     * Initializes the controller with the provided root element and the user data.
+     * Initializes the controller with the provided root element and the user
+     * data.
      *
      * @param root The root element of the scene.
      * @param user The user object containing the user's details.
@@ -98,7 +112,7 @@ public class MainController {
         stage.setTitle("Main");
         stage.setResizable(false);
         stage.getIcons().add(new Image("/Images/userIcon.png"));
-        
+
         // Set initial visibility of password fields
         passwordField.setVisible(true);
         plainPasswordField.setVisible(false);
@@ -118,9 +132,20 @@ public class MainController {
         // Concatenate street, city, and zip for the address field
         String address = String.format("%s, %s, %d", user.getStreet(), user.getCity(), user.getZip());
         addressField.setText(address);
-        
+
         // Set the user's password (ensure that this is a secure way of handling passwords)
         passwordField.setText(user.getPassword()); // Asegúrate de que tengas acceso a la contraseña aquí
+
+        // menu
+        // Initialize context menu
+        initializeContextMenu();
+
+        // Add context menu to the scene
+        root.setOnContextMenuRequested(this::showContextMenu);
+
+        // Load default theme
+        currentTheme = loadThemePreference();
+        loadTheme(currentTheme);
 
         logger.info("MainController initialized.");
         stage.show();
@@ -132,6 +157,11 @@ public class MainController {
     private void createContextMenu() {
         contextMenu = new ContextMenu();
         MenuItem copyItem = new MenuItem("Copy");
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem darkMode = new MenuItem("Dark Mode");
+
+        lightMode.setOnAction(e -> switchTheme("light"));
+        darkMode.setOnAction(e -> switchTheme("dark"));
 
         // Set action for the copy menu item
         copyItem.setOnAction(this::handleCopyAction);
@@ -142,6 +172,65 @@ public class MainController {
         // Attach the context menu to relevant text fields
         attachContextMenuToTextField(passwordField);
         attachContextMenuToTextField(plainPasswordField);
+    }
+
+    private void showContextMenu(ContextMenuEvent event) {
+        contextMenu.show(mainPane, event.getScreenX(), event.getScreenY());
+    }
+
+    private void saveThemePreference(String theme) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("theme", theme);
+            File file = new File("config.properties");
+            props.store(new FileOutputStream(file), "Theme Settings");
+        } catch (IOException e) {
+            logger.severe("Error saving theme preference: " + e.getMessage());
+        }
+    }
+
+    private String loadThemePreference() {
+        try {
+            Properties props = new Properties();
+            File file = new File("config.properties");
+            if (file.exists()) {
+                props.load(new FileInputStream(file));
+                return props.getProperty("theme", "light");
+            }
+        } catch (IOException e) {
+            logger.severe("Error loading theme preference: " + e.getMessage());
+        }
+        return "light";
+    }
+
+    private void switchTheme(String theme) {
+        currentTheme = theme;
+        loadTheme(theme);
+        saveThemePreference(theme);
+    }
+
+    private void loadTheme(String theme) {
+        Scene scene = stage.getScene();
+        scene.getStylesheets().clear();
+
+        if (theme.equals("dark")) {
+            // Código adicional para el tema oscuro
+
+            String cssFile = "/css/dark-styles.css";
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+            contextMenu.getStyleClass().add("context-menu-dark");
+
+            // Aquí puedes agregar más acciones específicas para el tema oscuro
+        } else if (theme.equals("light")) {
+            // Código adicional para el tema claro
+
+            String cssFile = "/css/CSSglobal.css";
+
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+            contextMenu.getStyleClass().remove("context-menu-dark");
+
+            // Aquí puedes agregar más acciones específicas para el tema claro
+        }
     }
 
     /**
@@ -156,10 +245,24 @@ public class MainController {
     /**
      * Attaches the context menu to a TextField or PasswordField.
      *
-     * @param textField The text field to which the context menu will be attached.
+     * @param textField The text field to which the context menu will be
+     * attached.
      */
     private void attachContextMenuToTextField(TextField textField) {
         textField.setContextMenu(contextMenu);
+    }
+
+    //menu and theme
+    private void initializeContextMenu() {
+        contextMenu = new ContextMenu();
+
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem darkMode = new MenuItem("Dark Mode");
+
+        lightMode.setOnAction(e -> switchTheme("light"));
+        darkMode.setOnAction(e -> switchTheme("dark"));
+
+        contextMenu.getItems().addAll(lightMode, darkMode);
     }
 
     /**
