@@ -114,7 +114,8 @@
                         <Insets bottom="5.0" />
                      </HBox.margin>
                   </GridPane>
-                  <Button fx:id="btn_show_password" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
+
+                  <Button fx:id="btn_show_password" mnemonicParsing="false">
                      <graphic>
                         <ImageView fx:id="imgShowPassword" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -321,7 +322,7 @@
                         </Label>
                         <CheckBox fx:id="chb_active" mnemonicParsing="false">
                            <HBox.margin>
-                              <Insets top="15.0" />
+                              <Insets left="52.0" top="15.0" />
                            </HBox.margin>
                         </CheckBox>
                      </children>

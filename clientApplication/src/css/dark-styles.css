@@ -4,36 +4,54 @@
 */
 
 /* General styles */
-/* dark-theme.css */
-/* dark-theme.css */
-
-/* Background colors */
 .root {
     -fx-background-color: #2c2f33;
 }
 
-.label, .text-field, .button {
+.label {
     -fx-text-fill: #ffffff; /* White text */
 }
 
+<<<<<<< HEAD
 .text-field {
+=======
+/* Style for TextFields */
+.text-field, .password-field {
+>>>>>>> 87fdadb77b39ca12ceecb96874f4a358b7321b90
     -fx-background-color: #23272a;
+    -fx-text-fill: #ffffff;
     -fx-border-color: #99aab5;
     -fx-border-width: 1px;
+<<<<<<< HEAD
+=======
+    -fx-border-radius: 5px;
+    -fx-background-radius: 10px;
+}
+
+.text-field:disabled, .password-field:disabled {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #ffffff;
+>>>>>>> 87fdadb77b39ca12ceecb96874f4a358b7321b90
 }
 
 .button {
     -fx-background-color: #7289da;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
 }
 
 .button:hover {
     -fx-background-color: #677bc4;
 }
 
-/* Style for any additional components */
-.combo-box, .password-field {
+.image-view {
+    -fx-opacity: 0.7;
+}
+
+/* ComboBox */
+.combo-box {
     -fx-background-color: #23272a;
     -fx-text-fill: #ffffff;
 }
@@ -50,3 +68,42 @@
 .menu-bar {
     -fx-background-color: #2c2f33;
 }
+
+#emailLabel {
+    -fx-font-size: 40px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+#logOutButton {
+    -fx-background-color: #7289da;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+}
+
+#logOutButton:hover {
+    -fx-background-color: #677bc4;
+}
+
+#eyeButton {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+#mainPane {
+    -fx-background-color: #2c2f33;
+}
+
+.context-menu-dark {
+    -fx-background-color: #333333; /* Fondo oscuro */
+    -fx-text-fill: #ffffff;        /* Texto blanco */
+}
+
+.context-menu-dark .menu-item {
+    -fx-background-color: #333333; /* Fondo oscuro de los ítems */
+    -fx-text-fill: #ffffff;        /* Texto blanco de los ítems */
+}
+.context-menu-dark .menu-item:hover {
+    -fx-background-color: #555555; /* Fondo más claro al pasar el cursor */
+    -fx-text-fill: #ffffff;
+}
+

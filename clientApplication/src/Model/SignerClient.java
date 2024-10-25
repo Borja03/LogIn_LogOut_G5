@@ -161,8 +161,8 @@ public class SignerClient implements Signable {
                     throw new IncorrectCredentialsException("Email o contraseña incorrectos.");
                 case SERVER_ERROR:
                     throw new ConnectionException("Ha ocurrido un error en el servidor.");
-                /*case MAX_THREAD_USER:
-                    throw new Exception("Maximo de usuarios alcanzado, inténtelo más tarde");*/
+                case MAX_THREAD_USER:
+                    throw new MaxThreadUserException("Maximo de usuarios alcanzado, inténtelo más tarde");
 
             }
             //Control de excepciones
