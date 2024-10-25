@@ -93,8 +93,18 @@ public class logInController {
      * email cuando pierde el foco.
      */
     @FXML
-    public void initialize() {
+    public void initialize(Parent root) {
+         Scene scene = new Scene(root);
+        // Set the stage properties
+        stage.setScene(scene);
+        stage.setTitle("SignIn");
+        stage.setResizable(false);
+        // stage.initModality(Modality.APPLICATION_MODAL);
+        stage.centerOnScreen();
+        
         visiblePasswordField.setVisible(false); // Inicialmente, el campo de texto visible está oculto
+        
+        stage.show();
     }
 
     /**
@@ -171,21 +181,6 @@ public class logInController {
      */
     private void navigateToScreen(String fxmlPath, String title, boolean main, User user) {
         try {
-            // Cargar el archivo FXML de la vista objetivo
-
-            // Cargar el archivo FXML de la vista objetivo
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-//            Scene scene = new Scene(loader.load());
-//
-//            // Obtener el escenario actual
-//            Stage currentStage = (Stage) logInButton.getScene().getWindow();
-//
-//            // Cambiar la escena del escenario actual a la nueva escena
-//            currentStage.setScene(scene);
-//            currentStage.setTitle(title); // Establecer el título de la nueva ventana
-//            currentStage.show();
-//
-//            logger.log(Level.INFO, "Navigated to " + title + " screen.");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             // Get the current stage
