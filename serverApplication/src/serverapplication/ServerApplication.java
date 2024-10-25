@@ -41,8 +41,5 @@ public class ServerApplication {
         
         // Create a server instance
         Server server = new Server();
-        
-        // Start the server
-        server.start();
-    }
+      }
 }

@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * 
  * @Author Borja
  */
-public class Server implements Runnable {
+public class Server {
 
     // Logger for logging server activities
     private static final Logger logger = Logger.getLogger(Server.class.getName());
@@ -33,13 +33,13 @@ public class Server implements Runnable {
      * Constructor for initializing the server with the port from configuration.
      */
     public Server() {
-        this.start();
+        this.startServer();
     }
 
     /**
      * Starts the server and begins listening for incoming client connections.
      */
-    public void start() {
+    public void startServer() {
         try {
             serverSocket = new ServerSocket(PORT);
             logger.info("Server is listening on port " + PORT);
@@ -50,8 +50,7 @@ public class Server implements Runnable {
             // Accept clients continuously while server is on
             while (serverOn) {
                 logger.info("Listening for new connections...");
-                try {
-                    synchronized (clientCounter) {
+                try {           
                         if (clientCounter.value() < MAX_USERS) {
                             // Accept client connections
                             Socket clientSocket = serverSocket.accept();
@@ -65,8 +64,7 @@ public class Server implements Runnable {
                         } else {
                             logger.warning("Max users reached, rejecting new connection.");
                             Socket tempSocket = serverSocket.accept();
-                            tempSocket.close();
-                        }
+                            tempSocket.close();                      
                     }
                 } catch (SocketException e) {
                     // If the socket is closed, exit the loop gracefully
@@ -110,11 +108,6 @@ public class Server implements Runnable {
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error stopping the server: " + e.getMessage(), e);
         }
-    }
-
-    @Override
-    public void run() {
-        // Main execution is handled in start()
     }
 }
    
