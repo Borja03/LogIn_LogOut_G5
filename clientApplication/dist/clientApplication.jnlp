@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="clientApplication.jar" size="423838" download="eager" />
+    <jar href="clientApplication.jar" size="423861" download="eager" />
     <jar href="lib\hamcrest-junit-2.0.0.0.jar" size="14347" download="eager" />
     <jar href="lib\java-hamcrest-2.0.0.0.jar" size="112929" download="eager" />
     <jar href="lib\junit-4.12.jar" size="316791" download="eager" />
