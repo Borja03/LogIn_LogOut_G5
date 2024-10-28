@@ -1,7 +1,6 @@
 package view;
 
 import Model.SignableFactory;
-import Model.SignerClient;
 import Model.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -15,12 +14,13 @@ import javafx.scene.image.ImageView;
 
 import java.util.logging.Logger;
 import Utils.UtilsMethods;
+import exception.*;
 import javafx.scene.layout.Pane;
 import java.util.logging.Level;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import exception.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -226,7 +226,6 @@ public class logInController {
         try {
 
             User loggedInUser = SignableFactory.getSignable().signIn(user);
-            navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
 
             if (loggedInUser != null) {
                 // Si el inicio de sesión es exitoso, navega a la pantalla principal
@@ -234,13 +233,13 @@ public class logInController {
             }
         } catch (IncorrectCredentialsException e) {
             utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
-            logger.warning(e.getMessage());
+            logger.warning("Credenciales incorrectas");
         } catch (ConnectionException e) {
             utils.showAlert("Error", "Problemas de conexión con el servidor.");
-            logger.warning(e.getMessage());
+            logger.warning("Error en la conexion");
         } catch (Exception e) {
             utils.showAlert("Error", "Ocurrió un error inesperado.");
-            logger.severe(e.getMessage());
+            logger.severe("Error inesperado");
         }
     }
 

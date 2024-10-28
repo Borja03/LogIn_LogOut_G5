@@ -107,8 +107,6 @@ public class SignerClient implements Signable {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         //Devuelve un obejto user
         return user;
@@ -166,12 +164,9 @@ public class SignerClient implements Signable {
 
             }
             //Control de excepciones
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
+            throw new Exception("Error de entrada/salida en los datos");
         }
         //Devuelve un obejto user
         return null;
