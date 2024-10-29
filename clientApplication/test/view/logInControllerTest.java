@@ -47,13 +47,13 @@ public class logInControllerTest extends org.testfx.framework.junit.ApplicationT
     }
 
     @Test
-    public void e_createUserLinkFunctionality() {
+    public void d_createUserLinkFunctionality() {
         clickOn("#createUserLink");
         verifyThat("#vbx_card", isVisible());
     }
 
     @Test
-    public void f_togglePasswordVisibility() {
+    public void e_togglePasswordVisibility() {
         clickOn("#passwordField");
         write("mySecretPassword");
         clickOn("#passwordImage");

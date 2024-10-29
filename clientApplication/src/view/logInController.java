@@ -25,6 +25,7 @@ import java.io.File; // Importa File para manipular archivos.
 import java.io.FileInputStream; // Importa FileInputStream para leer archivos.
 import java.io.FileOutputStream; // Importa FileOutputStream para escribir archivos.
 import java.io.IOException; // Importa IOException para manejar excepciones de entrada/salida.
+import java.net.ConnectException;
 import java.util.Properties; // Importa Properties para manejar propiedades.
 import javafx.scene.Parent; // Importa Parent para la raíz de la jerarquía de nodos.
 import javafx.scene.control.ContextMenu; // Importa ContextMenu para manejar menús contextuales.
