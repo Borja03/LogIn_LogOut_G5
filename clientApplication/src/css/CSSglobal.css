@@ -33,7 +33,6 @@
     -fx-background-color: #2196F3; /* Green button */
     -fx-border-radius: 5px; /* Rounded corners */
     -fx-background-radius: 5px; /* Matches border radius */
-    -fx-padding: 10px 20px; /* Adds more padding for a clean look */
     -fx-text-fill: white; /* White text */
 }
 

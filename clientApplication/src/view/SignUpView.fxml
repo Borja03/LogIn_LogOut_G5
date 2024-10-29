@@ -56,7 +56,7 @@
                         <Insets left="10.0" right="10.0" top="1.0" />
                      </HBox.margin>
                   </ImageView>
-                        <TextField id="tf_dni" fx:id="tf_email" prefHeight="40.0" prefWidth="350.0" promptText="Enter your email">
+                        <TextField id="tf_email" fx:id="tf_email" prefHeight="40.0" prefWidth="350.0" promptText="Enter your email">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -120,7 +120,7 @@
                         <Insets bottom="5.0" />
                      </HBox.margin>
                   </GridPane>
-                  <Button fx:id="btn_show_password" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0">
+                  <Button fx:id="btn_show_password" mnemonicParsing="false">
                      <graphic>
                         <ImageView fx:id="imgShowPassword" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -327,7 +327,7 @@
                         </Label>
                         <CheckBox fx:id="chb_active" mnemonicParsing="false">
                            <HBox.margin>
-                              <Insets top="15.0" />
+                              <Insets left="52.0" top="15.0" />
                            </HBox.margin>
                         </CheckBox>
                      </children>

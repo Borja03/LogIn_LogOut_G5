@@ -1,10 +1,12 @@
 package Application;
 
+import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import view.MainController;
+import view.SignUpController;
 import view.logInController;
 
 /**
@@ -12,7 +14,7 @@ import view.logInController;
  * Esta clase es responsable de iniciar la aplicación y cargar la interfaz de
  * usuario.
  */
-public class Application extends javafx.application.Application {
+public class ApplicationSignUp extends javafx.application.Application {
 
     /**
      * Método que se ejecuta al iniciar la aplicación. Carga el archivo FXML de
@@ -24,13 +26,13 @@ public class Application extends javafx.application.Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LogIn.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignUpView.fxml"));
 
         Parent root = loader.load();
-        logInController controller = loader.getController();
+        SignUpController controller = loader.getController();
         Stage newStage = new Stage();
         controller.setStage(newStage);
-        controller.initialize(root);
+        controller.initStage(root);
     }
 
     /**

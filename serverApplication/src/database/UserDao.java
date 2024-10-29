@@ -86,7 +86,7 @@ public class UserDao implements Signable {
 
         try {
             // Establece la conexión con la base de datos
-            connection = DBConnectionPool.getConnection();
+            connection = DBPool.getInstance().getConnection();
 
             // Consulta para obtener los datos del partner por email
             partnerStmt = connection.prepareStatement(SELECT_RES_PARTNER);
@@ -124,13 +124,13 @@ public class UserDao implements Signable {
                         user.setZip(partnerRs.getInt("zip"));
                         return user;
                     } else {
-                        throw new IncorrectCredentialsException("Contraseña incorrecta.");
+                        return null;
                     }
                 } else {
-                    throw new IncorrectCredentialsException("Usuario no encontrado.");
+                    return null;
                 }
             } else {
-                throw new IncorrectCredentialsException("Email no encontrado en res_partner.");
+                return null;
             }
         } finally {
             // Cierra todos los recursos
@@ -173,7 +173,8 @@ public class UserDao implements Signable {
 
         try {
             // Get a connection (Use a connection pool for scalability)
-            conn = DBConnectionPool.getConnection();
+            conn = DBPool.getInstance().getConnection();
+
             if(conn == null){
                throw new ServerErrorException("Erver not working");
             }
