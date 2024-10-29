@@ -117,10 +117,8 @@ public class logInController {
 
         visiblePasswordField.setVisible(false);
         initializeContextMenu();
-
         // Asigna el menú contextual al BorderPane
         borderPane.setOnContextMenuRequested(this::showContextMenu);
-
         currentTheme = loadThemePreference();
         loadTheme(currentTheme);
         stage.show();
@@ -263,12 +261,12 @@ public class logInController {
         isPasswordVisible = !isPasswordVisible;
 
         if (isPasswordVisible) {
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordVisible.png")));
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png")));
             passwordField.setVisible(false);
             visiblePasswordField.setVisible(true);
             visiblePasswordField.setText(passwordField.getText());
         } else {
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png")));
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png")));
             passwordField.setVisible(true);
             visiblePasswordField.setVisible(false);
             passwordField.setText(visiblePasswordField.getText());

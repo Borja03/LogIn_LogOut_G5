@@ -138,16 +138,8 @@ public class DBPool {
         idleConnections = 0;
     }
 
-    public synchronized void reloadConfiguration() {
-        // Reload the configuration settings
-        loadConfiguration();
-        // Optionally, handle any necessary cleanup or reconnections
-    }
-
-    public synchronized void shutdown() {
-        releaseAllConnections();
-        Logger.getLogger(DBPool.class.getName()).log(Level.INFO, "Database connection pool shut down successfully.");
-    }
+ 
+  
 
     public synchronized String getConnectionStatistics() {
         return String.format("Total Connections: %d, Active: %d, Idle: %d",

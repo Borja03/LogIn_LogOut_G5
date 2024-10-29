@@ -424,7 +424,7 @@ public class SignUpController {
             
             User nuevoUser = SignableFactory.getSignable().signUp(user);
           
-            //LOGGER.log(Level.INFO, "User signed up successfully: {0}", nuevoUser.getEmail());
+            LOGGER.log(Level.INFO, "User signed up successfully: {0}", nuevoUser.getEmail());
             if (nuevoUser == null) {
                 throw new UserAlreadyExistsException("Email already exist.");
             }

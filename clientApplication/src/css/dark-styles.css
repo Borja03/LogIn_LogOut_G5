@@ -10,6 +10,7 @@
 
 .label {
     -fx-text-fill: #ffffff; /* White text */
+    -fx-font-size: 20px;
 }
 
 /* Style for TextFields */
@@ -98,5 +99,9 @@
 .context-menu-dark .menu-item:hover {
     -fx-background-color: #555555; /* Fondo más claro al pasar el cursor */
     -fx-text-fill: #ffffff;
+}
+
+#lbl_signup{
+    -fx-font-size: 60px;
 }
 
