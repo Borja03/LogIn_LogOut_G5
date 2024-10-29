@@ -65,7 +65,7 @@ public class Worker implements Runnable {
                             logger.info("Registrando usuario: " + userEmail);
                             user = signable.signUp(msg.getUser());
                             msg.setUser(user);
-                            msg.setTipo(user == null ? TipoMensaje.SERVER_ERROR : TipoMensaje.OK_RESPONSE);
+                            msg.setTipo(user == null ? TipoMensaje.INCORRECT_CREDENTIALS_RESPONSE : TipoMensaje.OK_RESPONSE);
                             break;
 
                         default:

@@ -12,18 +12,12 @@
     -fx-text-fill: #ffffff; /* White text */
 }
 
-<<<<<<< HEAD
-.text-field {
-=======
 /* Style for TextFields */
 .text-field, .password-field {
->>>>>>> 87fdadb77b39ca12ceecb96874f4a358b7321b90
     -fx-background-color: #23272a;
     -fx-text-fill: #ffffff;
     -fx-border-color: #99aab5;
     -fx-border-width: 1px;
-<<<<<<< HEAD
-=======
     -fx-border-radius: 5px;
     -fx-background-radius: 10px;
 }
@@ -32,7 +26,6 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-text-fill: #ffffff;
->>>>>>> 87fdadb77b39ca12ceecb96874f4a358b7321b90
 }
 
 .button {
@@ -106,4 +99,3 @@
     -fx-background-color: #555555; /* Fondo más claro al pasar el cursor */
     -fx-text-fill: #ffffff;
 }
-
