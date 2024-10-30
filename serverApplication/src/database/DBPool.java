@@ -41,8 +41,8 @@ public class DBPool {
 
   private void loadConfiguration() {
     //to read from db file of config 
-    url = "jdbc:postgresql://192.168.56.128:5432/odoo_db_16";
-    db_user = "odoo16";
+    url = "jdbc:postgresql://192.168.142.130:5432/odoooo";
+    db_user = "odoo";
     db_pass = "abcd*1234";
     
     // Maximum number of connections allowed

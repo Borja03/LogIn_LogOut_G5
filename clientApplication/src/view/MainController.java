@@ -326,13 +326,11 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-            Scene scene = new Scene(root);
-
-            // Get the current stage
-            Stage currentStage = stage != null ? stage : (Stage) logOutButton.getScene().getWindow();
-            currentStage.setScene(scene);
-            currentStage.setTitle(windowTitle);
-            currentStage.show();
+            logInController controller = loader.getController();
+            stage.close();
+            Stage newStage = new Stage();
+            controller.setStage(newStage);
+            controller.initialize(root);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
         }
