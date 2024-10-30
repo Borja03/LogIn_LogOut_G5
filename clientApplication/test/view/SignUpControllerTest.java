@@ -142,6 +142,7 @@ public class SignUpControllerTest extends ApplicationTest {
         write("borja@outlook.es");
         clickOn("#pf_password");
         write("Borja@B1");
+        clickOn("#imgShowPassword");
         clickOn("#tf_password_confirm");
         write("Borja@B12"); // Contraseña diferente
         clickOn("#tf_name");
@@ -162,6 +163,7 @@ public class SignUpControllerTest extends ApplicationTest {
         write("borja@outlook.es");
         clickOn("#pf_password");
         write("123");
+        clickOn("#imgShowPassword");
         clickOn("#tf_password_confirm");
         write("123");
         clickOn("#tf_name");
@@ -283,13 +285,13 @@ public class SignUpControllerTest extends ApplicationTest {
         clickOn("#tf_street");
         write("Tartanga");
         clickOn("#tf_city");
-        write("Ermua33");
+        write("Ermua");
         clickOn("#tf_zip");
         write("123456");
         clickOn("#chb_active");
         clickOn("#btn_signup");
 
-        FxAssert.verifyThat("City must only contain letters.", NodeMatchers.isVisible());
+        FxAssert.verifyThat("Zip code must be exactly 5 digits.", NodeMatchers.isVisible());
     }
 
 }
