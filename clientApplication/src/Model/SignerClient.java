@@ -104,6 +104,8 @@ public class SignerClient implements Signable {
                     return user;
                 case EMAIL_EXISTS:
                     throw new UserAlreadyExistsException("Email already exists....SignerClient");
+                case CONNECTION_ERROR:
+                    throw new ConnectionException("Ha ocurrido un error con la conexion a la base de datos.");
                 case SERVER_ERROR:
                     throw new ServerErrorException("Server not working....SignerClient");
                 default:
@@ -169,14 +171,16 @@ public class SignerClient implements Signable {
                 case INCORRECT_CREDENTIALS_RESPONSE:
                     throw new IncorrectCredentialsException("Email o contraseña incorrectos.");
                 case SERVER_ERROR:
-                    throw new ConnectionException("Ha ocurrido un error en el servidor.");
+                    throw new ServerErrorException("Ha ocurrido un error en el servidor.");
+                case CONNECTION_ERROR:
+                    throw new ConnectionException("Ha ocurrido un error con la conexion a la base de datos.");
                 case MAX_THREAD_USER:
                     throw new MaxThreadUserException("Maximo de usuarios alcanzado, inténtelo más tarde");
             }
             //Control de excepciones
         } catch (IOException ex) {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ConnectionException("Error de entrada/salida en los datos");
+            throw new ServerErrorException("Error de entrada/salida en los datos");
         }
         //Devuelve un obejto user
         return null;

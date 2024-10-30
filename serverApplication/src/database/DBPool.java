@@ -1,6 +1,6 @@
 package database;
 
-import exception.ServerErrorException;
+import exception.ConnectionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -26,35 +26,36 @@ public class DBPool {
 
     private static final Logger LOGGER = Logger.getLogger(DBPool.class.getName());
 
-    public DBPool() {
+    public DBPool() throws ConnectionException {
         // Load configuration from the properties file
         loadConfiguration();
         initializeConnections();
     }
 
-    public static synchronized DBPool getInstance() {
+    public static synchronized DBPool getInstance() throws ConnectionException {
         if (instance == null) {
             instance = new DBPool();
         }
         return instance;
     }
 
-  private void loadConfiguration() {
-    //to read from db file of config 
-    url = "jdbc:postgresql://192.168.142.130:5432/odoooo";
-    db_user = "odoo";
-    db_pass = "abcd*1234";
-    
-    // Maximum number of connections allowed
-    maxConnections = 3; 
-    
-    // You can include validation checks to ensure that these values are correctly set
-    if (url == null || db_user == null || db_pass == null) {
-        throw new RuntimeException("Missing required configuration for database connection.");
-    }
-}
+    private void loadConfiguration() {
+        //to read from db file of config 
+        url = "jdbc:postgresql://192.168.142.130:5432/odoooo";
+        //url = "jdbc:postgresql://192.168.86.128:5432/odooDB";
+        db_user = "odoo";
+        db_pass = "abcd*1234";
 
-    private void initializeConnections() {
+        // Maximum number of connections allowed
+        maxConnections = 3;
+
+        // You can include validation checks to ensure that these values are correctly set
+        if (url == null || db_user == null || db_pass == null) {
+            throw new RuntimeException("Missing required configuration for database connection.");
+        }
+    }
+
+    private void initializeConnections() throws ConnectionException {
         // Initialize connections and push them to the stack
         for (int i = 0; i < maxConnections; i++) {
             try {
@@ -62,7 +63,8 @@ public class DBPool {
                 connectionStack.push(con);
                 idleConnections++;
             } catch (SQLException ex) {
-                   LOGGER.info("Error initializing connection");
+                LOGGER.info("Error initializing connection");
+                throw new ConnectionException("Error database connecxion");
             }
         }
     }
@@ -75,7 +77,7 @@ public class DBPool {
         }
     }
 
-    public synchronized Connection getConnection() throws ServerErrorException {
+    public synchronized Connection getConnection() throws ConnectionException {
         // Check for available connections
         if (connectionStack.isEmpty()) {
             if (activeConnections < maxConnections) {
@@ -84,11 +86,11 @@ public class DBPool {
                     activeConnections++;
                     return con;
                 } catch (SQLException ex) {
-                    throw new ServerErrorException(ex.getMessage());
+                    throw new ConnectionException(ex.getMessage());
                 }
             } else {
                 // No connections available and max limit reached
-                throw new ServerErrorException("Maximum number of connections reached, please wait.");
+                throw new ConnectionException("Maximum number of connections reached, please wait.");
             }
         } else {
             // Get a connection from the stack
@@ -99,7 +101,7 @@ public class DBPool {
                     con = DriverManager.getConnection(url, db_user, db_pass);
                     activeConnections++;
                 } catch (SQLException ex) {
-                    throw new ServerErrorException(ex.getMessage());
+                    throw new ConnectionException(ex.getMessage());
                 }
             }
             idleConnections--;
@@ -118,7 +120,7 @@ public class DBPool {
                     con.close();
                     activeConnections--;
                 } catch (SQLException e) {
-                     LOGGER.info("Error closing invalid connection");
+                    LOGGER.info("Error closing invalid connection");
                 }
             }
         }
@@ -129,8 +131,8 @@ public class DBPool {
             try {
                 con.close();
             } catch (SQLException e) {
-               LOGGER.info("Error closing connection");
-           
+                LOGGER.info("Error closing connection");
+
             }
         }
         connectionStack.clear();
@@ -138,14 +140,11 @@ public class DBPool {
         idleConnections = 0;
     }
 
- 
-  
-
     public synchronized String getConnectionStatistics() {
         return String.format("Total Connections: %d, Active: %d, Idle: %d",
-                        (activeConnections + idleConnections),
-                        activeConnections,
-                        idleConnections);
+                (activeConnections + idleConnections),
+                activeConnections,
+                idleConnections);
     }
 
     public synchronized int getActiveConnectionCount() {

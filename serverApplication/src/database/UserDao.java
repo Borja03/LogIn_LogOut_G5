@@ -87,6 +87,9 @@ public class UserDao implements Signable {
         try {
             // Establece la conexión con la base de datos
             connection = DBPool.getInstance().getConnection();
+            if(connection == null){
+               throw new ConnectionException("Erver not working");
+            }
 
             // Consulta para obtener los datos del partner por email
             partnerStmt = connection.prepareStatement(SELECT_RES_PARTNER);
@@ -167,7 +170,7 @@ public class UserDao implements Signable {
      * en la transacción.
      */
     @Override
-    public synchronized User signUp(User user) throws ServerErrorException, UserAlreadyExistsException {
+    public synchronized User signUp(User user) throws UserAlreadyExistsException, ConnectionException {
         Connection conn = null;
         PreparedStatement psPartner = null;
         PreparedStatement psUser = null;
@@ -178,7 +181,7 @@ public class UserDao implements Signable {
             conn = DBPool.getInstance().getConnection();
 
             if(conn == null){
-               throw new ServerErrorException("Erver not working");
+               throw new ConnectionException("Server not working");
             }
             conn.setAutoCommit(false); // Start transaction
 
