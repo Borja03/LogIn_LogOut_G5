@@ -1,6 +1,9 @@
 package view;
 
 import Application.Application;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import javafx.stage.Stage;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -11,12 +14,12 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class logInControllerTest extends org.testfx.framework.junit.ApplicationTest {
-    
-    @Override 
+
+    @Override
     public void start(Stage stage) throws Exception {
         new Application().start(stage);
     }
-    
+
     @Test
     public void a_correctSignIn() {
         clickOn("#emailTextField");
@@ -34,25 +37,23 @@ public class logInControllerTest extends org.testfx.framework.junit.ApplicationT
         clickOn("#logInButton");
         verifyThat("El texto tiene que estar en formato email 'example@example.extension'", isVisible());
     }
-    
+
     @Test
     public void c_incorrectSignIn() {
         clickOn("#emailTextField");
         write("aaa@aaa.aaa");
-        clickOn("#passwordField");
-        write("@Aa12345");
         clickOn("#logInButton");
         verifyThat("No se pudo iniciar sesión. Verifique sus credenciales.", isVisible());
     }
 
     @Test
-    public void e_createUserLinkFunctionality() {
+    public void d_createUserLinkFunctionality() {
         clickOn("#createUserLink");
         verifyThat("#vbx_card", isVisible());
     }
 
     @Test
-    public void f_togglePasswordVisibility() {
+    public void e_togglePasswordVisibility() {
         clickOn("#passwordField");
         write("mySecretPassword");
         clickOn("#passwordImage");
