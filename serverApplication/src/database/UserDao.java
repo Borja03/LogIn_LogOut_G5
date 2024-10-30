@@ -147,7 +147,9 @@ public class UserDao implements Signable {
                 userStmt.close();
             }
             if (connection != null) {
-                connection.close();
+               // connection.close();
+              DBPool.getInstance().releaseConnection(connection);
+
             }
         }
     }
@@ -237,7 +239,7 @@ public class UserDao implements Signable {
                     psUser.close();
                 }
                 if (conn != null) {
-                    conn.close();
+                    DBPool.getInstance().releaseConnection(conn);
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();

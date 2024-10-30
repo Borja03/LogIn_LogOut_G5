@@ -68,7 +68,7 @@ public class SignerClient implements Signable {
      * @throws Exception Si ocurre un error durante el registro.
      */
     @Override
-    public User signUp(User user) throws Exception {
+        public User signUp(User user) throws Exception {
         ObjectOutputStream oos = null;
         ObjectInputStream ois = null;
 
@@ -146,6 +146,7 @@ public class SignerClient implements Signable {
             //Instanciamos el socket
             LOGGER.info("Iniciando Sesión...");
             Socket socketCliente = new Socket(HOST, PUERTO);
+
             //Creamos el output y preparamos el encapsulador para enviarlo al servidor
             oos = new ObjectOutputStream(socketCliente.getOutputStream());
             msg = new Message();
@@ -169,17 +170,13 @@ public class SignerClient implements Signable {
                     throw new IncorrectCredentialsException("Email o contraseña incorrectos.");
                 case SERVER_ERROR:
                     throw new ConnectionException("Ha ocurrido un error en el servidor.");
-                /*case MAX_THREAD_USER:
-                    throw new Exception("Maximo de usuarios alcanzado, inténtelo más tarde");*/
-
+                case MAX_THREAD_USER:
+                    throw new MaxThreadUserException("Maximo de usuarios alcanzado, inténtelo más tarde");
             }
             //Control de excepciones
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ConnectionException("Error de entrada/salida en los datos");
         }
         //Devuelve un obejto user
         return null;

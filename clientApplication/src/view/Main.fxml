@@ -18,7 +18,7 @@
                 <Image url="@../Images/userIcon.png" />
             </image>
         </ImageView>
-      
+
        <TextField fx:id="emailField" editable="false" layoutX="177.0" layoutY="29.0" minHeight="-Infinity" minWidth="-Infinity" style="-fx-font-size: 40; -fx-background-color: transparent; -fx-border-color: transparent;" text="email@example.com" />
       
         <GridPane layoutX="53.0" layoutY="214.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="282.0" prefWidth="600.0">
@@ -31,6 +31,7 @@
                 <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
             </rowConstraints>
+
 
             <Label text="NAME" />
            <TextField id="nameTextField" fx:id="nameField" editable="false" style="-fx-background-color: transparent; -fx-border-color: transparent;" text="here goes the name" GridPane.columnIndex="1" />

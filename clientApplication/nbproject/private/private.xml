@@ -14,10 +14,10 @@
             <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/src/view/SignUpView.fxml</file>
         </group>
         <group name="Group Reto">
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/test/view/SignUpControllerTest.java</file>
             <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/view/SignUpController.java</file>
             <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/Model/SignerClient.java</file>
             <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/view/logInController.java</file>
-            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
         </group>
     </open-files>
 </project-private>

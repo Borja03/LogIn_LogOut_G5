@@ -105,3 +105,14 @@
     -fx-font-size: 60px;
 }
 
+#logInButton{
+    -fx-font-size: 20px;
+}
+
+#orLabelLogIn{
+    -fx-font-size: 20px;
+}
+
+#createUserLink{
+    -fx-font-size: 20px;
+}

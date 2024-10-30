@@ -3,14 +3,12 @@ package view;
 import Model.SignableFactory;
 import Model.User;
 import static Utils.UtilsMethods.logger;
-import exception.ConnectionException;
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
 import exception.InvalidEmailFormatException;
 import exception.InvalidPasswordFormatException;
 import exception.InvalidStreetFormatException;
 import exception.InvalidZipFormatException;
-import exception.MaxThreadUserException;
 import exception.ServerErrorException;
 import exception.UserAlreadyExistsException;
 import java.io.File;
@@ -43,7 +41,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import Utils.UtilsMethods; // Importa métodos utilitarios personalizados.
 
 public class SignUpController {
 
@@ -237,7 +234,7 @@ public class SignUpController {
             imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid-white.png")));
             imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid-white.png")));
             imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP-white.png")));
-            contextMenu.getStyleClass().add("context-menu-dark");
+             contextMenu.getStyleClass().add("context-menu-dark");
 
             // Aquí puedes agregar más acciones específicas para el tema oscuro
         } else if (theme.equals("light")) {
@@ -253,7 +250,7 @@ public class SignUpController {
             imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid.png")));
             imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid.png")));
             imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP.png")));
-            contextMenu.getStyleClass().remove("context-menu-dark");
+             contextMenu.getStyleClass().remove("context-menu-dark");
 
             // Aquí puedes agregar más acciones específicas para el tema claro
         }
@@ -418,13 +415,13 @@ public class SignUpController {
         return hasUppercase && hasDigit && hasSpecialChar;
     }
 
+   		
     private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
 
         try {
             // Attempting to sign up the user
             User nuevoUser = SignableFactory.getSignable().signUp(user);
-
             // If the sign-up is successful
             if (nuevoUser != null) {
                 showAlert();
@@ -442,7 +439,7 @@ public class SignUpController {
             showAlert("Error", "An unexpected error occurred: " + e.getMessage());
             LOGGER.log(Level.SEVERE, "Unexpected error in performSignUp", e);
         }
-    }
+     }
 
     public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -461,11 +458,13 @@ public class SignUpController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             // Get the current stage
+            
+                logInController controller = loader.getController();
+                Stage newStage = new Stage();
+                controller.setStage(newStage);
+                controller.initialize(root);
 
-            logInController controller = loader.getController();
-            Stage newStage = new Stage();
-            controller.setStage(newStage);
-            controller.initialize(root);
+            
 
             stage = (Stage) btn_signup.getScene().getWindow();
             //stage.hide();
