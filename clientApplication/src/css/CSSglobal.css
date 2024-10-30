@@ -16,6 +16,9 @@
 .label, .text-field, .button {
     -fx-text-fill: #333333; /* Darker gray for text */
 }
+.label{
+    -fx-font-size: 20px;
+}
 
 /* TextField and PasswordField with rounded corners */
 .text-field, .password-field {
@@ -69,4 +72,17 @@
 /* Minimal hover effect for TextField and PasswordField */
 .text-field:hover, .password-field:hover {
     -fx-border-color: #bbbbbb; /* Slightly darker border on hover */
+}
+
+#lbl_signup{
+    -fx-font-size: 60px;
+}
+#logInButton{
+    -fx-font-size: 20px;
+}
+#orLabelLogIn{
+    -fx-font-size: 20px;
+}
+#createUserLink{
+    -fx-font-size: 20px;
 }

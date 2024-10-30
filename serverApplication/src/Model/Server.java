@@ -80,6 +80,7 @@ public class Server {
             while (serverOn) {
                 String input = reader.readLine();
                 if (input != null && input.equalsIgnoreCase("q")) {
+                    
                     stopServer();
                     break;
                 }

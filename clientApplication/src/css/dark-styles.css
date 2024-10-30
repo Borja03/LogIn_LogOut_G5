@@ -10,6 +10,7 @@
 
 .label {
     -fx-text-fill: #ffffff; /* White text */
+    -fx-font-size: 20px;
 }
 
 /* Style for TextFields */
@@ -99,3 +100,20 @@
     -fx-background-color: #555555; /* Fondo más claro al pasar el cursor */
     -fx-text-fill: #ffffff;
 }
+
+#lbl_signup{
+    -fx-font-size: 60px;
+}
+
+#logInButton{
+    -fx-font-size: 20px;
+}
+
+#orLabelLogIn{
+    -fx-font-size: 20px;
+}
+
+#createUserLink{
+    -fx-font-size: 20px;
+}
+
