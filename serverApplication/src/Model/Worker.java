@@ -37,7 +37,6 @@ public class Worker implements Runnable {
     private void handleClient() {
         ObjectInputStream objectReader = null;
         ObjectOutputStream objectWriter = null;
-        Signable signable = new DaoFactory().getSignable();
         Message msg = null;
 
         try {
@@ -56,16 +55,24 @@ public class Worker implements Runnable {
                     switch (msg.getTipo()) {
                         case SIGN_IN_REQUEST:
                             logger.info("Iniciando sesión para el usuario: " + userEmail);
-                            User user = signable.signIn(msg.getUser());
+                            User user = DaoFactory.getSignable().signIn(msg.getUser());
                             msg.setUser(user);
-                            msg.setTipo(user == null ? TipoMensaje.SERVER_ERROR : TipoMensaje.OK_RESPONSE);
+                            if(user==null){
+                                msg.setTipo(TipoMensaje.INCORRECT_CREDENTIALS_RESPONSE);
+                            }else{
+                                msg.setTipo(TipoMensaje.OK_RESPONSE);
+                            }
                             break;
 
                         case SIGN_UP_REQUEST:
                             logger.info("Registrando usuario: " + userEmail);
-                            user = signable.signUp(msg.getUser());
+                            user = DaoFactory.getSignable().signUp(msg.getUser());
                             msg.setUser(user);
-                            msg.setTipo(user == null ? TipoMensaje.SERVER_ERROR : TipoMensaje.OK_RESPONSE);
+                             if(user==null){
+                                msg.setTipo(TipoMensaje.EMAIL_EXISTS);
+                            }else{
+                                msg.setTipo(TipoMensaje.OK_RESPONSE);
+                            }
                             break;
 
                         default:

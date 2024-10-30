@@ -83,12 +83,11 @@ public class SignerClient implements Signable {
             msg.setTipo(TipoMensaje.SIGN_UP_REQUEST);
             oos.writeObject(msg);
 
-            
             //Recibimos el objeto encapsulado del servidor
             ois = new ObjectInputStream(socketCliente.getInputStream());
             msg = (Message) ois.readObject();
             user = msg.getUser();
-            
+
             //Cerramos las conexiones
             oos.close();
             ois.close();
@@ -106,8 +105,6 @@ public class SignerClient implements Signable {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         //Devuelve un obejto user
@@ -138,6 +135,7 @@ public class SignerClient implements Signable {
             //Instanciamos el socket
             LOGGER.info("Iniciando Sesión...");
             Socket socketCliente = new Socket(HOST, PUERTO);
+
             //Creamos el output y preparamos el encapsulador para enviarlo al servidor
             oos = new ObjectOutputStream(socketCliente.getOutputStream());
             msg = new Message();
@@ -163,15 +161,11 @@ public class SignerClient implements Signable {
                     throw new ConnectionException("Ha ocurrido un error en el servidor.");
                 case MAX_THREAD_USER:
                     throw new MaxThreadUserException("Maximo de usuarios alcanzado, inténtelo más tarde");
-
             }
             //Control de excepciones
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ConnectionException("Error de entrada/salida en los datos");
         }
         //Devuelve un obejto user
         return null;
