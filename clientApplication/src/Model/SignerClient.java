@@ -16,18 +16,23 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 
 /**
- * La clase <code>SignerClient</code> implementa la interfaz
- * <code>Signable</code>, proporcionando métodos para el registro e inicio de
- * sesión de un usuario.
+ * La clase <code>SignerClient</code> implementa la interfaz {@link Signable}, proporcionando
+ * métodos para el registro e inicio de sesión de un usuario mediante comunicación con un servidor.
  *
  * <p>
- * Esta clase maneja la comunicación con un servidor para llevar a cabo
- * operaciones de registro e inicio de sesión. Los métodos <code>signUp</code> y
- * <code>signIn</code> permiten a los usuarios registrarse y acceder al sistema,
- * respectivamente. En caso de errores, se lanzan excepciones específicas.
+ * La clase <code>SignerClient</code> maneja la conexión y el intercambio de datos con un servidor
+ * remoto que gestiona operaciones de autenticación y registro de usuarios. Los métodos 
+ * <code>signUp</code> y <code>signIn</code> envían solicitudes al servidor y reciben respuestas
+ * en función de los resultados, como éxito, credenciales incorrectas, o errores de conexión.
+ * </p>
+ * <p>
+ * Esta clase utiliza configuraciones definidas en un archivo de recursos para establecer
+ * la conexión al servidor, incluyendo la dirección IP y el puerto. Además, emplea un
+ * {@link Logger} para registrar eventos significativos y errores durante la ejecución.
  * </p>
  *
  * @author Alder
+ * @see Signable
  */
 public class SignerClient implements Signable {
 
@@ -45,6 +50,7 @@ public class SignerClient implements Signable {
      * Dirección IP del servidor.
      */
     private static final String HOST = archivo.getString("IP");
+
     /**
      * Logger para registrar eventos y mensajes.
      */
@@ -63,65 +69,63 @@ public class SignerClient implements Signable {
     /**
      * Registra un nuevo usuario en el sistema.
      *
+     * <p>
+     * Este método establece una conexión con el servidor y envía un mensaje de
+     * solicitud de registro. Luego, espera una respuesta del servidor y maneja
+     * diferentes tipos de mensajes de respuesta. En caso de éxito, devuelve el
+     * usuario registrado; de lo contrario, lanza excepciones específicas según
+     * el error encontrado.
+     * </p>
+     *
      * @param user El usuario que se desea registrar.
      * @return El usuario registrado.
-     * @throws Exception Si ocurre un error durante el registro.
+     * @throws Exception Si ocurre un error durante el registro o en la conexión.
+     * @throws UserAlreadyExistsException Si el email del usuario ya está registrado.
+     * @throws ConnectionException Si ocurre un error en la conexión con la base de datos.
+     * @throws ServerErrorException Si ocurre un error en el servidor.
+     * @author Omar and Adrian
      */
     @Override
-        public User signUp(User user) throws Exception {
+    public User signUp(User user) throws Exception {
         ObjectOutputStream oos = null;
         ObjectInputStream ois = null;
 
         try {
-            // Logging start of sign-up session
-            LOGGER.info("Iniciando Sesión...");
+            LOGGER.info("Iniciando sesión de registro...");
 
-            // Establishing the socket connection
             Socket socketCliente = new Socket(HOST, PUERTO);
             oos = new ObjectOutputStream(socketCliente.getOutputStream());
 
-            // Preparing message object
             msg = new Message();
             msg.setUser(user);
             msg.setTipo(TipoMensaje.SIGN_UP_REQUEST);
 
-            // Sending the message to the server
             oos.writeObject(msg);
 
-            // Receiving the response from the server
             ois = new ObjectInputStream(socketCliente.getInputStream());
             msg = (Message) ois.readObject();
             user = msg.getUser();
 
-            // Closing connections
             oos.close();
             ois.close();
             socketCliente.close();
 
-            // Handling server response
             switch (msg.getTipo()) {
                 case OK_RESPONSE:
                     return user;
                 case EMAIL_EXISTS:
-                    throw new UserAlreadyExistsException("Email already exists....SignerClient");
+                    throw new UserAlreadyExistsException("El email ya existe.");
                 case CONNECTION_ERROR:
-                    throw new ConnectionException("Ha ocurrido un error con la conexion a la base de datos.");
+                    throw new ConnectionException("Error en la conexión con la base de datos.");
                 case SERVER_ERROR:
-                    throw new ServerErrorException("Server not working....SignerClient");
+                    throw new ServerErrorException("El servidor no está disponible.");
                 default:
-                    throw new Exception("Unknown server response....SignerClient");
+                    throw new Exception("Respuesta desconocida del servidor.");
             }
         } catch (ClassNotFoundException | IOException ex) {
-            LOGGER.log(Level.SEVERE, "Error in signUp", ex);
-           // throw new ServerErrorException("Communication error....SignerClient", ex);
-        } catch (UserAlreadyExistsException | ServerErrorException ex) {
-            // Rethrow expected exceptions to the caller
-            throw ex;
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Error in signUp", ex);
-            throw ex; // Rethrow any unexpected exceptions
+            LOGGER.log(Level.SEVERE, "Error en el método signUp", ex);
+            throw new ServerErrorException("Error de comunicación con el servidor.", ex);
         }
-        return null;
     }
 
     /**
@@ -138,6 +142,11 @@ public class SignerClient implements Signable {
      * @param user El usuario que desea iniciar sesión.
      * @return El usuario que ha iniciado sesión.
      * @throws Exception Si ocurre un error durante el inicio de sesión.
+     * @throws IncorrectCredentialsException Si las credenciales son incorrectas.
+     * @throws ServerErrorException Si ocurre un error en el servidor.
+     * @throws ConnectionException Si ocurre un error en la conexión con la base de datos.
+     * @throws MaxThreadUserException Si el máximo de usuarios concurrentes ha sido alcanzado.
+     * @author Alder and Borja
      */
     @Override
     public User signIn(User user) throws Exception {
@@ -145,26 +154,23 @@ public class SignerClient implements Signable {
         ObjectInputStream ois = null;
 
         try {
-            //Instanciamos el socket
             LOGGER.info("Iniciando Sesión...");
             Socket socketCliente = new Socket(HOST, PUERTO);
 
-            //Creamos el output y preparamos el encapsulador para enviarlo al servidor
             oos = new ObjectOutputStream(socketCliente.getOutputStream());
             msg = new Message();
             msg.setUser(user);
             msg.setTipo(TipoMensaje.SIGN_IN_REQUEST);
             oos.writeObject(msg);
 
-            //Recibimos el objeto encapsulado del servidor
             ois = new ObjectInputStream(socketCliente.getInputStream());
             msg = (Message) ois.readObject();
             user = msg.getUser();
-            //Cerramos las conexiones
+
             oos.close();
             ois.close();
             socketCliente.close();
-            //Dependiendo de el mensaje que reciva lanza o escribe un mensaje nuevo
+
             switch (msg.getTipo()) {
                 case OK_RESPONSE:
                     return user;
@@ -173,17 +179,16 @@ public class SignerClient implements Signable {
                 case SERVER_ERROR:
                     throw new ServerErrorException("Ha ocurrido un error en el servidor.");
                 case CONNECTION_ERROR:
-                    throw new ConnectionException("Ha ocurrido un error con la conexion a la base de datos.");
+                    throw new ConnectionException("Error en la conexión con la base de datos.");
                 case MAX_THREAD_USER:
-                    throw new MaxThreadUserException("Maximo de usuarios alcanzado, inténtelo más tarde");
+                    throw new MaxThreadUserException("Máximo de usuarios alcanzado. Intente más tarde.");
+                default:
+                    throw new Exception("Respuesta desconocida del servidor.");
             }
-            //Control de excepciones
         } catch (IOException ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerErrorException("Error de entrada/salida en los datos");
+            LOGGER.log(Level.SEVERE, "Error en el método signIn", ex);
+            throw new ServerErrorException("Error de entrada/salida en los datos.", ex);
         }
-        //Devuelve un obejto user
         return null;
     }
-
 }
