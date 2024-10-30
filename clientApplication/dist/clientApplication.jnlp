@@ -8,11 +8,11 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="clientApplication.jar" size="423818" download="eager" />
+    <jar href="clientApplication.jar" size="424152" download="eager" />
     <jar href="lib\hamcrest-junit-2.0.0.0.jar" size="14347" download="eager" />
     <jar href="lib\java-hamcrest-2.0.0.0.jar" size="112929" download="eager" />
     <jar href="lib\junit-4.12.jar" size="316791" download="eager" />
-    <jar href="lib\librariesApplication.jar" size="10974" download="eager" />
+    <jar href="lib\librariesApplication.jar" size="11424" download="eager" />
     <jar href="lib\testfx-core-4.0.13-alpha.jar" size="202932" download="eager" />
     <jar href="lib\testfx-junit-4.0.13-alpha.jar" size="9871" download="eager" />
   </resources>

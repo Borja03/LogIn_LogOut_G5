@@ -68,50 +68,58 @@ public class SignerClient implements Signable {
      * @throws Exception Si ocurre un error durante el registro.
      */
     @Override
-    public User signUp(User user) throws ServerErrorException, UserAlreadyExistsException {
+    public User signUp(User user) throws Exception {
         ObjectOutputStream oos = null;
         ObjectInputStream ois = null;
 
         try {
-            //Instanciamos el socket
+            // Logging start of sign-up session
             LOGGER.info("Iniciando Sesión...");
+
+            // Establishing the socket connection
             Socket socketCliente = new Socket(HOST, PUERTO);
-            //Creamos el output y preparamos el encapsulador para enviarlo al servidor
             oos = new ObjectOutputStream(socketCliente.getOutputStream());
+
+            // Preparing message object
             msg = new Message();
             msg.setUser(user);
             msg.setTipo(TipoMensaje.SIGN_UP_REQUEST);
+
+            // Sending the message to the server
             oos.writeObject(msg);
 
-            
-            //Recibimos el objeto encapsulado del servidor
+            // Receiving the response from the server
             ois = new ObjectInputStream(socketCliente.getInputStream());
             msg = (Message) ois.readObject();
             user = msg.getUser();
-            
-            //Cerramos las conexiones
+
+            // Closing connections
             oos.close();
             ois.close();
             socketCliente.close();
-            //Dependiendo de el mensaje que reciva lanza o escribe un mensaje nuevo
+
+            // Handling server response
             switch (msg.getTipo()) {
                 case OK_RESPONSE:
                     return user;
                 case EMAIL_EXISTS:
-                    throw new UserAlreadyExistsException("Email already exist.");
+                    throw new UserAlreadyExistsException("Email already exists....SignerClient");
                 case SERVER_ERROR:
-                    throw new ServerErrorException("Server not working");
+                    throw new ServerErrorException("Server not working....SignerClient");
+                default:
+                    throw new Exception("Unknown server response....SignerClient");
             }
-            //Control de excepciones
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | IOException ex) {
+            LOGGER.log(Level.SEVERE, "Error in signUp", ex);
+           // throw new ServerErrorException("Communication error....SignerClient", ex);
+        } catch (UserAlreadyExistsException | ServerErrorException ex) {
+            // Rethrow expected exceptions to the caller
+            throw ex;
         } catch (Exception ex) {
-            Logger.getLogger(SignerClient.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "Error in signUp", ex);
+            throw ex; // Rethrow any unexpected exceptions
         }
-        //Devuelve un obejto user
-        return user;
+        return null;
     }
 
     /**
