@@ -20,7 +20,7 @@ public interface Signable {
      * @return User es el objeto que se retorna en el metodo
      * @throws Exception Si ocurre un error durante el registro.
      */
-    public User signUp(User user) throws ServerErrorException, UserAlreadyExistsException;
+    public User signUp(User user) throws Exception;
 
     /**
      * Método para iniciar sesión de un usuario existente.

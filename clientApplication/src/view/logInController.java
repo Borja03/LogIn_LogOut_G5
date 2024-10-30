@@ -297,12 +297,12 @@ public class logInController {
         isPasswordVisible = !isPasswordVisible; // Cambia el estado de visibilidad de la contraseña.
 
         if (isPasswordVisible) { // Si la contraseña es visible
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordVisible.png"))); // Cambia la imagen a visible.
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png"))); // Cambia la imagen a visible.
             passwordField.setVisible(false); // Oculta el campo de contraseña.
             visiblePasswordField.setVisible(true); // Muestra el campo de contraseña visible.
             visiblePasswordField.setText(passwordField.getText()); // Copia la contraseña al campo visible.
         } else { // Si la contraseña no es visible
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/passwordNotVisible.png"))); // Cambia la imagen a no visible.
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png"))); // Cambia la imagen a no visible.
             passwordField.setVisible(true); // Muestra el campo de contraseña.
             visiblePasswordField.setVisible(false); // Oculta el campo de contraseña visible.
             passwordField.setText(visiblePasswordField.getText()); // Copia la contraseña del campo visible al campo oculto.
