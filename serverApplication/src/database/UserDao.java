@@ -86,7 +86,7 @@ public class UserDao implements Signable {
 
         try {
             // Establece la conexión con la base de datos
-            connection = DBConnectionPool.getConnection();
+            connection = DBPool.getInstance().getConnection();
 
             // Consulta para obtener los datos del partner por email
             partnerStmt = connection.prepareStatement(SELECT_RES_PARTNER);
@@ -147,7 +147,9 @@ public class UserDao implements Signable {
                 userStmt.close();
             }
             if (connection != null) {
-                connection.close();
+               // connection.close();
+              DBPool.getInstance().releaseConnection(connection);
+
             }
         }
     }
@@ -173,7 +175,8 @@ public class UserDao implements Signable {
 
         try {
             // Get a connection (Use a connection pool for scalability)
-            conn = DBConnectionPool.getConnection();
+            conn = DBPool.getInstance().getConnection();
+
             if(conn == null){
                throw new ServerErrorException("Erver not working");
             }
@@ -236,7 +239,7 @@ public class UserDao implements Signable {
                     psUser.close();
                 }
                 if (conn != null) {
-                    conn.close();
+                    DBPool.getInstance().releaseConnection(conn);
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
