@@ -262,10 +262,13 @@ public class logInController {
         } catch (IncorrectCredentialsException e) { // Captura excepciones específicas
             utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales."); // Muestra un mensaje de error.
             logger.warning("Credenciales incorrectas"); // Registra una advertencia.
-        } catch (ConnectionException e) { // Captura excepciones de conexión
+        } catch (ServerErrorException e) { // Captura excepciones de conexión
             utils.showAlert("Error", "Problemas de conexión con el servidor."); // Muestra un mensaje de error.
             logger.warning("Error en la conexion"); // Registra una advertencia.
-        } catch (MaxThreadUserException e) { // Captura excepcion de max user
+        } catch (ConnectionException e) { // Captura excepciones de conexión
+            utils.showAlert("Error", "Problemas de conexión a la base de datos."); // Muestra un mensaje de error.
+            logger.warning("Error en la conexion"); // Registra una advertencia.
+        }catch (MaxThreadUserException e) { // Captura excepcion de max user
             utils.showAlert("Error", "No se pudo iniciar sesión. Maximo número de usuarios alcanzado espere unos minutos."); // Muestra un mensaje de error.
             logger.warning("Maximo usuario alcanzado"); // Registra una advertencia.
         } catch (Exception e) { // Captura cualquier otra excepción

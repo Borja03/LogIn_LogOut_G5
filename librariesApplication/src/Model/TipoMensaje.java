@@ -26,6 +26,7 @@ public enum TipoMensaje {
     SERVER_ERROR,       // Error en el servidor
     MAX_THREAD_USER,
     OK_RESPONSE,
-    INCORRECT_CREDENTIALS_RESPONSE
+    INCORRECT_CREDENTIALS_RESPONSE,
+    CONNECTION_ERROR
 
 }
