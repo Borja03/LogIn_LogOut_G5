@@ -92,6 +92,15 @@ public class MainController {
 
     // Stage to manage the current window
     private Stage stage;
+    
+     // Getter and Setter for Stage
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 
     // Current theme setting
     private String currentTheme = "light";
@@ -282,8 +291,8 @@ public class MainController {
      */
     private void attachContextMenuToTextField(TextField textField) {
         textField.setContextMenu(contextMenu);
-    }
-
+    }  
+   
     /**
      * Copies the selected text from the active text field to the clipboard.
      */
