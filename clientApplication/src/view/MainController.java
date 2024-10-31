@@ -32,21 +32,22 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
 
 /**
- * The MainController class handles the main functionalities of the application's main screen.
- * It provides features for displaying user details, toggling password visibility, and logging out.
- * This controller is linked to the main FXML view where user interactions are processed.
+ * The MainController class handles the main functionalities of the
+ * application's main screen. It provides features for displaying user details,
+ * toggling password visibility, and logging out. This controller is linked to
+ * the main FXML view where user interactions are processed.
  *
  * <p>
- * Key functionalities include viewing the password in plain text, hiding the password, and
- * logging out to the login screen. It also manages theme preferences and context menus for 
- * copying text.
+ * Key functionalities include viewing the password in plain text, hiding the
+ * password, and logging out to the login screen. It also manages theme
+ * preferences and context menus for copying text.
  * </p>
- * 
+ *
  * <p>
- * The controller maintains a clear separation of UI components, events, and utility functions 
- * to enhance maintainability and readability.
+ * The controller maintains a clear separation of UI components, events, and
+ * utility functions to enhance maintainability and readability.
  * </p>
- * 
+ *
  * @author Borja
  */
 public class MainController {
@@ -96,7 +97,8 @@ public class MainController {
     private String currentTheme = "light";
 
     /**
-     * Initializes the controller with the provided root element and the user data.
+     * Initializes the controller with the provided root element and the user
+     * data.
      *
      * @param root The root element of the scene.
      * @param user The user object containing the user's details.
@@ -108,7 +110,7 @@ public class MainController {
         stage.setTitle("Main");
         stage.setResizable(false);
         stage.getIcons().add(new Image("/Images/userIcon.png"));
-        
+
         // Set initial visibility of password fields
         passwordField.setVisible(true);
         plainPasswordField.setVisible(false);
@@ -124,14 +126,11 @@ public class MainController {
         // Set user details in text fields
         // emailField.setText(user.getEmail());
         // nameField.setText(user.getName());
-
         // Concatenate street, city, and zip for the address field
         // String address = String.format("%s, %s, %d", user.getStreet(), user.getCity(), user.getZip());
         // addressField.setText(address);
-        
         // Set the user's password securely
         // passwordField.setText(user.getPassword());
-
         // Initialize context menu
         initializeContextMenu();
         root.setOnContextMenuRequested(this::showContextMenu);
@@ -142,6 +141,28 @@ public class MainController {
 
         logger.info("MainController initialized.");
         stage.show();
+    }
+
+    /**
+     * Initializes the context menu with options for switching themes. Adds
+     * "Light Mode" and "Dark Mode" menu items to the context menu, each of
+     * which, when selected, triggers a theme switch action.
+     */
+    private void initializeContextMenu() {
+        // Create a new context menu for theme selection
+        contextMenu = new ContextMenu();
+
+        // Create menu items for light and dark themes
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem darkMode = new MenuItem("Dark Mode");
+
+        // Set action for light mode menu item to switch to light theme
+        lightMode.setOnAction(e -> switchTheme("light"));
+        // Set action for dark mode menu item to switch to dark theme
+        darkMode.setOnAction(e -> switchTheme("dark"));
+
+        // Add menu items to the context menu
+        contextMenu.getItems().addAll(lightMode, darkMode);
     }
 
     /**
@@ -212,18 +233,20 @@ public class MainController {
     }
 
     /**
-     * Switches the current theme to the specified theme and saves the preference.
+     * Switches the current theme to the specified theme and saves the
+     * preference.
      *
      * @param theme The new theme to be applied, such as "light" or "dark".
      */
     private void switchTheme(String theme) {
-        currentTheme = theme; 
-        loadTheme(theme); 
-        saveThemePreference(theme); 
+        currentTheme = theme;
+        loadTheme(theme);
+        saveThemePreference(theme);
     }
 
     /**
-     * Loads the specified theme and applies the corresponding styles to the scene.
+     * Loads the specified theme and applies the corresponding styles to the
+     * scene.
      *
      * @param theme The theme to be loaded, either "light" or "dark".
      */
@@ -254,7 +277,8 @@ public class MainController {
     /**
      * Attaches the context menu to a TextField or PasswordField.
      *
-     * @param textField The text field to which the context menu will be attached.
+     * @param textField The text field to which the context menu will be
+     * attached.
      */
     private void attachContextMenuToTextField(TextField textField) {
         textField.setContextMenu(contextMenu);
