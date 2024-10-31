@@ -17,12 +17,10 @@ import org.testfx.api.FxAssert;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 
-
 /**
  *
  * @author 2dam
  */
-    
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SignUpControllerTest extends ApplicationTest {
 
@@ -32,7 +30,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test1WriteSignUp() {
+    public void a_test1WriteSignUp() {
         clickOn("#tf_email");
         write("borja@outlook.es");
         clickOn("#pf_password");
@@ -54,15 +52,37 @@ public class SignUpControllerTest extends ApplicationTest {
         FxAssert.verifyThat("Your account has been created successfully!", NodeMatchers.isVisible());
     }
 
- 
     @Test
-    public void test2_EmailCannotBeEmpty() {
+    public void b_serverNotAvailable() {
+        clickOn("#tf_email");
+        write("borja@outlook.es");
+        clickOn("#pf_password");
+        write("Borja@B1");
+        clickOn("#imgShowPassword");
+        clickOn("#tf_password_confirm");
+        write("Borja@B1");
+        clickOn("#tf_name");
+        write("Borja");
+        clickOn("#tf_street");
+        write("Tartanga");
+        clickOn("#tf_city");
+        write("Ermua");
+        clickOn("#tf_zip");
+        write("48260");
+        clickOn("#chb_active");
+        clickOn("#btn_signup");
+
+        FxAssert.verifyThat("Server is not available at the moment. Please try again later.", NodeMatchers.isVisible());
+    }
+
+    @Test
+    public void c_EmailCannotBeEmpty() {
         clickOn("#btn_signup");
         FxAssert.verifyThat("Email cannot be empty.", NodeMatchers.isVisible());
     }
 
     @Test
-    public void test3_PasswordCannotBeEmpty() {
+    public void d_PasswordCannotBeEmpty() {
         clickOn("#tf_email");
         write("borja@outlook.es");
         clickOn("#btn_signup");
@@ -70,9 +90,9 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test4_NameCannotBeEmpty() {
+    public void e_NameCannotBeEmpty() {
         clickOn("#tf_email");
-        write("borja@outlook.eus");
+        write("borja@outlook.es");
         clickOn("#pf_password");
         write("Borja@B1");
         clickOn("#imgShowPassword");
@@ -83,9 +103,9 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test5_StreetCannotBeEmpty() {
+    public void f_StreetCannotBeEmpty() {
         clickOn("#tf_email");
-        write("borja@outlook.eus");
+        write("borja@outlook.es");
         clickOn("#pf_password");
         write("Borja@B1");
         clickOn("#imgShowPassword");
@@ -98,9 +118,9 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test6_CityCannotBeEmpty() {
+    public void g_CityCannotBeEmpty() {
         clickOn("#tf_email");
-        write("borja@outlook.eus");
+        write("borja@outlook.es");
         clickOn("#pf_password");
         write("Borja@B1");
         clickOn("#imgShowPassword");
@@ -115,9 +135,9 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test7_ZipCannotBeEmpty() {
+    public void h_ZipCannotBeEmpty() {
         clickOn("#tf_email");
-        write("borja@outlook.eus");
+        write("borja@outlook.es");
         clickOn("#pf_password");
         write("Borja@B1");
         clickOn("#imgShowPassword");
@@ -134,11 +154,12 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test8_PasswordMismatch() {
+    public void i_PasswordMismatch() {
         clickOn("#tf_email");
-        write("borja@outlook.eus");
+        write("borja@outlook.es");
         clickOn("#pf_password");
         write("Borja@B1");
+        clickOn("#imgShowPassword");
         clickOn("#tf_password_confirm");
         write("Borja@B12"); // Contraseña diferente
         clickOn("#tf_name");
@@ -154,11 +175,12 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test9_WeakPassword() {
+    public void j_WeakPassword() {
         clickOn("#tf_email");
-        write("borja@outlook.eus");
+        write("borja@outlook.es");
         clickOn("#pf_password");
         write("123");
+        clickOn("#imgShowPassword");
         clickOn("#tf_password_confirm");
         write("123");
         clickOn("#tf_name");
@@ -173,17 +195,16 @@ public class SignUpControllerTest extends ApplicationTest {
         FxAssert.verifyThat("Password must be at least 6 characters, with lowercase, uppercase, numbers, and special characters.", NodeMatchers.isVisible());
     }
 
-    
     @Test
-    public void test10_EmailAlreadyExists() {
+    public void k_EmailAlreadyExists() {
         // Primero, registrar un email
         clickOn("#tf_email");
-        write("borja@outlook.com");
+        write("borja@outlook.es");
         clickOn("#pf_password");
-        write("Borja@1B");
+        write("Borja@B1");
         clickOn("#imgShowPassword");
         clickOn("#tf_password_confirm");
-        write("Borja@1B");
+        write("Borja@B1");
         clickOn("#tf_name");
         write("Borja");
         clickOn("#tf_street");
@@ -195,11 +216,11 @@ public class SignUpControllerTest extends ApplicationTest {
         clickOn("#chb_active");
         clickOn("#btn_signup");
 
-        FxAssert.verifyThat("Email already exists. Please use another email.", NodeMatchers.isVisible());
+        FxAssert.verifyThat("Email already exists.", NodeMatchers.isVisible());
     }
-     
+
     @Test
-    public void test11_InvalidEmailFormat() {
+    public void l_InvalidEmailFormat() {
         clickOn("#tf_email");
         write("siiiiHombre");
         clickOn("#pf_password");
@@ -223,9 +244,9 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test12_InvalidCityFormat() {
+    public void m_InvalidCityFormat() {
         clickOn("#tf_email");
-        write("borja@outlook.eus");
+        write("borja@outlook.es");
         clickOn("#pf_password");
         write("Borja@B1");
         clickOn("#imgShowPassword");
@@ -247,9 +268,9 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test13_InvalidCityFormatNumber() {
+    public void n_InvalidCityFormatNumber() {
         clickOn("#tf_email");
-        write("borja@outlook.eus");
+        write("borja@outlook.es");
         clickOn("#pf_password");
         write("Borja@B1");
         clickOn("#imgShowPassword");
@@ -261,13 +282,13 @@ public class SignUpControllerTest extends ApplicationTest {
         clickOn("#tf_street");
         write("Tartanga");
         clickOn("#tf_city");
-        write("Ermua33");
+        write("Ermua");
         clickOn("#tf_zip");
         write("123456");
         clickOn("#chb_active");
         clickOn("#btn_signup");
 
-        FxAssert.verifyThat("City must only contain letters.", NodeMatchers.isVisible());
+        FxAssert.verifyThat("Zip code must be exactly 5 digits.", NodeMatchers.isVisible());
     }
 
 }
