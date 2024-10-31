@@ -55,7 +55,7 @@ public class logInController {
     /**
      * Logger para registrar eventos y mensajes.
      */
-    private static final Logger logger = Logger.getLogger(logInController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(logInController.class.getName());
 
     @FXML
     private TextField emailTextField; // Campo de texto para el email del usuario.
@@ -175,7 +175,7 @@ public class logInController {
             File file = new File("config.properties"); // Archivo donde se guardará la preferencia.
             props.store(new FileOutputStream(file), "Theme Settings"); // Almacena las propiedades en el archivo.
         } catch (IOException e) {
-            logger.severe("Error saving theme preference: " + e.getMessage()); // Registra un error si ocurre una excepción.
+            LOGGER.severe("Error saving theme preference: " + e.getMessage()); // Registra un error si ocurre una excepción.
         }
     }
 
@@ -193,7 +193,7 @@ public class logInController {
                 return props.getProperty("theme", "light"); // Devuelve el tema cargado, o "light" por defecto.
             }
         } catch (IOException e) {
-            logger.severe("Error loading theme preference: " + e.getMessage()); // Registra un error si ocurre una excepción.
+            LOGGER.severe("Error loading theme preference: " + e.getMessage()); // Registra un error si ocurre una excepción.
         }
         return "light"; // Devuelve el tema por defecto.
     }
@@ -261,20 +261,23 @@ public class logInController {
             }
         } catch (IncorrectCredentialsException e) { // Captura excepciones específicas
             utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales."); // Muestra un mensaje de error.
-            logger.warning("Credenciales incorrectas"); // Registra una advertencia.
+            LOGGER.warning("Credenciales incorrectas"); // Registra una advertencia.
         } catch (ServerErrorException e) { // Captura excepciones de conexión
             utils.showAlert("Error", "Problemas de conexión con el servidor."); // Muestra un mensaje de error.
-            logger.warning("Error en la conexion"); // Registra una advertencia.
+            LOGGER.warning("Error en la conexion"); // Registra una advertencia.
         } catch (ConnectionException e) { // Captura excepciones de conexión
             utils.showAlert("Error", "Problemas de conexión a la base de datos."); // Muestra un mensaje de error.
-            logger.warning("Error en la conexion"); // Registra una advertencia.
+            LOGGER.warning("Error en la conexion"); // Registra una advertencia.
         }catch (MaxThreadUserException e) { // Captura excepcion de max user
             utils.showAlert("Error", "No se pudo iniciar sesión. Maximo número de usuarios alcanzado espere unos minutos."); // Muestra un mensaje de error.
-            logger.warning("Maximo usuario alcanzado"); // Registra una advertencia.
+            LOGGER.warning("Maximo usuario alcanzado"); // Registra una advertencia.
         } catch (Exception e) { // Captura cualquier otra excepción
             utils.showAlert("Error", "Ocurrió un error inesperado."); // Muestra un mensaje de error.
-            logger.severe("Error inesperado"); // Registra un error grave.
+            LOGGER.severe("Error inesperado"); // Registra un error grave.
         }
+        // Captura excepciones específicas
+        // Muestra un mensaje de error.
+        // Registra una advertencia.
         // Captura excepciones específicas
         // Muestra un mensaje de error.
         // Registra una advertencia.
@@ -287,7 +290,7 @@ public class logInController {
      */
     @FXML
     private void handleCreateUserLinkAction() {
-        logger.info("Abrir vista de registro."); // Registra la acción de abrir la vista de registro.
+        LOGGER.info("Abrir vista de registro."); // Registra la acción de abrir la vista de registro.
         navigateToScreen("/view/SignUpView.fxml", "SignUp", false, null); // Navega a la vista de registro.
     }
 
@@ -340,7 +343,7 @@ public class logInController {
             }
 
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e); // Registra un error si falla la carga de la pantalla.
+            LOGGER.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e); // Registra un error si falla la carga de la pantalla.
         }
     }
 }

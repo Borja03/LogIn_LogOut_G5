@@ -1,5 +1,7 @@
 package Model;
 
+import database.DBPool;
+import exception.ConnectionException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -92,6 +94,8 @@ public class Server {
 
     private void stopServer() {
         try {
+            
+            DBPool.getInstance().releaseAllConnections();
             serverOn = false; // Set serverOn to false
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close(); // Close the server socket
@@ -99,6 +103,8 @@ public class Server {
             logger.info("Server has been stopped.");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error stopping the server: " + e.getMessage(), e);
+        } catch (ConnectionException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

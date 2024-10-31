@@ -124,7 +124,7 @@ public class SignerClient implements Signable {
             }
         } catch (ClassNotFoundException | IOException ex) {
             LOGGER.log(Level.SEVERE, "Error en el método signUp", ex);
-            throw new ServerErrorException("Error de comunicación con el servidor.", ex);
+            throw new ServerErrorException("Error de comunicación con el servidor.");
         }
     }
 
@@ -187,8 +187,7 @@ public class SignerClient implements Signable {
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error en el método signIn", ex);
-            throw new ServerErrorException("Error de entrada/salida en los datos.", ex);
+            throw new ServerErrorException("Error de entrada/salida en los datos.");
         }
-        return null;
     }
 }
