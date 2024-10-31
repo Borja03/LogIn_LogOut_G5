@@ -326,7 +326,7 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-            logInController controller = loader.getController();
+            LogInController controller = loader.getController();
             stage.close();
             Stage newStage = new Stage();
             controller.setStage(newStage);
