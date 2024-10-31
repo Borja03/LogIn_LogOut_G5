@@ -2,7 +2,9 @@ package view;
 
 import Model.SignableFactory;
 import Model.User;
+import Utils.UtilsMethods;
 import static Utils.UtilsMethods.logger;
+import exception.ConnectionException;
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
 import exception.InvalidEmailFormatException;
@@ -124,6 +126,8 @@ public class SignUpController {
     public Stage getStage() {
         return stage;
     }
+    
+    UtilsMethods utils = new UtilsMethods();
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -415,25 +419,41 @@ public class SignUpController {
         return hasUppercase && hasDigit && hasSpecialChar;
     }
 
-    private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive)
-                    throws UserAlreadyExistsException, ServerErrorException {
+   		
+    private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
 
-        //UserDao userdao = new UserDao();
-        //userdao.signUp(user);
         try {
+            // Attempting to sign up the user
             User nuevoUser = SignableFactory.getSignable().signUp(user);
-            LOGGER.log(Level.INFO, "User signed up successfully: {0}", nuevoUser.getEmail());
-            if (nuevoUser == null) {
-                throw new UserAlreadyExistsException("Email already exist.");
+            // If the sign-up is successful
+            if (nuevoUser != null) {
+                utils.showAlert("Felicidades","Usuario añadido correctamente");
             }
+        } catch (UserAlreadyExistsException e) {
+            // Handle duplicate email error
+            utils.showAlert("Error", "Email already exists. Please use another email.");
+            LOGGER.warning("Email already exists");
         } catch (ServerErrorException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
+            // Handle server error
+            utils.showAlert("Error", "Server is not available at the moment. Please try again later.");
+            LOGGER.warning("Server error occurred");
+        } catch (ConnectionException e) { // Captura excepciones de conexión
+            utils.showAlert("Error", "Problemas de conexión a la base de datos."); // Muestra un mensaje de error.
+            logger.warning("Error en la conexion"); // Registra una advertencia.
+        }catch (Exception e) {
+            // Handle unexpected errors
+            utils.showAlert("Error", "An unexpected error occurred: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Unexpected error in performSignUp", e);
         }
+     }
 
-        // Inform the user of successful sign-up using an Alert
-        showAlert();
-
+    public void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private void handleLoginHyperlinkAction(ActionEvent event) {
@@ -484,21 +504,6 @@ public class SignUpController {
             alert.showAndWait();
             LOGGER.log(Level.SEVERE, errorMsg);
         }
-    }
-
-    private void showAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sign-up Successful");
-        alert.setHeaderText(null);
-        alert.setContentText("Your account has been created successfully!");
-
-        // Handle alert button click
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                // Navigate to another screen after the user clicks OK
-                navigateToScreen("/view/LogIn.fxml", "LogIn");
-            }
-        });
     }
 
 }

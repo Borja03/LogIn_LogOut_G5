@@ -12,14 +12,17 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
+
 
 /**
  *
  * @author 2dam
  */
+    
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SignUpControllerTest extends ApplicationTest {
 
