@@ -30,80 +30,94 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 
 /**
- * The MainController handles the main functionalities of the main screen of the
- * application. It includes actions for showing and hiding the password, as well
- * as logging out. This class is linked to the main FXML view where user
- * interactions are handled.
+ * The MainController class manages the main screen of the application.
+ * It includes actions for showing and hiding the password, logging out,
+ * theme switching, and handling user interactions.
  *
  * <p>
- * This controller allows the user to view the password in plain text, hide the
- * password, and log out to the login screen.</p>
+ * The controller is associated with the main FXML view where various
+ * actions are managed, including toggling password visibility, logging out,
+ * copying selected text, and switching between light and dark themes.
+ * </p>
  *
- * @author Borja
+ * @see javafx.fxml.FXML
+ * @see javafx.stage.Stage
+ * @see javafx.scene.Scene
+ * @see javafx.scene.control.Button
+ * @see javafx.scene.control.PasswordField
+ * @see javafx.scene.control.TextField
+ * @see javafx.scene.input.ContextMenuEvent
+ * @see javafx.scene.layout.Pane
+ * 
+ * @since 1.0
+ * @version 1.0
  */
 public class MainController {
 
-    // FXML components to display user details
     @FXML
-    private TextField emailField;  // TextField to display user's email
+    private TextField emailField;
 
     @FXML
-    private TextField nameField;   // TextField to display user's name
+    private TextField nameField;
 
     @FXML
-    private TextField addressField; // TextField to display user's address
-
-    // Password-related fields
-    @FXML
-    private PasswordField passwordField; // The masked password input
+    private TextField addressField;
 
     @FXML
-    private TextField plainPasswordField; // The visible plain text input (used when the password is shown)
+    private PasswordField passwordField;
 
     @FXML
-    private Button logOutButton; // LogOut button
+    private TextField plainPasswordField;
 
     @FXML
-    private Button eyeButton; // Eye button for showing/hiding password
+    private Button logOutButton;
 
     @FXML
-    private ImageView eyeImageView; // Eye icon for password visibility
+    private Button eyeButton;
+
+    @FXML
+    private ImageView eyeImageView;
 
     @FXML
     private Pane mainPane;
 
-    // Image paths for the eye icons
     private final Image eyeClosed = new Image(getClass().getResourceAsStream("/Images/eye-solid.png"));
     private final Image eyeOpen = new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png"));
 
     private boolean passwordIsVisible = false;
 
-    // Context menus for copying selected text
     private ContextMenu contextMenu;
 
-    // Stage to manage the current window
     private Stage stage;
-
-    // Getter and Setter for Stage
-    public Stage getStage() {
-        return stage;
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
 
     private String currentTheme = "light";
 
     /**
-     * Initializes the controller with the provided root element and the user
-     * data.
+     * Retrieves the current Stage instance.
      *
-     * @param root The root element of the scene.
-     * @param user The user object containing the user's details.
+     * @return The active stage where the scene is set.
+     */
+    public Stage getStage() {
+        return stage;
+    }
+
+    /**
+     * Assigns a Stage instance to this controller.
+     *
+     * @param stage the stage instance to associate with the controller.
+     */
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    /**
+     * Initializes the main stage with user data and sets up UI elements, theme preference,
+     * and event handlers.
+     *
+     * @param root the root element of the scene.
+     * @param user the User object containing details to populate the UI fields.
      */
     public void initStage(Parent root, User user) {
         logger.info("Initializing MainController stage.");
@@ -113,37 +127,24 @@ public class MainController {
         stage.setResizable(false);
         stage.getIcons().add(new Image("/Images/userIcon.png"));
 
-        // Set initial visibility of password fields
         passwordField.setVisible(true);
         plainPasswordField.setVisible(false);
         eyeImageView.setImage(eyeClosed);
 
-        // Initialize the context menu for copy functionality
         createContextMenu();
 
-        // Link event handlers
         logOutButton.setOnAction(this::logOut);
         eyeButton.setOnAction(this::togglePasswordVisibility);
 
-        // Set user details in text fields
         emailField.setText(user.getEmail());
         nameField.setText(user.getName());
-
-        // Concatenate street, city, and zip for the address field
         String address = String.format("%s, %s, %d", user.getStreet(), user.getCity(), user.getZip());
         addressField.setText(address);
+        passwordField.setText(user.getPassword());
 
-        // Set the user's password (ensure that this is a secure way of handling passwords)
-        passwordField.setText(user.getPassword()); // Asegúrate de que tengas acceso a la contraseña aquí
-
-        // menu
-        // Initialize context menu
         initializeContextMenu();
-
-        // Add context menu to the scene
         root.setOnContextMenuRequested(this::showContextMenu);
 
-        // Load default theme
         currentTheme = loadThemePreference();
         loadTheme(currentTheme);
 
@@ -152,7 +153,7 @@ public class MainController {
     }
 
     /**
-     * Creates a context menu with a copy option for selected text.
+     * Creates a context menu for text fields, with options to copy text and change themes.
      */
     private void createContextMenu() {
         contextMenu = new ContextMenu();
@@ -162,22 +163,28 @@ public class MainController {
 
         lightMode.setOnAction(e -> switchTheme("light"));
         darkMode.setOnAction(e -> switchTheme("dark"));
-
-        // Set action for the copy menu item
         copyItem.setOnAction(this::handleCopyAction);
 
-        // Add the copy option to the context menu
         contextMenu.getItems().add(copyItem);
 
-        // Attach the context menu to relevant text fields
         attachContextMenuToTextField(passwordField);
         attachContextMenuToTextField(plainPasswordField);
     }
 
+    /**
+     * Displays the context menu at the specified screen coordinates when triggered.
+     *
+     * @param event the context menu request event.
+     */
     private void showContextMenu(ContextMenuEvent event) {
         contextMenu.show(mainPane, event.getScreenX(), event.getScreenY());
     }
 
+    /**
+     * Persists the theme preference in a properties file.
+     *
+     * @param theme the theme name ("light" or "dark") to save as a preference.
+     */
     private void saveThemePreference(String theme) {
         try {
             Properties props = new Properties();
@@ -189,6 +196,11 @@ public class MainController {
         }
     }
 
+    /**
+     * Loads the stored theme preference from the properties file.
+     *
+     * @return the name of the theme ("light" or "dark"), defaults to "light".
+     */
     private String loadThemePreference() {
         try {
             Properties props = new Properties();
@@ -203,80 +215,70 @@ public class MainController {
         return "light";
     }
 
+    /**
+     * Switches the UI theme to the specified theme and updates the preference file.
+     *
+     * @param theme the theme to apply ("light" or "dark").
+     */
     private void switchTheme(String theme) {
         currentTheme = theme;
         loadTheme(theme);
         saveThemePreference(theme);
     }
 
+    /**
+     * Applies the specified theme to the scene's stylesheet.
+     *
+     * @param theme the theme name ("light" or "dark") to load.
+     */
     private void loadTheme(String theme) {
         Scene scene = stage.getScene();
         scene.getStylesheets().clear();
-
+        String cssFile = theme.equals("dark") ? "/css/dark-styles.css" : "/css/CSSglobal.css";
+        scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
         if (theme.equals("dark")) {
-            // Código adicional para el tema oscuro
-
-            String cssFile = "/css/dark-styles.css";
-            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
             contextMenu.getStyleClass().add("context-menu-dark");
-
-            // Aquí puedes agregar más acciones específicas para el tema oscuro
-        } else if (theme.equals("light")) {
-            // Código adicional para el tema claro
-
-            String cssFile = "/css/CSSglobal.css";
-
-            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+        } else {
             contextMenu.getStyleClass().remove("context-menu-dark");
-
-            // Aquí puedes agregar más acciones específicas para el tema claro
         }
     }
 
     /**
-     * Handles the copy action from the context menu.
+     * Copies selected text from a text field to the clipboard.
      *
-     * @param event The action event triggered by the context menu.
+     * @param event the action event triggered for the copy action.
      */
     private void handleCopyAction(ActionEvent event) {
         copySelectedText();
     }
 
     /**
-     * Attaches the context menu to a TextField or PasswordField.
+     * Attaches the context menu to a specified text field, enabling right-click copy.
      *
-     * @param textField The text field to which the context menu will be
-     * attached.
+     * @param textField the TextField instance to attach the context menu to.
      */
     private void attachContextMenuToTextField(TextField textField) {
         textField.setContextMenu(contextMenu);
     }
 
-    //menu and theme
+    /**
+     * Initializes the context menu with theme options for light and dark modes.
+     */
     private void initializeContextMenu() {
         contextMenu = new ContextMenu();
-
         MenuItem lightMode = new MenuItem("Light Mode");
         MenuItem darkMode = new MenuItem("Dark Mode");
-
         lightMode.setOnAction(e -> switchTheme("light"));
         darkMode.setOnAction(e -> switchTheme("dark"));
-
         contextMenu.getItems().addAll(lightMode, darkMode);
     }
 
     /**
-     * Copies the selected text from the active text field to the clipboard.
+     * Copies the selected text from the visible text field (password field or plain text field)
+     * to the system clipboard.
      */
     private void copySelectedText() {
-        String selectedText = "";
-
-        if (passwordField.isVisible() && passwordField.getSelectedText() != null) {
-            selectedText = passwordField.getSelectedText();
-        } else if (plainPasswordField.isVisible() && plainPasswordField.getSelectedText() != null) {
-            selectedText = plainPasswordField.getSelectedText();
-        }
-
+        String selectedText = passwordField.isVisible() ? passwordField.getSelectedText() : plainPasswordField.getSelectedText();
         if (!selectedText.isEmpty()) {
             Clipboard clipboard = Clipboard.getSystemClipboard();
             ClipboardContent content = new ClipboardContent();
@@ -286,80 +288,62 @@ public class MainController {
     }
 
     /**
-     * Handles the log out action and navigates to the login screen.
+     * Toggles password visibility between plain text and masked text.
      *
-     * @param event The action event triggered by the log out button.
+     * @param event the ActionEvent for toggling visibility.
      */
-    @FXML
-    private void logOut(ActionEvent event) {
-        navigateToScreen("/view/LogIn.fxml", "LogIn");
-    }
-
-    /**
-     * Toggles the password visibility between masked and plain text.
-     *
-     * @param event The action event triggered by the eye button.
-     */
-    @FXML
     private void togglePasswordVisibility(ActionEvent event) {
-        if (passwordIsVisible) {
-            passwordField.setVisible(true);
-            plainPasswordField.setVisible(false);
-            eyeImageView.setImage(eyeClosed);
-        } else {
-            passwordField.setVisible(false);
-            plainPasswordField.setVisible(true);
-            plainPasswordField.setText(passwordField.getText()); // Mostrar la contraseña real
-            eyeImageView.setImage(eyeOpen);
-        }
         passwordIsVisible = !passwordIsVisible;
-    }
+        passwordField.setVisible(!passwordIsVisible);
+        plainPasswordField.setVisible(passwordIsVisible);
 
-    /**
-     * Navigates to a different screen based on the provided FXML path and
-     * title.
-     *
-     * @param fxmlPath The path to the FXML file for the new screen.
-     * @param windowTitle The title for the new window.
-     */
-    private void navigateToScreen(String fxmlPath, String windowTitle) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();
-            logInController controller = loader.getController();
-            stage.close();
-            Stage newStage = new Stage();
-            controller.setStage(newStage);
-            controller.initialize(root);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to load {0} screen: " + e.getMessage(), windowTitle);
+        if (passwordIsVisible) {
+            plainPasswordField.setText(passwordField.getText());
+            eyeImageView.setImage(eyeOpen);
+        } else {
+            passwordField.setText(plainPasswordField.getText());
+            eyeImageView.setImage(eyeClosed);
         }
     }
 
     /**
-     * Handles the exit action with confirmation dialog.
+     * Handles the logout action by closing the current stage and returning to the login screen.
      *
-     * @param event The event triggered when closing the stage.
+     * @param event the ActionEvent triggered by clicking the log out button.
      */
-    private void handleOnActionExit(Event event) {
+    private void logOut(ActionEvent event) {
+        logger.info("User logged out successfully.");
+        showLogoutMessage();
+        closeCurrentStageAndReturnToLogin();
+    }
+
+    /**
+     * Shows an information alert message confirming the logout action.
+     */
+    private void showLogoutMessage() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Log Out");
+        alert.setHeaderText(null);
+        alert.setContentText("User logged out successfully.");
+        alert.showAndWait();
+    }
+
+    /**
+     * Closes the current stage and loads the login screen.
+     */
+    private void closeCurrentStageAndReturnToLogin() {
         try {
-            // Ask user for confirmation on exit
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                    "Are you sure you want to exit the application?",
-                    ButtonType.OK, ButtonType.CANCEL);
-            Optional<ButtonType> result = alert.showAndWait();
-            // If OK to exit
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                Platform.exit();
-            } else {
-                event.consume();
-            }
-        } catch (Exception e) {
-            String errorMsg = "Error exiting application:" + e.getMessage();
-            Alert alert = new Alert(Alert.AlertType.ERROR,
-                    errorMsg,
-                    ButtonType.OK);
-            alert.showAndWait();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Login.fxml"));
+            Parent loginRoot = loader.load();
+            Stage loginStage = new Stage();
+            loginStage.setScene(new Scene(loginRoot));
+            loginStage.setTitle("Login");
+            loginStage.setResizable(false);
+            loginStage.getIcons().add(new Image("/Images/userIcon.png"));
+            stage.close();
+            loginStage.show();
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Failed to load login screen: {0}", e.getMessage());
         }
     }
 }
