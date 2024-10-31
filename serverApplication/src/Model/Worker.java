@@ -95,9 +95,12 @@ public class Worker implements Runnable {
             msg.setTipo(TipoMensaje.EMAIL_EXISTS);
             logger.log(Level.SEVERE, "El usuario ya existe: " + (msg.getUser() != null ? msg.getUser().getEmail() : "Usuario no especificado"), e);
         } catch (ConnectionException e) {
+            msg.setTipo(TipoMensaje.CONNECTION_ERROR);
+            logger.log(Level.SEVERE, "Error de conexión", e);
+        } catch (ServerErrorException e) {
             msg.setTipo(TipoMensaje.SERVER_ERROR);
             logger.log(Level.SEVERE, "Error de conexión", e);
-        } catch (ClassNotFoundException e) {
+        }catch (ClassNotFoundException e) {
             msg.setTipo(TipoMensaje.SERVER_ERROR);
             logger.log(Level.SEVERE, "Clase no encontrada", e);
         } catch (IOException e) {

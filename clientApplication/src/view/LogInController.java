@@ -1,50 +1,54 @@
 package view;
 
-import Model.SignableFactory; // Importa la fábrica de objetos signables para manejar el inicio de sesión.
-import Model.User; // Importa la clase User para manejar información del usuario.
-import javafx.fxml.FXML; // Importa las anotaciones FXML para vincular el controlador a la interfaz gráfica.
-import javafx.scene.control.Alert; // Importa Alert para mostrar mensajes de alerta.
-import javafx.scene.control.Button; // Importa Button para crear botones.
-import javafx.scene.control.Label; // Importa Label para crear etiquetas.
-import javafx.scene.control.PasswordField; // Importa PasswordField para campos de contraseña.
-import javafx.scene.control.TextField; // Importa TextField para campos de texto.
-import javafx.scene.control.Hyperlink; // Importa Hyperlink para enlaces.
-import javafx.scene.image.Image; // Importa Image para manejar imágenes.
-import javafx.scene.image.ImageView; // Importa ImageView para mostrar imágenes.
+import Model.SignableFactory;
+import Model.User;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
-import java.util.logging.Logger; // Importa Logger para registrar eventos y mensajes.
-import Utils.UtilsMethods; // Importa métodos utilitarios personalizados.
-import exception.*; // Importa excepciones personalizadas.
-import javafx.scene.layout.Pane; // Importa Pane para la gestión de layouts.
-import java.util.logging.Level; // Importa Level para manejar niveles de registro.
-import javafx.fxml.FXMLLoader; // Importa FXMLLoader para cargar archivos FXML.
-import javafx.scene.Scene; // Importa Scene para manejar escenas.
-import javafx.stage.Stage; // Importa Stage para manejar ventanas.
+import java.util.logging.Logger;
+import Utils.UtilsMethods;
+import exception.*;
+import javafx.scene.layout.Pane;
+import java.util.logging.Level;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-import java.io.File; // Importa File para manipular archivos.
-import java.io.FileInputStream; // Importa FileInputStream para leer archivos.
-import java.io.FileOutputStream; // Importa FileOutputStream para escribir archivos.
-import java.io.IOException; // Importa IOException para manejar excepciones de entrada/salida.
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.ConnectException;
-import java.util.Properties; // Importa Properties para manejar propiedades.
-import javafx.scene.Parent; // Importa Parent para la raíz de la jerarquía de nodos.
-import javafx.scene.control.ContextMenu; // Importa ContextMenu para manejar menús contextuales.
-import javafx.scene.control.MenuItem; // Importa MenuItem para manejar ítems de menú.
-import javafx.scene.input.ContextMenuEvent; // Importa ContextMenuEvent para eventos de menú contextual.
-import javafx.scene.layout.BorderPane; // Importa BorderPane para la gestión de layouts.
+import java.util.Properties;
+import javafx.scene.Parent;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.BorderPane;
 
- /**
-  * Controlador para la interfaz de inicio de sesión. Este controlador maneja la
-  * lógica de la vista de inicio de sesión, incluyendo la validación de
-  * credenciales y la visibilidad de la contraseña.
-  *
-  * <p>
-  * Se encarga de gestionar la interacción del usuario con los componentes de la
-  * interfaz de usuario, así como de proporcionar retroalimentación mediante
-  * mensajes de alerta.</p>
-  *
-  * @author Alder
-  */
+/**
+ * Controlador para la vista de inicio de sesión en la aplicación.
+ * Esta clase maneja la lógica para iniciar sesión, cambiar la visibilidad
+ * de la contraseña, navegar entre vistas, gestionar temas de interfaz
+ * (claro/oscuro) y proporciona opciones adicionales mediante un menú contextual.
+ * 
+ * <p>El controlador interactúa con diversos elementos de la interfaz gráfica
+ * para obtener las credenciales del usuario, validarlas y manejar los intentos
+ * de inicio de sesión. En caso de éxito, permite al usuario acceder a la
+ * pantalla principal o a la vista de registro.</p>
+ * 
+ * <p>Incluye métodos utilitarios para guardar preferencias de usuario, como
+ * el tema de la aplicación, y para limpiar campos de entrada cuando se solicita.</p>
+ * 
+ * @author Alder
+ */
 public class LogInController {
 
     /**
@@ -58,36 +62,40 @@ public class LogInController {
     private static final Logger logger = Logger.getLogger(LogInController.class.getName());
 
     @FXML
-    private TextField emailTextField; // Campo de texto para el email del usuario.
+    private TextField emailTextField;
 
     @FXML
-    private PasswordField passwordField; // Campo de texto para la contraseña del usuario.
+    private PasswordField passwordField;
 
     @FXML
-    private TextField visiblePasswordField; // Campo de texto para mostrar la contraseña en texto plano.
+    private TextField visiblePasswordField;
 
     @FXML
-    private Button logInButton; // Botón para iniciar sesión.
+    private Button logInButton;
 
     @FXML
-    private Label emailLabel; // Etiqueta para el campo de email.
+    private Label emailLabel;
 
     @FXML
-    private Label passwordLabel; // Etiqueta para el campo de contraseña.
+    private Label passwordLabel;
 
     @FXML
-    private Hyperlink createUserLink; // Enlace para crear usuario.
+    private Hyperlink createUserLink;
 
     @FXML
-    private ImageView passwordImage; // Imagen que indica la visibilidad de la contraseña.
-    @FXML
-    private BorderPane borderPane; // Pane para la organización de la interfaz.
+    private ImageView passwordImage;
 
-    private ContextMenu contextMenu; // Menú contextual para opciones adicionales.
-    private String currentTheme = "light"; // Tema actual de la interfaz.
     @FXML
-    private Pane centralPane; // Pane central para la organización.
-    private Stage stage; // Ventana principal.
+    private BorderPane borderPane;
+
+    private ContextMenu contextMenu;
+
+    private String currentTheme = "light";
+
+    @FXML
+    private Pane centralPane;
+
+    private Stage stage;
 
     /**
      * Establece la ventana principal (stage).
@@ -113,69 +121,72 @@ public class LogInController {
     private boolean isPasswordVisible = false;
 
     /**
-     * Método que se ejecuta al inicializar el controlador. Configura el campo
-     * de texto visible para la contraseña y agrega un listener para validar el
-     * email cuando pierde el foco.
+     * Método que se ejecuta al inicializar el controlador. Configura la escena,
+     * establece el título y las propiedades de la ventana principal, oculta el
+     * campo de texto visible para la contraseña, y carga y aplica la
+     * preferencia del tema guardado.
      *
-     * @param root la raíz de la interfaz.
+     * @param root la raíz de la interfaz que se mostrará en la ventana.
      */
     @FXML
     public void initialize(Parent root) {
-        Scene scene = new Scene(root); // Crea una nueva escena con el root proporcionado.
-        stage.setScene(scene); // Establece la escena en la ventana principal.
-        stage.setTitle("SignIn"); // Establece el título de la ventana.
-        stage.setResizable(false); // Deshabilita el redimensionamiento de la ventana.
-        stage.centerOnScreen(); // Centra la ventana en la pantalla.
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("SignIn");
+        stage.setResizable(false);
+        stage.centerOnScreen();
 
-        visiblePasswordField.setVisible(false); // Oculta el campo de texto visible para la contraseña.
-        initializeContextMenu(); // Inicializa el menú contextual.
+        visiblePasswordField.setVisible(false);
+        initializeContextMenu();
 
-        // Asigna el menú contextual al BorderPane
-        borderPane.setOnContextMenuRequested(this::showContextMenu); // Muestra el menú contextual al solicitarlo.
+        borderPane.setOnContextMenuRequested(this::showContextMenu);
 
-        currentTheme = loadThemePreference(); // Carga la preferencia del tema guardada.
-        loadTheme(currentTheme); // Aplica el tema cargado.
-        stage.show(); // Muestra la ventana.
+        currentTheme = loadThemePreference();
+        loadTheme(currentTheme);
+        stage.show();
     }
 
-    // Método para inicializar el menú contextual y sus opciones.
+    /**
+     * Inicializa el menú contextual y define las opciones disponibles, como
+     * cambiar el tema y limpiar los campos de entrada.
+     */
     private void initializeContextMenu() {
-        contextMenu = new ContextMenu(); // Crea un nuevo menú contextual.
+        contextMenu = new ContextMenu();
 
-        MenuItem lightMode = new MenuItem("Light Mode"); // Opción para el modo claro.
-        MenuItem darkMode = new MenuItem("Dark Mode"); // Opción para el modo oscuro.
-        MenuItem clearFields = new MenuItem("Clear Fields"); // Opción para limpiar campos.
+        MenuItem lightMode = new MenuItem("Light Mode");
+        MenuItem darkMode = new MenuItem("Dark Mode");
+        MenuItem clearFields = new MenuItem("Clear Fields");
 
-        // Establece acciones para las opciones del menú.
-        lightMode.setOnAction(e -> switchTheme("light")); // Cambia al modo claro.
-        darkMode.setOnAction(e -> switchTheme("dark")); // Cambia al modo oscuro.
-        clearFields.setOnAction(e -> clearAllFields()); // Limpia todos los campos.
+        lightMode.setOnAction(e -> switchTheme("light"));
+        darkMode.setOnAction(e -> switchTheme("dark"));
+        clearFields.setOnAction(e -> clearAllFields());
 
-        contextMenu.getItems().addAll(lightMode, darkMode, clearFields); // Agrega opciones al menú contextual.
+        contextMenu.getItems().addAll(lightMode, darkMode, clearFields);
     }
 
     /**
      * Muestra el menú contextual en la posición del mouse.
      *
-     * @param event el evento de menú contextual.
+     * @param event el evento de menú contextual que indica la posición del
+     * mouse.
      */
     private void showContextMenu(ContextMenuEvent event) {
-        contextMenu.show(centralPane, event.getScreenX(), event.getScreenY()); // Muestra el menú contextual.
+        contextMenu.show(centralPane, event.getScreenX(), event.getScreenY());
     }
 
     /**
      * Guarda la preferencia del tema en un archivo de propiedades.
      *
-     * @param theme el tema a guardar.
+     * @param theme el tema a guardar, puede ser "light" o "dark".
      */
     private void saveThemePreference(String theme) {
         try {
-            Properties props = new Properties(); // Crea un objeto Properties para almacenar el tema.
-            props.setProperty("theme", theme); // Establece la propiedad del tema.
-            File file = new File("config.properties"); // Archivo donde se guardará la preferencia.
-            props.store(new FileOutputStream(file), "Theme Settings"); // Almacena las propiedades en el archivo.
+            Properties props = new Properties();
+            props.setProperty("theme", theme);
+            File file = new File("config.properties");
+            props.store(new FileOutputStream(file), "Theme Settings");
         } catch (IOException e) {
-            logger.severe("Error saving theme preference: " + e.getMessage()); // Registra un error si ocurre una excepción.
+            logger.severe("Error saving theme preference: " + e.getMessage());
         }
     }
 
@@ -186,96 +197,110 @@ public class LogInController {
      */
     private String loadThemePreference() {
         try {
-            Properties props = new Properties(); // Crea un objeto Properties para cargar el tema.
-            File file = new File("config.properties"); // Archivo donde se espera encontrar la preferencia.
+            Properties props = new Properties();
+            File file = new File("config.properties");
             if (file.exists()) {
-                props.load(new FileInputStream(file)); // Carga las propiedades desde el archivo.
-                return props.getProperty("theme", "light"); // Devuelve el tema cargado, o "light" por defecto.
+                props.load(new FileInputStream(file));
+                return props.getProperty("theme", "light");
             }
         } catch (IOException e) {
-            logger.severe("Error loading theme preference: " + e.getMessage()); // Registra un error si ocurre una excepción.
+            logger.severe("Error loading theme preference: " + e.getMessage());
         }
-        return "light"; // Devuelve el tema por defecto.
+        return "light";
     }
 
     /**
      * Cambia el tema de la interfaz y guarda la preferencia.
      *
-     * @param theme el nuevo tema a aplicar.
+     * Este método actualiza el tema actual de la interfaz, lo aplica y lo
+     * guarda en las preferencias del usuario para que se mantenga la próxima
+     * vez que se inicie la aplicación.
+     *
+     * @param theme el nuevo tema a aplicar, que puede ser "light" o "dark".
      */
     private void switchTheme(String theme) {
-        currentTheme = theme; // Actualiza el tema actual.
-        loadTheme(theme); // Aplica el nuevo tema.
-        saveThemePreference(theme); // Guarda la preferencia del nuevo tema.
+        currentTheme = theme;
+        loadTheme(theme);
+        saveThemePreference(theme);
     }
 
     /**
-     * Carga el tema CSS correspondiente.
+     * Carga el tema CSS correspondiente según el parámetro.
      *
-     * @param theme el tema a cargar.
+     * Este método limpia las hojas de estilo actuales de la escena y carga la
+     * hoja de estilo correspondiente al tema especificado. También ajusta el
+     * estilo del menú contextual de acuerdo al tema.
+     *
+     * @param theme el tema a cargar, que puede ser "light" o "dark".
      */
     private void loadTheme(String theme) {
-        Scene scene = stage.getScene(); // Obtiene la escena actual.
-        scene.getStylesheets().clear(); // Limpia las hojas de estilo actuales.
+        Scene scene = stage.getScene();
+        scene.getStylesheets().clear();
 
-        if (theme.equals("dark")) { // Si el tema es oscuro
-            String cssFile = "/css/dark-styles.css"; // Ruta del archivo CSS para el tema oscuro.
-            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm()); // Agrega la hoja de estilo para el tema oscuro.
-            contextMenu.getStyleClass().add("context-menu-dark"); // Establece el estilo oscuro para el menú contextual.
-        } else if (theme.equals("light")) { // Si el tema es claro
-            String cssFile = "/css/CSSglobal.css"; // Ruta del archivo CSS para el tema claro.
-            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm()); // Agrega la hoja de estilo para el tema claro.
-            contextMenu.getStyleClass().remove("context-menu-dark"); // Remueve el estilo oscuro del menú contextual.
+        if (theme.equals("dark")) {
+            String cssFile = "/css/dark-styles.css";
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+            contextMenu.getStyleClass().add("context-menu-dark");
+        } else if (theme.equals("light")) {
+            String cssFile = "/css/CSSglobal.css";
+            scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
+            contextMenu.getStyleClass().remove("context-menu-dark");
         }
     }
 
     /**
      * Limpia todos los campos de entrada.
+     *
+     * Este método borra el contenido de los campos de texto de email y
+     * contraseña, dejando la interfaz lista para una nueva entrada de datos.
      */
     private void clearAllFields() {
-        emailTextField.clear(); // Limpia el campo de email.
-        passwordField.clear(); // Limpia el campo de contraseña.
+        emailTextField.clear();
+        passwordField.clear();
     }
 
     /**
-     * Maneja la acción del botón de inicio de sesión. Valida las credenciales
-     * del usuario y muestra un mensaje apropiado. Si el inicio de sesión es
-     * exitoso, navega a la pantalla principal.
+     * Maneja la acción del botón de inicio de sesión.
+     *
+     * Este método valida las credenciales del usuario ingresadas en los campos
+     * de texto y, si son correctas, navega a la pantalla principal de la
+     * aplicación. En caso de que las credenciales sean incorrectas o se
+     * produzca algún error, muestra un mensaje de alerta correspondiente.
+     *
+     * @throws InvalidEmailFormatException si el formato del email es inválido.
      */
     @FXML
     private void handleLogInButtonAction() throws InvalidEmailFormatException {
-        utils.validateEmail(emailTextField.getText()); // Valida el formato del email ingresado.
-        String email = emailTextField.getText(); // Obtiene el email del campo de texto.
-        String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText(); // Obtiene la contraseña según su visibilidad.
+        utils.validateEmail(emailTextField.getText());
+        String email = emailTextField.getText();
+        String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
 
-        User user = new User(); // Crea una nueva instancia de User.
-        user.setEmail(email); // Establece el email del usuario.
-        user.setPassword(password); // Establece la contraseña del usuario.
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
 
         try {
-            User loggedInUser = SignableFactory.getSignable().signIn(user); // Intenta iniciar sesión con el usuario.
+            User loggedInUser = SignableFactory.getSignable().signIn(user);
 
-            if (loggedInUser != null) { // Si el inicio de sesión es exitoso
-                // Si el inicio de sesión es exitoso, navega a la pantalla principal
-                navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser); // Navega a la vista principal.
+            if (loggedInUser != null) {
+                navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
             }
-        } catch (IncorrectCredentialsException e) { // Captura excepciones específicas
-            utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales."); // Muestra un mensaje de error.
-            logger.warning("Credenciales incorrectas"); // Registra una advertencia.
-        } catch (ConnectionException e) { // Captura excepciones de conexión
-            utils.showAlert("Error", "Problemas de conexión con el servidor."); // Muestra un mensaje de error.
-            logger.warning("Error en la conexion"); // Registra una advertencia.
-        } catch (MaxThreadUserException e) { // Captura excepcion de max user
-            utils.showAlert("Error", "No se pudo iniciar sesión. Maximo número de usuarios alcanzado espere unos minutos."); // Muestra un mensaje de error.
-            logger.warning("Maximo usuario alcanzado"); // Registra una advertencia.
-        } catch (Exception e) { // Captura cualquier otra excepción
-            utils.showAlert("Error", "Ocurrió un error inesperado."); // Muestra un mensaje de error.
-            logger.severe("Error inesperado"); // Registra un error grave.
+        } catch (IncorrectCredentialsException e) {
+            utils.showAlert("Error", "No se pudo iniciar sesión. Verifique sus credenciales.");
+            logger.warning("Credenciales incorrectas");
+        } catch (ServerErrorException e) {
+            utils.showAlert("Error", "Problemas de conexión con el servidor.");
+            logger.warning("Error en la conexión");
+        } catch (ConnectionException e) {
+            utils.showAlert("Error", "Problemas de conexión a la base de datos.");
+            logger.warning("Error en la conexión");
+        } catch (MaxThreadUserException e) {
+            utils.showAlert("Error", "No se pudo iniciar sesión. Máximo número de usuarios alcanzado. Espere unos minutos.");
+            logger.warning("Máximo usuario alcanzado");
+        } catch (Exception e) {
+            utils.showAlert("Error", "Ocurrió un error inesperado.");
+            logger.severe("Error inesperado");
         }
-        // Captura excepciones específicas
-        // Muestra un mensaje de error.
-        // Registra una advertencia.
-         
     }
 
     /**
@@ -284,8 +309,8 @@ public class LogInController {
      */
     @FXML
     private void handleCreateUserLinkAction() {
-        logger.info("Abrir vista de registro."); // Registra la acción de abrir la vista de registro.
-        navigateToScreen("/view/SignUpView.fxml", "SignUp", false, null); // Navega a la vista de registro.
+        logger.info("Abrir vista de registro.");
+        navigateToScreen("/view/SignUpView.fxml", "SignUp", false, null);
     }
 
     /**
@@ -294,50 +319,50 @@ public class LogInController {
      */
     @FXML
     private void handlePasswordImageButtonAction() {
-        isPasswordVisible = !isPasswordVisible; // Cambia el estado de visibilidad de la contraseña.
+        isPasswordVisible = !isPasswordVisible;
 
-        if (isPasswordVisible) { // Si la contraseña es visible
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png"))); // Cambia la imagen a visible.
-            passwordField.setVisible(false); // Oculta el campo de contraseña.
-            visiblePasswordField.setVisible(true); // Muestra el campo de contraseña visible.
-            visiblePasswordField.setText(passwordField.getText()); // Copia la contraseña al campo visible.
-        } else { // Si la contraseña no es visible
-            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png"))); // Cambia la imagen a no visible.
-            passwordField.setVisible(true); // Muestra el campo de contraseña.
-            visiblePasswordField.setVisible(false); // Oculta el campo de contraseña visible.
-            passwordField.setText(visiblePasswordField.getText()); // Copia la contraseña del campo visible al campo oculto.
+        if (isPasswordVisible) {
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-slash-solid.png")));
+            passwordField.setVisible(false);
+            visiblePasswordField.setVisible(true);
+            visiblePasswordField.setText(passwordField.getText());
+        } else {
+            passwordImage.setImage(new Image(getClass().getResourceAsStream("/Images/eye-solid.png")));
+            passwordField.setVisible(true);
+            visiblePasswordField.setVisible(false);
+            passwordField.setText(visiblePasswordField.getText());
         }
     }
 
     /**
      * Navega a una pantalla diferente cargando el archivo FXML correspondiente.
      *
-     * @param fxmlPath la ruta del archivo FXML de la pantalla objetivo
-     * @param title el título a establecer para la ventana
-     * @param main indica si es la pantalla principal
-     * @param user el usuario que inicia sesión
+     * @param fxmlPath la ruta del archivo FXML de la pantalla objetivo.
+     * @param title el título a establecer para la ventana.
+     * @param main indica si es la pantalla principal.
+     * @param user el usuario que inicia sesión.
      */
     private void navigateToScreen(String fxmlPath, String title, boolean main, User user) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath)); // Carga el archivo FXML.
-            Parent root = loader.load(); // Crea la raíz de la nueva escena.
-            // Get the current stage
-            if (!main) { // Si no es la pantalla principal
-                SignUpController controller = loader.getController(); // Obtiene el controlador de la vista de registro.
-                Stage newStage = new Stage(); // Crea una nueva ventana.
-                controller.setStage(newStage); // Establece la nueva ventana en el controlador.
-                controller.initStage(root); // Inicializa la nueva escena.
-                stage.close(); // Cierra la ventana actual.
-            } else { // Si es la pantalla principal
-                MainController controller = loader.getController(); // Obtiene el controlador de la vista principal.
-                Stage newStage = new Stage(); // Crea una nueva ventana.
-                controller.setStage(newStage); // Establece la nueva ventana en el controlador.
-                controller.initStage(root, user); // Inicializa la nueva escena con el usuario.
-                stage.close(); // Cierra la ventana actual.
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+
+            if (!main) {
+                SignUpController controller = loader.getController();
+                Stage newStage = new Stage();
+                controller.setStage(newStage);
+                controller.initStage(root);
+                stage.close();
+            } else {
+                MainController controller = loader.getController();
+                Stage newStage = new Stage();
+                controller.setStage(newStage);
+                controller.initStage(root, user);
+                stage.close();
             }
 
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e); // Registra un error si falla la carga de la pantalla.
+            logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
         }
     }
 }

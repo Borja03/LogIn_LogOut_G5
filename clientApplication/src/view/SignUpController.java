@@ -2,7 +2,9 @@ package view;
 
 import Model.SignableFactory;
 import Model.User;
+import Utils.UtilsMethods;
 import static Utils.UtilsMethods.logger;
+import exception.ConnectionException;
 import exception.EmptyFieldException;
 import exception.InvalidCityFormatException;
 import exception.InvalidEmailFormatException;
@@ -124,6 +126,8 @@ public class SignUpController {
     public Stage getStage() {
         return stage;
     }
+    
+    UtilsMethods utils = new UtilsMethods();
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -424,19 +428,22 @@ public class SignUpController {
             User nuevoUser = SignableFactory.getSignable().signUp(user);
             // If the sign-up is successful
             if (nuevoUser != null) {
-                showAlert();
+                utils.showAlert("Felicidades","Usuario añadido correctamente");
             }
         } catch (UserAlreadyExistsException e) {
             // Handle duplicate email error
-            showAlert("Error", "Email already exists. Please use another email.");
+            utils.showAlert("Error", "Email already exists. Please use another email.");
             LOGGER.warning("Email already exists");
         } catch (ServerErrorException e) {
             // Handle server error
-            showAlert("Error", "Server is not available at the moment. Please try again later.");
+            utils.showAlert("Error", "Server is not available at the moment. Please try again later.");
             LOGGER.warning("Server error occurred");
-        } catch (Exception e) {
+        } catch (ConnectionException e) { // Captura excepciones de conexión
+            utils.showAlert("Error", "Problemas de conexión a la base de datos."); // Muestra un mensaje de error.
+            logger.warning("Error en la conexion"); // Registra una advertencia.
+        }catch (Exception e) {
             // Handle unexpected errors
-            showAlert("Error", "An unexpected error occurred: " + e.getMessage());
+            utils.showAlert("Error", "An unexpected error occurred: " + e.getMessage());
             LOGGER.log(Level.SEVERE, "Unexpected error in performSignUp", e);
         }
      }
@@ -497,21 +504,6 @@ public class SignUpController {
             alert.showAndWait();
             LOGGER.log(Level.SEVERE, errorMsg);
         }
-    }
-
-    private void showAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sign-up Successful");
-        alert.setHeaderText(null);
-        alert.setContentText("Your account has been created successfully!");
-
-        // Handle alert button click
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                // Navigate to another screen after the user clicks OK
-                navigateToScreen("/view/LogIn.fxml", "LogIn");
-            }
-        });
     }
 
 }
