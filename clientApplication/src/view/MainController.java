@@ -264,13 +264,6 @@ public class MainController {
         contextMenu.getItems().addAll(lightMode, darkMode);
     }
 
- 
-
-   
-
-
-    
-
     /**
      * Copies the selected text from the active text field to the clipboard.
      */
