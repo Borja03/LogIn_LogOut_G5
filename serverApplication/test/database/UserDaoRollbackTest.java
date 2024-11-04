@@ -1,120 +1,92 @@
 package database;
-
 import Model.User;
 import exception.ConnectionException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
+import static org.junit.Assert.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import static org.junit.Assert.*;
+import org.junit.After;
 
 public class UserDaoRollbackTest {
-
+    
     private UserDao userDao;
     private Connection connection;
-
+    
     @Before
-    public void setUp() throws SQLException, ConnectionException {
+    public void setUp() throws ConnectionException {
         userDao = new UserDao();
+        // Get connection from pool for verification
         connection = DBPool.getInstance().getConnection();
-        connection.setAutoCommit(true); // Ensure auto-commit for setup and cleanup
     }
-
-    @After
-    public void tearDown() throws SQLException {
-        try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM public.res_partner WHERE email = ?")) {
-            stmt.setString(1, "testuser@example.com");
-            stmt.executeUpdate();
-        }
-        connection.close();
-    }
-
+    
     @Test
-    public void testRollbackOnSecondInsertFailure() {
-        // Full user details according to UserDao structure
+    public void testSignUpRollbackOnError() throws Exception {
+        // Create test user data
         User testUser = new User();
-        //"testuser@example.com", "Test@1234", "Test User", "123 Test St", "Test City", "12345", true
-        testUser.setEmail("testuser@example.com");
         testUser.setName("Test User");
-        //testUser.
+        testUser.setEmail("test.rollback@example.com");
+        testUser.setPassword("password123");
+        testUser.setStreet("Test Street");
+        testUser.setCity("Test City");
+        testUser.setZip(12345);
+        testUser.setActivo(true);
+        testUser.setCompanyID(1);
+        
+        // First, verify user doesn't exist
+        assertFalse(userExists(testUser.getEmail()));
         
         try {
-            connection.setAutoCommit(false); // Start transaction
+            // Force an error by setting company_id to invalid value
+            testUser.setCompanyID(-999); // This should cause a foreign key constraint violation
             
-            // First Insert: Insert into res_partner
-            int partnerId = insertPartner(testUser);
-            if (partnerId == 0) {
-                fail("Failed to insert into res_partner"); // Insertion failed, stop test
-            }
-
-            // Second Insert: Insert into res_users (simulate failure)
-            boolean insertFailed = false;
-            try {
-                insertUser(testUser, partnerId);
-            } catch (SQLException e) {
-                insertFailed = true;
-                connection.rollback(); // Rollback if there’s an error in second insert
-            }
+            User result = userDao.signUp(testUser);
             
-            assertTrue(insertFailed); // Assert that the second insert failed
-
-            // Verify that no data is left in `res_partner` after rollback
-            verifyNoPartnerData(testUser.getEmail());
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            fail("Test encountered an unexpected SQL exception.");
-        } finally {
-            try {
-                connection.setAutoCommit(true); // Reset auto-commit mode
-            } catch (SQLException e) {
-                e.printStackTrace();
+            // The signup should fail and return null
+            assertNull(result);
+            
+            // Verify that no records were created in either table due to rollback
+            assertFalse("User should not exist after rollback", userExists(testUser.getEmail()));
+            assertFalse("Partner should not exist after rollback", partnerExists(testUser.getEmail()));
+            
+        } catch (Exception e) {
+            // Expected exception due to constraint violation
+            // Verify rollback occurred
+            assertFalse("User should not exist after exception", userExists(testUser.getEmail()));
+            assertFalse("Partner should not exist after exception", partnerExists(testUser.getEmail()));
+        }
+    }
+    
+    // Helper method to check if user exists in res_users table
+    private boolean userExists(String email) throws SQLException {
+        String query = "SELECT COUNT(*) FROM public.res_users WHERE login = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
             }
         }
     }
-
-    private int insertPartner(User user) throws SQLException {
-        String insertPartnerQuery = "INSERT INTO public.res_partner (name, email, street, city, zip, active) VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
-        try (PreparedStatement psPartner = connection.prepareStatement(insertPartnerQuery)) {
-            psPartner.setString(1, user.getName());
-            psPartner.setString(2, user.getEmail());
-            psPartner.setString(3, user.getStreet());
-            psPartner.setString(4, user.getCity());
-            psPartner.setInt(5, user.getZip());
-            psPartner.setBoolean(6, user.isActivo());
-            ResultSet rs = psPartner.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("id");
+    
+    // Helper method to check if partner exists in res_partner table
+    private boolean partnerExists(String email) throws SQLException {
+        String query = "SELECT COUNT(*) FROM public.res_partner WHERE email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
             }
         }
-        return 0; // Return 0 if partner insert failed
     }
-
-    private void insertUser(User user, int partnerId) throws SQLException {
-        String insertUserQuery = "INSERT INTO public.res_users (login, password, partner_id) VALUES (?, ?, ?)";
-        try (PreparedStatement psUser = connection.prepareStatement(insertUserQuery)) {
-            psUser.setString(1, user.getEmail());
-            psUser.setString(2, user.getPassword());
-            psUser.setInt(3, partnerId);
-            // Simulate failure for testing purposes
-            throw new SQLException("Simulated exception on second insert.");
-        }
-    }
-
-    private void verifyNoPartnerData(String email) throws SQLException {
-        String verifyQuery = "SELECT COUNT(*) FROM public.res_partner WHERE email = ?";
-        try (PreparedStatement psCheck = connection.prepareStatement(verifyQuery)) {
-            psCheck.setString(1, email);
-            ResultSet rsCheck = psCheck.executeQuery();
-            if (rsCheck.next()) {
-                int count = rsCheck.getInt(1);
-                assertEquals(0, count); // Assert that no partner data exists after rollback
-            }
+    
+    @After
+    public void tearDown() throws SQLException, ConnectionException {
+        // Clean up any test data if necessary
+        if (connection != null && !connection.isClosed()) {
+            // Return connection to pool
+            DBPool.getInstance().releaseConnection(connection);
         }
     }
 }

@@ -79,8 +79,8 @@ public class DBPool {
     
  
     private void loadConfiguration() {
-           LOGGER.info("Start loading Database configuration");
-            configFile = ResourceBundle.getBundle("config.config");
+        LOGGER.info("Start loading Database configuration");
+        configFile = ResourceBundle.getBundle("config.config");
         url = configFile.getString("jdbc.url");
         db_user = configFile.getString("db.user");
         db_pass =configFile.getString("db.password");
