@@ -92,8 +92,8 @@ public class MainController {
 
     // Stage to manage the current window
     private Stage stage;
-    
-     // Getter and Setter for Stage
+
+    // Getter and Setter for Stage
     public Stage getStage() {
         return stage;
     }
@@ -213,11 +213,19 @@ public class MainController {
      */
     private void saveThemePreference(String theme) {
         try {
+            // Create a Properties object to hold the theme setting.
             Properties props = new Properties();
+
+            // Set the theme property to the specified value.
             props.setProperty("theme", theme);
+
+            // Define the configuration file location.
             File file = new File("config.properties");
+
+            // Store the properties in the file with a comment header "Theme Settings".
             props.store(new FileOutputStream(file), "Theme Settings");
         } catch (IOException e) {
+            // Log an error message if saving the theme preference fails.
             logger.severe("Error saving theme preference: " + e.getMessage());
         }
     }
@@ -229,15 +237,26 @@ public class MainController {
      */
     private String loadThemePreference() {
         try {
+            // Create a Properties object to hold the loaded settings.
             Properties props = new Properties();
+
+            // Define the configuration file location.
             File file = new File("config.properties");
+
+            // Check if the configuration file exists.
             if (file.exists()) {
+                // Load properties from the file.
                 props.load(new FileInputStream(file));
+
+                // Retrieve and return the theme property, defaulting to "light" if not set.
                 return props.getProperty("theme", "light");
             }
         } catch (IOException e) {
+            // Log an error message if loading the theme preference fails.
             logger.severe("Error loading theme preference: " + e.getMessage());
         }
+
+        // Return the default theme if no preference is saved or an error occurs.
         return "light";
     }
 
@@ -248,8 +267,13 @@ public class MainController {
      * @param theme The new theme to be applied, such as "light" or "dark".
      */
     private void switchTheme(String theme) {
+        // Update the current theme variable.
         currentTheme = theme;
+
+        // Apply the specified theme to the application.
         loadTheme(theme);
+
+        // Save the theme preference to persist the user's selection.
         saveThemePreference(theme);
     }
 
@@ -260,14 +284,17 @@ public class MainController {
      * @param theme The theme to be loaded, either "light" or "dark".
      */
     private void loadTheme(String theme) {
+        // Get the current scene and clear any existing stylesheets.
         Scene scene = stage.getScene();
         scene.getStylesheets().clear();
 
+        // Apply the "dark" theme stylesheet and add dark styling to the context menu.
         if (theme.equals("dark")) {
             String cssFile = "/css/dark-styles.css";
             scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
             contextMenu.getStyleClass().add("context-menu-dark");
-        } else if (theme.equals("light")) {
+        } // Apply the "light" theme stylesheet and remove dark styling from the context menu.
+        else if (theme.equals("light")) {
             String cssFile = "/css/CSSglobal.css";
             scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
             contextMenu.getStyleClass().remove("context-menu-dark");
@@ -291,20 +318,24 @@ public class MainController {
      */
     private void attachContextMenuToTextField(TextField textField) {
         textField.setContextMenu(contextMenu);
-    }  
-   
+    }
+
     /**
      * Copies the selected text from the active text field to the clipboard.
      */
     private void copySelectedText() {
+        // Initialize the selected text variable.
         String selectedText = "";
 
+        // Check if the password field is visible and has selected text.
         if (passwordField.isVisible() && passwordField.getSelectedText() != null) {
             selectedText = passwordField.getSelectedText();
-        } else if (plainPasswordField.isVisible() && plainPasswordField.getSelectedText() != null) {
+        } // If the plain password field is visible, use its selected text instead.
+        else if (plainPasswordField.isVisible() && plainPasswordField.getSelectedText() != null) {
             selectedText = plainPasswordField.getSelectedText();
         }
 
+        // Copy the selected text to the system clipboard if it's not empty.
         if (!selectedText.isEmpty()) {
             Clipboard clipboard = Clipboard.getSystemClipboard();
             ClipboardContent content = new ClipboardContent();
@@ -320,16 +351,24 @@ public class MainController {
      */
     @FXML
     public void logOut(ActionEvent event) {
+        // Log the logout attempt.
         logger.info("Logging out...");
+
         try {
+            // Load the Login screen from the FXML file.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Login.fxml"));
             Parent root = loader.load();
+
+            // Get the current stage and set the new scene.
             Stage stage = (Stage) logOutButton.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
+
+            // Update the window title to "Login" and show the login screen.
             stage.setTitle("Login");
             stage.show();
         } catch (IOException e) {
+            // Log an error message and show an alert if the logout fails.
             logger.severe("Error during log out: " + e.getMessage());
             showAlert("Error", "An error occurred during log out.");
         }
@@ -342,17 +381,24 @@ public class MainController {
      */
     @FXML
     public void togglePasswordVisibility(ActionEvent event) {
+        // Toggle the password visibility state.
         passwordIsVisible = !passwordIsVisible;
 
         if (passwordIsVisible) {
+            // Show the plain text password field and update the icon to "eye open".
             passwordField.setVisible(false);
             plainPasswordField.setVisible(true);
             eyeImageView.setImage(eyeOpen);
+
+            // Transfer the masked password text to the plain text field.
             plainPasswordField.setText(passwordField.getText());
         } else {
+            // Show the masked password field and update the icon to "eye closed".
             passwordField.setVisible(true);
             plainPasswordField.setVisible(false);
             eyeImageView.setImage(eyeClosed);
+
+            // Transfer the plain text password back to the masked field.
             passwordField.setText(plainPasswordField.getText());
         }
     }
@@ -364,8 +410,13 @@ public class MainController {
      * @param message The message to display in the alert dialog.
      */
     private void showAlert(String title, String message) {
+        // Create an informational alert with the specified message and an OK button.
         Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+
+        // Set the title of the alert dialog.
         alert.setTitle(title);
+
+        // Display the alert dialog and wait for user interaction.
         alert.showAndWait();
     }
 }
