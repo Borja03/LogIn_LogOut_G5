@@ -1,16 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package exception;
 
 /**
- *
+ * Excepción que indica que ha ocurrido un error en el servidor.
+ * 
+ * <p>Esta clase extiende {@link Exception} y se utiliza para señalar
+ * situaciones en las que se produce un error interno en el servidor,
+ * impidiendo el procesamiento correcto de la solicitud.</p>
+ * 
  * @author Omar
  */
-public class ServerErrorException extends Exception{
-      public ServerErrorException(String message) {
+public class ServerErrorException extends Exception {
+    
+    /**
+     * Crea una nueva instancia de ServerErrorException con un mensaje específico.
+     *
+     * @param message el mensaje que describe el motivo de la excepción
+     */
+    public ServerErrorException(String message) {
         super(message);
     }
 }
