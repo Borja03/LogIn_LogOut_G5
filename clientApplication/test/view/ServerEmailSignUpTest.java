@@ -22,7 +22,7 @@ import org.testfx.matcher.base.NodeMatchers;
  * @author 2dam
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ServerEmailSignUpTestIT extends ApplicationTest {
+public class ServerEmailSignUpTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {

@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import view.MainController;
 import view.SignUpController;
-import view.logInController;
+import view.LogInController;
 
 /**
  * Clase principal de la aplicación que extiende javafx.application.Application.
