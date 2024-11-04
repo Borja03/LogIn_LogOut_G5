@@ -49,17 +49,6 @@ public class UserDao implements Signable {
      */
     private static final String SELECT_RES_PARTNER = "SELECT * FROM public.res_partner WHERE email = ?";
 
-    /**
-     * Método auxiliar para realizar el hash de una contraseña.
-     *
-     * @param password La contraseña en texto plano.
-     * @return La contraseña en su forma hash (en este caso sin hash para demo).
-     * Se recomienda implementar un algoritmo de hash como bcrypt o SHA-512.
-     */
-    private String hashPassword(String password) {
-        // Para demostración, devolver la contraseña tal como está.
-        return password;
-    }
 
     /**
      * Método para realizar el inicio de sesión de un usuario. Verifica si el

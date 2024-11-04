@@ -19,7 +19,7 @@ public class Worker implements Runnable {
 
     private static final Logger logger = Logger.getLogger(Worker.class.getName());
     private Socket socket;
-    private static final numThread clientCounter = new numThread(); // Thread-safe client counting
+    private static final NumThread clientCounter = new NumThread(); // Thread-safe client counting
     private static final ResourceBundle config = ResourceBundle.getBundle("Utils.socketConfig");
     private static final int MAX_USERS = Integer.parseInt(config.getString("MAX_USERS"));
 

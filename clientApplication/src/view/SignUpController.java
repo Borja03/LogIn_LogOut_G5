@@ -616,11 +616,12 @@ public class SignUpController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
+                // Get the current stage
+                LogInController controller = loader.getController();
+                Stage newStage = new Stage();
+                controller.setStage(newStage);
+                controller.initialize(root);
 
-            logInController controller = loader.getController();
-            Stage newStage = new Stage();
-            controller.setStage(newStage);
-            controller.initialize(root);
 
             stage = (Stage) btn_signup.getScene().getWindow();
             stage.close();

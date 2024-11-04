@@ -76,12 +76,16 @@ public class DBPool {
      *
      * @throws RuntimeException if any required configuration is missing.
      */
+    
+ 
     private void loadConfiguration() {
            LOGGER.info("Start loading Database configuration");
-        url = "jdbc:postgresql://192.168.142.130:5432/odoooo";
-        db_user = "odoo";
-        db_pass = "abcd*1234";
-        maxConnections = 3;
+            configFile = ResourceBundle.getBundle("config.config");
+        url = configFile.getString("jdbc.url");
+        db_user = configFile.getString("db.user");
+        db_pass =configFile.getString("db.password");
+        maxConnections =Integer.parseInt(configFile.getString("max.connections"));
+       // maxConnections = 3;
 
         if (url == null || db_user == null || db_pass == null) {
             throw new RuntimeException("Missing required configuration for database connection.");
