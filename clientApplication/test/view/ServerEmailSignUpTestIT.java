@@ -1,4 +1,8 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package view;
 
 import Application.Application;
@@ -18,17 +22,15 @@ import org.testfx.matcher.base.NodeMatchers;
  * @author 2dam
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ServerSignUpTest extends ApplicationTest {
+public class ServerEmailSignUpTestIT extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
         new ApplicationSignUp().start(stage);
     }
 
-   
-
     @Test
-    public void b_serverNotAvailable() {
+    public void a_EmailAlreadyExists() {
         clickOn("#tf_email");
         write("borja@outlook.es");
         clickOn("#pf_password");
@@ -47,7 +49,7 @@ public class ServerSignUpTest extends ApplicationTest {
         clickOn("#chb_active");
         clickOn("#btn_signup");
 
-        FxAssert.verifyThat("Server is not available at the moment. Please try again later.", NodeMatchers.isVisible());
+        FxAssert.verifyThat("Email already exists.", NodeMatchers.isVisible());
     }
 
 }

@@ -173,30 +173,6 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void k_EmailAlreadyExists() {
-        // Primero, registrar un email
-        clickOn("#tf_email");
-        write("borja@outlook.es");
-        clickOn("#pf_password");
-        write("Borja@B1");
-        clickOn("#imgShowPassword");
-        clickOn("#tf_password_confirm");
-        write("Borja@B1");
-        clickOn("#tf_name");
-        write("Borja");
-        clickOn("#tf_street");
-        write("Tartanga");
-        clickOn("#tf_city");
-        write("Ermua");
-        clickOn("#tf_zip");
-        write("48260");
-        clickOn("#chb_active");
-        clickOn("#btn_signup");
-
-        FxAssert.verifyThat("Email already exists.", NodeMatchers.isVisible());
-    }
-
-    @Test
     public void l_InvalidEmailFormat() {
         clickOn("#tf_email");
         write("siiiiHombre");
