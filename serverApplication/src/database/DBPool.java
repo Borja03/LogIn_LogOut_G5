@@ -1,7 +1,6 @@
 package database;
 
 import exception.ConnectionException;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,48 +10,58 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * La clase <code>DBPool</code> implementa un pool de conexiones a una base de datos.
- * Permite gestionar un conjunto limitado de conexiones, asegurando un uso eficiente
- * de los recursos y mejorando el rendimiento en aplicaciones que requieren múltiples
- * accesos a la base de datos.
- *
- * <p>Esta clase utiliza un patrón singleton para garantizar que solo haya una instancia
- * del pool de conexiones en toda la aplicación. Se encarga de la creación, validación
- * y liberación de conexiones a la base de datos.</p>
- *
- * @author Borja
+ * Singleton class that manages a pool of database connections.
+ * It provides methods to acquire and release database connections while managing
+ * a stack of available connections and tracking active and idle connections.
+ * @author Omar
  */
 public class DBPool {
 
+      /** ResourceBundle for loading configuration properties. */
     private ResourceBundle configFile;
+
+    /** The database username for authentication. */
     private String db_user;
+
+    /** The database password for authentication. */
     private String db_pass;
+
+    /** The database connection URL. */
     private String url;
+
+    /** Stack of available database connections. */
     private static Stack<Connection> connectionStack = new Stack<>();
+
+    /** Maximum number of connections allowed in the pool. */
     private int maxConnections;
+
+    /** Counter for currently active connections. */
     private int activeConnections = 0;
+
+    /** Counter for currently idle connections. */
     private int idleConnections = 0;
+
+    /** Singleton instance of the DBPool. */
     private static DBPool instance;
 
     private static final Logger LOGGER = Logger.getLogger(DBPool.class.getName());
 
     /**
-     * Constructor que inicializa el pool de conexiones cargando la configuración
-     * y creando las conexiones necesarias.
+     * Private constructor to prevent instantiation from outside.
+     * Loads the configuration and initializes the connections.
      *
-     * @throws ConnectionException Si ocurre un error al establecer la conexión
-     *                             con la base de datos.
+     * @throws ConnectionException if there is an error during connection initialization.
      */
-    public DBPool() throws ConnectionException {
+    private DBPool() throws ConnectionException {
         loadConfiguration();
         initializeConnections();
     }
 
     /**
-     * Método estático que devuelve la instancia única de <code>DBPool</code>.
+     * Retrieves the singleton instance of the DBPool.
      *
-     * @return La instancia única de <code>DBPool</code>.
-     * @throws ConnectionException Si ocurre un error al crear la instancia.
+     * @return the single instance of DBPool.
+     * @throws ConnectionException if there is an error during connection initialization.
      */
     public static synchronized DBPool getInstance() throws ConnectionException {
         if (instance == null) {
@@ -62,28 +71,32 @@ public class DBPool {
     }
 
     /**
-     * Carga la configuración necesaria para establecer conexiones a la base de datos.
-     * 
-     * @throws RuntimeException Si faltan valores requeridos en la configuración.
+     * Loads the database configuration from a properties file.
+     * Sets the database URL, username, password, and max connections.
+     *
+     * @throws RuntimeException if any required configuration is missing.
      */
+    
+ 
     private void loadConfiguration() {
-        // Cargar URL y credenciales de la base de datos
-        url = "jdbc:postgresql://192.168.142.130:5432/odoooo";
-        db_user = "odoo";
-        db_pass = "abcd*1234";
-
-        // Número máximo de conexiones permitidas
-        maxConnections = 3;
+           LOGGER.info("Start loading Database configuration");
+            configFile = ResourceBundle.getBundle("config.config");
+        url = configFile.getString("jdbc.url");
+        db_user = configFile.getString("db.user");
+        db_pass =configFile.getString("db.password");
+        maxConnections =Integer.parseInt(configFile.getString("max.connections"));
+       // maxConnections = 3;
 
         if (url == null || db_user == null || db_pass == null) {
             throw new RuntimeException("Missing required configuration for database connection.");
         }
+        LOGGER.info("Database configuration loaded successfully.");
     }
 
     /**
-     * Inicializa las conexiones y las agrega a la pila de conexiones disponibles.
+     * Initializes the database connections and pushes them onto the stack.
      *
-     * @throws ConnectionException Si ocurre un error al inicializar las conexiones.
+     * @throws ConnectionException if there is an error initializing connections.
      */
     private void initializeConnections() throws ConnectionException {
         for (int i = 0; i < maxConnections; i++) {
@@ -92,17 +105,18 @@ public class DBPool {
                 connectionStack.push(con);
                 idleConnections++;
             } catch (SQLException ex) {
-                LOGGER.info("Error initializing connection");
+                LOGGER.log(Level.SEVERE, "Error initializing connection", ex);
                 throw new ConnectionException("Error database connection");
             }
         }
+        LOGGER.info("Connections initialized successfully.");
     }
 
     /**
-     * Verifica si una conexión es válida.
+     * Checks if a given connection is valid.
      *
-     * @param con La conexión a verificar.
-     * @return <code>true</code> si la conexión es válida; de lo contrario, <code>false</code>.
+     * @param con the connection to check.
+     * @return true if the connection is valid, false otherwise.
      */
     private boolean isValidConnection(Connection con) {
         try {
@@ -113,11 +127,10 @@ public class DBPool {
     }
 
     /**
-     * Obtiene una conexión del pool.
+     * Acquires a database connection from the pool.
      *
-     * @return Una conexión de la base de datos.
-     * @throws ConnectionException Si no hay conexiones disponibles o se alcanza
-     *                             el límite máximo de conexiones.
+     * @return a valid database connection.
+     * @throws ConnectionException if there are no available connections.
      */
     public synchronized Connection getConnection() throws ConnectionException {
         if (connectionStack.isEmpty()) {
@@ -125,6 +138,7 @@ public class DBPool {
                 try {
                     Connection con = DriverManager.getConnection(url, db_user, db_pass);
                     activeConnections++;
+                    LOGGER.info("New connection created. Active connections: " + activeConnections);
                     return con;
                 } catch (SQLException ex) {
                     throw new ConnectionException(ex.getMessage());
@@ -138,57 +152,61 @@ public class DBPool {
                 try {
                     con = DriverManager.getConnection(url, db_user, db_pass);
                     activeConnections++;
+                    LOGGER.info("Invalid connection replaced with a new one. Active connections: " + activeConnections);
                 } catch (SQLException ex) {
                     throw new ConnectionException(ex.getMessage());
                 }
             }
             idleConnections--;
+            LOGGER.info("Connection acquired from stack. Idle connections: " + idleConnections);
             return con;
         }
     }
 
     /**
-     * Libera una conexión de vuelta al pool.
+     * Releases a database connection back to the pool.
      *
-     * @param con La conexión a liberar.
+     * @param con the connection to release.
      */
     public synchronized void releaseConnection(Connection con) {
         if (con != null) {
             if (isValidConnection(con)) {
                 connectionStack.push(con);
                 idleConnections++;
+                LOGGER.info("Connection released back to pool. Idle connections: " + idleConnections);
             } else {
                 try {
                     con.close();
                     activeConnections--;
+                    LOGGER.info("Invalid connection closed. Active connections: " + activeConnections);
                 } catch (SQLException e) {
-                    LOGGER.info("Error closing invalid connection");
+                    LOGGER.log(Level.WARNING, "Error closing invalid connection", e);
                 }
             }
         }
     }
 
     /**
-     * Libera todas las conexiones en el pool, cerrándolas adecuadamente.
+     * Releases all database connections and clears the connection stack.
      */
     public synchronized void releaseAllConnections() {
         for (Connection con : connectionStack) {
             try {
                 con.close();
             } catch (SQLException e) {
-                LOGGER.info("Error closing connection");
+                LOGGER.log(Level.WARNING, "Error closing connection", e);
             }
         }
         connectionStack.clear();
         activeConnections = 0;
         idleConnections = 0;
+        LOGGER.info("All connections released. Active connections reset to 0.");
     }
 
     /**
-     * Obtiene estadísticas sobre las conexiones en el pool.
+     * Gets statistics about the current connections.
      *
-     * @return Un string con información sobre el número total de conexiones,
-     *         conexiones activas e inactivas.
+     * @return a string summarizing total, active, and idle connections.
      */
     public synchronized String getConnectionStatistics() {
         return String.format("Total Connections: %d, Active: %d, Idle: %d",
@@ -198,18 +216,18 @@ public class DBPool {
     }
 
     /**
-     * Obtiene el número de conexiones activas.
+     * Gets the count of active connections.
      *
-     * @return El número de conexiones activas.
+     * @return the number of active connections.
      */
     public synchronized int getActiveConnectionCount() {
         return activeConnections;
     }
 
     /**
-     * Obtiene el número de conexiones inactivas.
+     * Gets the count of idle connections.
      *
-     * @return El número de conexiones inactivas.
+     * @return the number of idle connections.
      */
     public synchronized int getIdleConnectionCount() {
         return idleConnections;

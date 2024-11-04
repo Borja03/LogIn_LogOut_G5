@@ -1,5 +1,7 @@
 package Model;
 
+import database.DBPool;
+import exception.ConnectionException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -107,13 +109,19 @@ public class Server {
      */
     private void stopServer() {
         try {
+            
+            DBPool.getInstance().releaseAllConnections();
+            serverOn = false; // Set serverOn to false
             serverOn = false; // Establece serverOn a false
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close(); // Cierra el socket del servidor
             }
             logger.info("El servidor ha sido detenido.");
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error al detener el servidor: " + e.getMessage(), e);
+            logger.log(Level.SEVERE, "Error stopping the server: " + e.getMessage(), e);
+        } catch (ConnectionException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "Error al detener el servidor: " + ex.getMessage(), ex);
         }
     }
 }
