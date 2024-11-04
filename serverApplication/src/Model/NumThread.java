@@ -4,7 +4,7 @@ package Model;
  * Esta clase se utiliza para llevar un conteo seguro de hilos (threads)
  * activos en un entorno multihilo.
  *
- * <p>La clase <code>numThread</code> proporciona métodos sincronizados para incrementar,
+ * <p>La clase <code>NumThread</code> proporciona métodos sincronizados para incrementar,
  * decrementar y obtener el número actual de hilos activos. Esto es útil en
  * escenarios donde se requiere un seguimiento del número de conexiones o tareas
  * concurrentes que se están ejecutando, asegurando que el conteo se mantenga
@@ -12,7 +12,7 @@ package Model;
  *
  * @author Alder
  */
-public class numThread {
+public class NumThread {
     private Integer threadCount = 0;
 
     /**

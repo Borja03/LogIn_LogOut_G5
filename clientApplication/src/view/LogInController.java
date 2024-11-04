@@ -49,7 +49,7 @@ import javafx.scene.layout.BorderPane;
  * 
  * @author Alder
  */
-public class logInController {
+public class LogInController {
 
     /**
      * Instancia de métodos utilitarios.
@@ -59,7 +59,7 @@ public class logInController {
     /**
      * Logger para registrar eventos y mensajes.
      */
-    private static final Logger logger = Logger.getLogger(logInController.class.getName());
+    private static final Logger logger = Logger.getLogger(LogInController.class.getName());
 
     @FXML
     private TextField emailTextField;
