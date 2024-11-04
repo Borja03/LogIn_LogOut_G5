@@ -13,7 +13,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class logInControllerTest extends org.testfx.framework.junit.ApplicationTest {
+public class LogInControllerTest extends org.testfx.framework.junit.ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
