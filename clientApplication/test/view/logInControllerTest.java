@@ -39,21 +39,31 @@ public class logInControllerTest extends org.testfx.framework.junit.ApplicationT
     }
 
     @Test
-    public void c_incorrectSignIn() {
+    public void c_incorrectSignInWrongPassword() {
+        clickOn("#emailTextField");
+        write("aa@aa.aa");
+        clickOn("#logInButton");
+        verifyThat("No se pudo iniciar sesión. Verifique sus credenciales.", isVisible());
+    }
+    
+    @Test
+    public void d_incorrectSignInWrongEmail() {
         clickOn("#emailTextField");
         write("aaa@aaa.aaa");
+        clickOn("#passwordField");
+        write("@Aa12345");
         clickOn("#logInButton");
         verifyThat("No se pudo iniciar sesión. Verifique sus credenciales.", isVisible());
     }
 
     @Test
-    public void d_createUserLinkFunctionality() {
+    public void e_createUserLinkFunctionality() {
         clickOn("#createUserLink");
         verifyThat("#vbx_card", isVisible());
     }
 
     @Test
-    public void e_togglePasswordVisibility() {
+    public void f_togglePasswordVisibility() {
         clickOn("#passwordField");
         write("mySecretPassword");
         clickOn("#passwordImage");
