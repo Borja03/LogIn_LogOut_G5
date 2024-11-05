@@ -7,7 +7,7 @@ package exception;
  * situaciones en las que una dirección de correo electrónico proporcionada
  * no cumple con los criterios de formato válidos establecidos por la aplicación.</p>
  * 
- * @author Omar
+ * @author Adrian
  */
 public class InvalidEmailFormatException extends Exception {
     

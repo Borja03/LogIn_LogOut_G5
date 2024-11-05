@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * Singleton class that manages a pool of database connections.
  * It provides methods to acquire and release database connections while managing
  * a stack of available connections and tracking active and idle connections.
- * @author Omar
+ * @author Adrian y Omar 
  */
 public class DBPool {
 
