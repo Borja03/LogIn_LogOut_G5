@@ -116,3 +116,6 @@
 #createUserLink{
     -fx-font-size: 20px;
 }
+#lbl_error{
+        -fx-text-fill: #FF0000;
+}

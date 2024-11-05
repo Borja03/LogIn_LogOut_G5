@@ -22,5 +22,22 @@
             <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/test/view/SignUpControllerTest.java</file>
             <file>file:/C:/Users/2dam.TARTANGALH/Desktop/LogIn_LogOut_G5/clientApplication/test/view/logInControllerTest.java</file>
         </group>
+        <group name="Group Reto">
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/exception/InvalidStreetFormatException.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/css/light-styles.css</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/exception/InvalidZipFormatException.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/exception/InvalidCityFormatException.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/test/view/ServerSignUpTest.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/exception/InvalidEmailFormatException.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/exception/InvalidPasswordFormatException.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/test/view/SignUpControllerTest.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/exception/package-info.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/test/view/ServerDatabaseTest.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/test/view/logInControllerTest.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/view/SignUpController.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/test/view/ServerEmailSignUpTest.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/exception/EmptyFieldException.java</file>
+            <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
+        </group>
     </open-files>
 </project-private>
