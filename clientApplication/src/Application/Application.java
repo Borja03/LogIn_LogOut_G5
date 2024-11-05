@@ -26,7 +26,7 @@ public class Application extends javafx.application.Application {
      * la aplicación mediante el método {@link #main(String[])}. 
      * <p>
      * Este método carga el archivo FXML correspondiente a la interfaz de inicio de sesión,
-     * asigna el controlador {@link logInController}, configura el escenario y establece la
+     * asigna el controlador {@link LogInController}, configura el escenario y establece la
      * escena inicial en la interfaz gráfica.
      * </p>
      *
@@ -41,6 +41,8 @@ public class Application extends javafx.application.Application {
         Parent root = loader.load();
         LogInController controller = loader.getController();
 
+        
+        // Configuración de un nuevo Stage para la ventana de inicio de sesión
         Stage newStage = new Stage();
         controller.setStage(newStage);
         controller.initialize(root);

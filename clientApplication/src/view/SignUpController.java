@@ -1,4 +1,4 @@
-package view;
+        package view;
 
 import Model.SignableFactory;
 import Model.User;
@@ -47,7 +47,10 @@ import javafx.stage.Stage;
 /**
  * SignUpController handles the user interactions for the sign-up window. It
  * manages the UI components and their associated actions.
+ * Author: Adrian y Omar
  */
+        
+
 public class SignUpController {
 
     // Logger for logging events
@@ -616,7 +619,9 @@ public class SignUpController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-                // Get the current stage
+            // Get the current stage
+
+
                 LogInController controller = loader.getController();
                 Stage newStage = new Stage();
                 controller.setStage(newStage);
