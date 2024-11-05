@@ -154,7 +154,8 @@ public class UserDao implements Signable {
      * @param user El objeto User que contiene los datos del usuario a registrar
      * (nombre, email, contraseña, dirección, etc.).
      * @return El objeto User con los datos registrados en la base de datos.
-     * @throws UserAlreadyExistsException o  ConnectionException si se produce un error en la inserción de los datos o
+     * @throws UserAlreadyExistsException o 
+     * @throws ConnectionException si se produce un error en la inserción de los datos o
      * en la transacción.
      */
     @Override
