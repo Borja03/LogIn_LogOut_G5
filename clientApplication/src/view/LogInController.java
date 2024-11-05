@@ -134,6 +134,7 @@ public class LogInController {
         stage.setScene(scene);
         stage.setTitle("SignIn");
         stage.setResizable(false);
+        stage.getIcons().add(new Image("/Images/userIcon.png"));
         stage.centerOnScreen();
 
         visiblePasswordField.setVisible(false);
