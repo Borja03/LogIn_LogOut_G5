@@ -17,16 +17,46 @@ package Model;
  * </ul>
  * 
  * @author Alder
- */ 
+ */
 public enum TipoMensaje {
 
-    SIGN_IN_REQUEST,  // Solicitud de inicio de sesión
-    SIGN_UP_REQUEST,   // Solicitud de registro
-    EMAIL_EXISTS,      // Email ya existe
-    SERVER_ERROR,       // Error en el servidor
-    MAX_THREAD_USER,
-    OK_RESPONSE,
-    INCORRECT_CREDENTIALS_RESPONSE,
-    CONNECTION_ERROR
+    /**
+     * Solicitud de inicio de sesión.
+     */
+    SIGN_IN_REQUEST,  
 
+    /**
+     * Solicitud de registro.
+     */
+    SIGN_UP_REQUEST,   
+
+    /**
+     * Indica que el correo electrónico ya existe en el sistema.
+     */
+    EMAIL_EXISTS,      
+
+    /**
+     * Indica que ha ocurrido un error en el servidor.
+     */
+    SERVER_ERROR,      
+
+    /**
+     * Indica que se ha alcanzado el número máximo de usuarios en hilo.
+     */
+    MAX_THREAD_USER,
+
+    /**
+     * Indica una respuesta exitosa.
+     */
+    OK_RESPONSE,
+
+    /**
+     * Indica que las credenciales proporcionadas son incorrectas.
+     */
+    INCORRECT_CREDENTIALS_RESPONSE,
+
+    /**
+     * Indica que ha ocurrido un error de conexión.
+     */
+    CONNECTION_ERROR
 }

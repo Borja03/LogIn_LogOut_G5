@@ -1,5 +1,7 @@
 package Model;
 
+import database.DBPool;
+import exception.ConnectionException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,96 +11,117 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class represents a custom server socket that listens for client
- * connections, processes incoming requests, and creates Worker instances to
- * handle each client.
+ * Esta clase representa un servidor personalizado que escucha conexiones de clientes,
+ * procesa solicitudes entrantes y crea instancias de {@link Worker} para manejar
+ * cada cliente.
  *
- * @Author Borja
+ * <p>El servidor se ejecuta en un puerto específico configurado a través de un
+ * archivo de recursos y permite múltiples conexiones simultáneas mediante hilos.</p>
+ *
+ * @author Borja
  */
 public class Server {
 
-    // Logger for logging server activities
+    // Logger para registrar actividades del servidor
     private static final Logger logger = Logger.getLogger(Server.class.getName());
 
-    // Load configuration settings
+    // Carga de configuraciones
     private static final ResourceBundle config = ResourceBundle.getBundle("Utils.socketConfig");
     private static final int PORT = Integer.parseInt(config.getString("PORT"));
 
-    // Server state variables
+    // Variables de estado del servidor
     private static boolean serverOn = true;
     private ServerSocket serverSocket;
 
     /**
-     * Constructor for initializing the server with the port from configuration.
+     * Constructor para inicializar el servidor con el puerto de la configuración.
      */
     public Server() {
         this.startServer();
     }
 
     /**
-     * Starts the server and begins listening for incoming client connections.
+     * Inicia el servidor y comienza a escuchar conexiones de clientes entrantes.
+     *
+     * <p>El servidor aceptará conexiones continuamente hasta que se indique lo contrario.
+     * Se ejecuta un hilo dedicado para escuchar la entrada del teclado para cerrar el
+     * servidor de forma controlada.</p>
      */
     public void startServer() {
         try {
             serverSocket = new ServerSocket(PORT);
-            logger.info("Server is listening on port " + PORT);
+            logger.info("El servidor está escuchando en el puerto " + PORT);
 
-            // Start a dedicated thread to listen for 'q' input to close the server
+            // Inicia un hilo dedicado para escuchar la entrada 'q' para cerrar el servidor
             new Thread(this::keyboardListener).start();
 
-            // Accept clients continuously while server is on
+            // Acepta clientes continuamente mientras el servidor esté activo
             while (serverOn) {
-                logger.info("Listening for new connections...");
+                logger.info("Esperando nuevas conexiones...");
                 try {
-                    // Accept client connections
+                    // Acepta conexiones de clientes
                     Socket clientSocket = serverSocket.accept();
-                    logger.info("New client connected");
+                    logger.info("Nuevo cliente conectado");
 
-                    // Create a new thread to handle communication with the client
+                    // Crea un nuevo hilo para manejar la comunicación con el cliente
                     new Thread(new Worker(clientSocket)).start();
 
                 } catch (SocketException e) {
-                    // If the socket is closed, exit the loop gracefully
-                    logger.warning("Server socket closed. Stopping accept loop.");
+                    // Si el socket está cerrado, salir del bucle de forma controlada
+                    logger.warning("Socket del servidor cerrado. Deteniendo el bucle de aceptación.");
                     break;
                 } catch (IOException e) {
-                    logger.log(Level.SEVERE, "IO Exception: " + e.getMessage(), e);
+                    logger.log(Level.SEVERE, "Excepción de IO: " + e.getMessage(), e);
                 }
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Server exception: " + e.getMessage(), e);
+            logger.log(Level.SEVERE, "Excepción del servidor: " + e.getMessage(), e);
         }
     }
 
     /**
-     * Dedicated method to listen for 'q' input to close the server.
+     * Método dedicado para escuchar la entrada 'q' para cerrar el servidor.
+     *
+     * <p>Este método lee la entrada del teclado y, al recibir 'q', detiene
+     * el servidor de forma controlada.</p>
      */
     private void keyboardListener() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        logger.info("Press 'q' to stop the server.");
+        logger.info("Presione 'q' para detener el servidor.");
         try {
             while (serverOn) {
                 String input = reader.readLine();
                 if (input != null && input.equalsIgnoreCase("q")) {
-                    
                     stopServer();
                     break;
                 }
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error reading input", e);
+            logger.log(Level.SEVERE, "Error al leer la entrada", e);
         }
     }
 
+    /**
+     * Detiene el servidor y cierra el socket del servidor.
+     *
+     * <p>Este método establece la variable {@code serverOn} a false,
+     * cierra el socket del servidor y registra la detención del servidor.</p>
+     */
     private void stopServer() {
         try {
+            
+            DBPool.getInstance().releaseAllConnections();
             serverOn = false; // Set serverOn to false
+            serverOn = false; // Establece serverOn a false
             if (serverSocket != null && !serverSocket.isClosed()) {
-                serverSocket.close(); // Close the server socket
+                serverSocket.close(); // Cierra el socket del servidor
             }
-            logger.info("Server has been stopped.");
+            logger.info("El servidor ha sido detenido.");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error stopping the server: " + e.getMessage(), e);
+        } catch (ConnectionException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "Error al detener el servidor: " + ex.getMessage(), ex);
         }
     }
 }

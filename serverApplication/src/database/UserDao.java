@@ -49,17 +49,6 @@ public class UserDao implements Signable {
      */
     private static final String SELECT_RES_PARTNER = "SELECT * FROM public.res_partner WHERE email = ?";
 
-    /**
-     * Método auxiliar para realizar el hash de una contraseña.
-     *
-     * @param password La contraseña en texto plano.
-     * @return La contraseña en su forma hash (en este caso sin hash para demo).
-     * Se recomienda implementar un algoritmo de hash como bcrypt o SHA-512.
-     */
-    private String hashPassword(String password) {
-        // Para demostración, devolver la contraseña tal como está.
-        return password;
-    }
 
     /**
      * Método para realizar el inicio de sesión de un usuario. Verifica si el
@@ -87,8 +76,8 @@ public class UserDao implements Signable {
         try {
             // Establece la conexión con la base de datos
             connection = DBPool.getInstance().getConnection();
-            if(connection == null){
-               throw new ConnectionException("Erver not working");
+            if (connection == null) {
+                throw new ConnectionException("Server not working");
             }
 
             // Consulta para obtener los datos del partner por email
@@ -150,9 +139,8 @@ public class UserDao implements Signable {
                 userStmt.close();
             }
             if (connection != null) {
-               // connection.close();
-              DBPool.getInstance().releaseConnection(connection);
-
+                // connection.close();
+                DBPool.getInstance().releaseConnection(connection);
             }
         }
     }
@@ -180,15 +168,13 @@ public class UserDao implements Signable {
             // Get a connection (Use a connection pool for scalability)
             conn = DBPool.getInstance().getConnection();
 
-            if(conn == null){
-               throw new ConnectionException("Server not working");
+            if (conn == null) {
+                throw new ConnectionException("Server not working");
             }
             conn.setAutoCommit(false); // Start transaction
 
             // Insert into res_partner
-            String sqlPartner = "INSERT INTO res_partner (name, email, display_name, is_company, company_id, street, city, zip, active) "
-                            + "VALUES (?, ?, ?, FALSE, 1, ?, ?, ?, ?) RETURNING id";
-            psPartner = conn.prepareStatement(sqlPartner);
+            psPartner = conn.prepareStatement(INSERT_USER_PARTNERS_TABLE);
             psPartner.setString(1, user.getName());
             psPartner.setString(2, user.getEmail());
             psPartner.setString(3, user.getName()); // Assuming display_name is similar to the name field
@@ -205,9 +191,7 @@ public class UserDao implements Signable {
             }
 
             // Insert into res_users
-            String sqlUser = "INSERT INTO res_users (login, password, partner_id, company_id, notification_type) "
-                            + "VALUES (?, ?, ?, ?, 'email')";
-            psUser = conn.prepareStatement(sqlUser);
+            psUser = conn.prepareStatement(INSERT_USER_USERS_TABLE);
             psUser.setString(1, user.getEmail());
             psUser.setString(2, user.getPassword());
             psUser.setInt(3, partnerId);  // Use the partner ID from res_partner
@@ -249,5 +233,4 @@ public class UserDao implements Signable {
             }
         }
     }
-
 }

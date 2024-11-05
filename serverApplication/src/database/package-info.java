@@ -1,4 +1,5 @@
+
 /**
- * This is the package everything that deals with database.
+ * This is the package that deals with all the code of the database.
  */
 package database;

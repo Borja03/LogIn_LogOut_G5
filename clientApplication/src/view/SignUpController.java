@@ -44,6 +44,13 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * SignUpController handles the user interactions for the sign-up window. It
+ * manages the UI components and their associated actions.
+ * Author: Adrian y Omar
+ */
+        
+
 public class SignUpController {
 
     // Logger for logging events
@@ -51,90 +58,106 @@ public class SignUpController {
 
     // UI Components
     @FXML
-    private Button btn_show_password;
+    private Button btn_show_password; // Button to toggle password visibility
 
     @FXML
-    private Button btn_signup;
+    private Button btn_signup; // Button to submit the sign-up form
 
     @FXML
-    private CheckBox chb_active;
+    private CheckBox chb_active; // Checkbox to indicate if the user is active
 
     @FXML
-    private Hyperlink hl_login;
+    private Hyperlink hl_login; // Hyperlink to navigate to the login screen
 
     @FXML
-    private ImageView imgCity;
+    private ImageView imgCity; // Image view for the city input field
 
     @FXML
-    private ImageView imgEmail;
+    private ImageView imgEmail; // Image view for the email input field
 
     @FXML
-    private ImageView imgKey;
+    private ImageView imgKey; // Image view for the password input field
 
     @FXML
-    private ImageView imgLock;
+    private ImageView imgLock; // Image view for the password lock icon
 
     @FXML
-    private ImageView imgShowPassword;
+    private ImageView imgShowPassword; // Image view for showing password visibility
 
     @FXML
-    private ImageView imgStreet;
+    private ImageView imgStreet; // Image view for the street input field
 
     @FXML
-    private ImageView imgUser;
+    private ImageView imgUser; // Image view for the user name input field
 
     @FXML
-    private ImageView imgZIP;
+    private ImageView imgZIP; // Image view for the ZIP code input field
 
     @FXML
-    private Label lbl_error;
+    private Label lbl_error; // Label to display error messages
 
     @FXML
-    private PasswordField pf_password;
+    private PasswordField pf_password; // Password field for user password
 
     @FXML
-    private PasswordField pf_password_confirm;
+    private PasswordField pf_password_confirm; // Password field for confirming user password
 
     @FXML
-    private TextField tf_city;
+    private TextField tf_city; // Text field for user city input
 
     @FXML
-    private TextField tf_email;
+    private TextField tf_email; // Text field for user email input
 
     @FXML
-    private TextField tf_name;
+    private TextField tf_name; // Text field for user name input
 
     @FXML
-    private TextField tf_password;
+    private TextField tf_password; // Text field for user password input
 
     @FXML
-    private TextField tf_password_confirm;
+    private TextField tf_password_confirm; // Text field for confirming user password input
 
     @FXML
-    private TextField tf_street;
+    private TextField tf_street; // Text field for user street input
 
     @FXML
-    private TextField tf_zip;
+    private TextField tf_zip; // Text field for user ZIP code input
 
     @FXML
-    private VBox vbx_card;
+    private VBox vbx_card; // Vertical box layout for UI components
 
-    private Stage stage;
+    private Stage stage; // Current stage for the sign-up window
 
-    private boolean isPasswordVisible = false;
+    private boolean isPasswordVisible = false; // Flag to check if the password is visible
 
+    /**
+     * Gets the current stage of the SignUpController.
+     *
+     * @return the current stage
+     */
     public Stage getStage() {
         return stage;
     }
-    
-    UtilsMethods utils = new UtilsMethods();
 
+    UtilsMethods utils = new UtilsMethods(); // Instance of utility methods
+
+    /**
+     * Sets the current stage of the SignUpController.
+     *
+     * @param stage the stage to be set
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-    private ContextMenu contextMenu;
-    private String currentTheme = "light";
 
+    private ContextMenu contextMenu; // Context menu for additional actions
+    private String currentTheme = "light"; // Current theme of the application
+
+    /**
+     * Initializes the sign-up stage with the given root layout.
+     *
+     * @param root the parent layout for the sign-up window
+     */
     public void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
 
@@ -172,7 +195,9 @@ public class SignUpController {
         stage.show();
     }
 
-    //menu and theme
+    /**
+     * Initializes and manages the context menu for the SignUpController.
+     */
     private void initializeContextMenu() {
         contextMenu = new ContextMenu();
 
@@ -187,10 +212,20 @@ public class SignUpController {
         contextMenu.getItems().addAll(lightMode, darkMode, clearFields);
     }
 
+    /**
+     * Displays the context menu at the specified screen coordinates.
+     *
+     * @param event the context menu event containing the screen coordinates
+     */
     private void showContextMenu(ContextMenuEvent event) {
         contextMenu.show(vbx_card, event.getScreenX(), event.getScreenY());
     }
 
+    /**
+     * Saves the user's selected theme preference to a properties file.
+     *
+     * @param theme the theme to be saved
+     */
     private void saveThemePreference(String theme) {
         try {
             Properties props = new Properties();
@@ -198,10 +233,15 @@ public class SignUpController {
             File file = new File("config.properties");
             props.store(new FileOutputStream(file), "Theme Settings");
         } catch (IOException e) {
-            logger.severe("Error saving theme preference: " + e.getMessage());
+            LOGGER.severe("Error saving theme preference: " + e.getMessage());
         }
     }
 
+    /**
+     * Loads the user's theme preference from a properties file.
+     *
+     * @return the loaded theme preference, defaults to "light" if not found
+     */
     private String loadThemePreference() {
         try {
             Properties props = new Properties();
@@ -211,24 +251,33 @@ public class SignUpController {
                 return props.getProperty("theme", "light");
             }
         } catch (IOException e) {
-            logger.severe("Error loading theme preference: " + e.getMessage());
+            LOGGER.severe("Error loading theme preference: " + e.getMessage());
         }
-        return "light";
+        return "light"; // Default theme
     }
 
+    /**
+     * Switches the application theme and saves the preference.
+     *
+     * @param theme the new theme to be applied
+     */
     private void switchTheme(String theme) {
         currentTheme = theme;
         loadTheme(theme);
         saveThemePreference(theme);
     }
 
+    /**
+     * Loads the specified theme by applying the appropriate styles and images.
+     *
+     * @param theme the theme to be loaded
+     */
     private void loadTheme(String theme) {
         Scene scene = stage.getScene();
         scene.getStylesheets().clear();
 
         if (theme.equals("dark")) {
-            // Código adicional para el tema oscuro
-
+            // Code for dark theme
             String cssFile = "/css/dark-styles.css";
             scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
             imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid-white.png")));
@@ -238,14 +287,12 @@ public class SignUpController {
             imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid-white.png")));
             imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid-white.png")));
             imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP-white.png")));
-             contextMenu.getStyleClass().add("context-menu-dark");
+            contextMenu.getStyleClass().add("context-menu-dark");
 
-            // Aquí puedes agregar más acciones específicas para el tema oscuro
+            // Additional actions for dark theme
         } else if (theme.equals("light")) {
-            // Código adicional para el tema claro
-
+            // Code for light theme
             String cssFile = "/css/CSSglobal.css";
-
             scene.getStylesheets().add(getClass().getResource(cssFile).toExternalForm());
             imgEmail.setImage(new Image(getClass().getResourceAsStream("/Images/envelope-solid.png")));
             imgLock.setImage(new Image(getClass().getResourceAsStream("/Images/lock-solid.png")));
@@ -254,12 +301,15 @@ public class SignUpController {
             imgStreet.setImage(new Image(getClass().getResourceAsStream("/Images/location-dot-solid.png")));
             imgCity.setImage(new Image(getClass().getResourceAsStream("/Images/city-solid.png")));
             imgZIP.setImage(new Image(getClass().getResourceAsStream("/Images/imgZIP.png")));
-             contextMenu.getStyleClass().remove("context-menu-dark");
+            contextMenu.getStyleClass().remove("context-menu-dark");
 
-            // Aquí puedes agregar más acciones específicas para el tema claro
+            // Additional actions for light theme
         }
     }
 
+    /**
+     * Clears all input fields in the sign-up form and resets the error label.
+     */
     private void clearAllFields() {
         LOGGER.info("Clearing all input fields.");
         tf_email.clear();
@@ -275,6 +325,11 @@ public class SignUpController {
         lbl_error.setText("");
     }
 
+    /**
+     * Handles the action of showing or hiding the password input fields.
+     *
+     * @param event the action event triggered by the password visibility button
+     */
     private void handlePasswordImageButtonAction(ActionEvent event) {
         isPasswordVisible = !isPasswordVisible;
         if (isPasswordVisible) {
@@ -296,14 +351,19 @@ public class SignUpController {
         }
     }
 
+    /**
+     * Handles the action of the sign-up button, validating input fields and
+     * performing the sign-up process.
+     *
+     * @param event the action event triggered by the sign-up button
+     */
     private void handleSignUpButtonAction(ActionEvent event) {
         try {
-
             String password;
             String confirmPassword;
             String email = tf_email.getText();
 
-            // Revisar qué campos de contraseña están activos y usarlos
+            // Check which password fields are visible and use them
             if (pf_password.isVisible()) {
                 password = pf_password.getText();
                 confirmPassword = pf_password_confirm.getText();
@@ -317,11 +377,13 @@ public class SignUpController {
             String city = tf_city.getText();
             String zip = tf_zip.getText();
             boolean isActive = chb_active.isSelected();
+
             // Clear previous error messages            
             lbl_error.setText("");
 
             // Validate inputs
             validateInputs(email, password, confirmPassword, name, street, city, zip);
+
             // Proceed with sign-up logic
             performSignUp(email, password, name, 1, street, city, Integer.parseInt(zip), isActive);
             LOGGER.info("Performing signup");
@@ -331,16 +393,46 @@ public class SignUpController {
         }
     }
 
+    /**
+     * Validates the provided input fields for empty values and correct formats.
+     *
+     * @param email the email to validate
+     * @param password the password to validate
+     * @param confirmPassword the password confirmation to validate
+     * @param name the name to validate
+     * @param street the street to validate
+     * @param city the city to validate
+     * @param zip the zip code to validate
+     * @throws EmptyFieldException if any required field is empty
+     * @throws InvalidEmailFormatException if the email format is invalid
+     * @throws InvalidPasswordFormatException if the password format is invalid
+     * @throws InvalidCityFormatException if the city format is invalid
+     * @throws InvalidZipFormatException if the zip code format is invalid
+     * @throws InvalidStreetFormatException if the street format is invalid
+     */
     private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
                     throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
                     InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
-        // check empty fileds
-        checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
-        //check fields format 
-        checkFieldsFormat(email, password, confirmPassword, name, street, city, zip);
 
+        // Check empty fields
+        checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
+
+        // Check fields format 
+        checkFieldsFormat(email, password, confirmPassword, name, street, city, zip);
     }
 
+    /**
+     * Checks for empty fields among the provided input values.
+     *
+     * @param email the email to check
+     * @param password the password to check
+     * @param confirmPassword the password confirmation to check
+     * @param name the name to check
+     * @param street the street to check
+     * @param city the city to check
+     * @param zip the zip code to check
+     * @throws EmptyFieldException if any field is empty
+     */
     private void checkEmptyFields(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException {
         // Validate email
         if (email == null || email.isEmpty()) {
@@ -350,11 +442,11 @@ public class SignUpController {
         if (password == null || password.isEmpty()) {
             throw new EmptyFieldException("Password cannot be empty.");
         }
-        // Validate password confirmation empty 
+        // Validate password confirmation
         if (confirmPassword == null || confirmPassword.isEmpty()) {
             throw new EmptyFieldException("Password confirmation cannot be empty.");
         }
-        // Validate name is empty 
+        // Validate name
         if (name == null || name.isEmpty()) {
             throw new EmptyFieldException("Name cannot be empty.");
         }
@@ -362,7 +454,6 @@ public class SignUpController {
         if (street == null || street.isEmpty()) {
             throw new EmptyFieldException("Street cannot be empty.");
         }
-        // You can add any additional format checks for street if needed
         // Validate city
         if (city == null || city.isEmpty()) {
             throw new EmptyFieldException("City cannot be empty.");
@@ -373,33 +464,62 @@ public class SignUpController {
         }
     }
 
-    private void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip) throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+    /**
+     * Checks the format of the provided input fields.
+     *
+     * @param email the email to check
+     * @param password the password to check
+     * @param confirmPassword the password confirmation to check
+     * @param name the name to check
+     * @param street the street to check
+     * @param city the city to check
+     * @param zip the zip code to check
+     * @throws InvalidEmailFormatException if the email format is invalid
+     * @throws InvalidPasswordFormatException if the password format is invalid
+     * @throws InvalidCityFormatException if the city format is invalid
+     * @throws InvalidZipFormatException if the zip code format is invalid
+     * @throws InvalidStreetFormatException if the street format is invalid
+     */
+    private void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip)
+                    throws InvalidEmailFormatException, InvalidPasswordFormatException,
                     InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+
         // Regex pattern for a valid email format
         String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
         if (!email.matches(emailRegex)) {
             throw new InvalidEmailFormatException("Email must be in a valid format (e.g., example@domain.com).");
         }
+
         // Validate password format
         if (!validatePassword(password)) {
             throw new InvalidPasswordFormatException("Password must be at least 6 characters, with lowercase, uppercase, numbers, and special characters.");
         }
-        // Validate password format equals
+
+        // Validate password match
         if (!password.equals(confirmPassword)) {
             throw new InvalidPasswordFormatException("Passwords do not match.");
         }
-        //  check that city only contains letters (basic validation)
+
+        // Check that city only contains letters (basic validation)
         if (!city.matches("[a-zA-Z\\s]+")) {
             throw new InvalidCityFormatException("City must only contain letters.");
         }
-        // Example: check that zip contains exactly 5 digits
+
+        // Check that zip contains exactly 5 digits
         if (!zip.matches("\\d{5}")) {
             throw new InvalidZipFormatException("Zip code must be exactly 5 digits.");
         }
     }
 
+    /**
+     * Validates the given password based on certain criteria.
+     *
+     * @param password the password to validate.
+     * @return true if the password is valid; false otherwise.
+     */
     private boolean validatePassword(String password) {
         if (password.length() < 6) {
+            LOGGER.warning("Password validation failed: Length is less than 6 characters.");
             return false;
         }
 
@@ -416,10 +536,26 @@ public class SignUpController {
                 hasSpecialChar = true;
             }
         }
-        return hasUppercase && hasDigit && hasSpecialChar;
+
+        boolean isValid = hasUppercase && hasDigit && hasSpecialChar;
+        if (!isValid) {
+            LOGGER.warning("Password validation failed: Missing required characters.");
+        }
+        return isValid;
     }
 
-   		
+    /**
+     * Performs the sign-up process for a new user.
+     *
+     * @param email the email address of the user.
+     * @param password the password entered by the user.
+     * @param name the name of the user.
+     * @param companyID the company ID associated with the user.
+     * @param street the street address of the user.
+     * @param city the city of the user.
+     * @param zip the zip code of the user.
+     * @param isActive the active status of the user.
+     */
     private void performSignUp(String email, String password, String name, int companyID, String street, String city, int zip, boolean isActive) {
         User user = new User(email, password, name, isActive, companyID, street, city, zip);
 
@@ -428,76 +564,99 @@ public class SignUpController {
             User nuevoUser = SignableFactory.getSignable().signUp(user);
             // If the sign-up is successful
             if (nuevoUser != null) {
-                utils.showAlert("Felicidades","Usuario añadido correctamente");
+                showAlert();
+                LOGGER.info("User signed up successfully: " + email);
             }
         } catch (UserAlreadyExistsException e) {
             // Handle duplicate email error
             utils.showAlert("Error", "Email already exists. Please use another email.");
-            LOGGER.warning("Email already exists");
+            LOGGER.warning("Email already exists: " + email);
         } catch (ServerErrorException e) {
             // Handle server error
             utils.showAlert("Error", "Server is not available at the moment. Please try again later.");
-            LOGGER.warning("Server error occurred");
-        } catch (ConnectionException e) { // Captura excepciones de conexión
-            utils.showAlert("Error", "Problemas de conexión a la base de datos."); // Muestra un mensaje de error.
-            logger.warning("Error en la conexion"); // Registra una advertencia.
-        }catch (Exception e) {
+            LOGGER.warning("Server error occurred during sign-up: " + e.getMessage());
+        } catch (ConnectionException e) {
+            // Handle connection exceptions
+            utils.showAlert("Error", "Problemas de conexión a la base de datos.");
+            LOGGER.warning("Connection error during sign-up: " + e.getMessage());
+        } catch (Exception e) {
             // Handle unexpected errors
             utils.showAlert("Error", "An unexpected error occurred: " + e.getMessage());
             LOGGER.log(Level.SEVERE, "Unexpected error in performSignUp", e);
         }
-     }
-
-    public void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
+    /**
+     * Handles the action of the login hyperlink.
+     *
+     * @param event the action event triggered by the hyperlink.
+     */
     private void handleLoginHyperlinkAction(ActionEvent event) {
         navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
 
+        private void showAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Sign-up Successful");
+        alert.setHeaderText(null);
+        alert.setContentText("Your account has been created successfully!");
+
+        // Handle alert button click
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // Navigate to another screen after the user clicks OK
+                navigateToScreen("/view/LogIn.fxml", "LogIn");
+            }
+        });
+    }
+    /**
+     * Navigates to a specified screen.
+     *
+     * @param fxmlPath the path to the FXML file of the screen to load.
+     * @param title the title of the new screen.
+     */
     private void navigateToScreen(String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             // Get the current stage
-            
+
+
                 LogInController controller = loader.getController();
                 Stage newStage = new Stage();
                 controller.setStage(newStage);
                 controller.initialize(root);
 
-            
 
             stage = (Stage) btn_signup.getScene().getWindow();
-            //stage.hide();
             stage.close();
-            logger.log(Level.SEVERE, "Stage closed");
-
+            LOGGER.info("Stage closed successfully for: " + title);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
         }
     }
 
+    /**
+     * Handles the exit action of the application.
+     *
+     * @param event the exit event triggered by the user.
+     */
     private void handleOnActionExit(Event event) {
         try {
-            //Ask user for confirmation on exit
+            // Ask user for confirmation on exit
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                             "Are you sure you want to exit the application?",
                             ButtonType.OK, ButtonType.CANCEL);
             Optional<ButtonType> result = alert.showAndWait();
-            //If OK to exit
+            // If OK to exit
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 Platform.exit();
+                LOGGER.info("Application exited by user.");
             } else {
                 event.consume();
             }
         } catch (Exception e) {
-            String errorMsg = "Error exiting application:" + e.getMessage();
+            String errorMsg = "Error exiting application: " + e.getMessage();
             Alert alert = new Alert(Alert.AlertType.ERROR,
                             errorMsg,
                             ButtonType.OK);

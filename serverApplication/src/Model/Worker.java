@@ -10,29 +10,40 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class represents a worker that handles communication with a single
- * client in a separate thread.
+ * Esta clase representa un trabajador que maneja la comunicación con un único
+ * cliente en un hilo separado.
  *
- * @Author Borja
+ * <p>El {@link Worker} es responsable de procesar los mensajes entrantes de los clientes,
+ * manejar las solicitudes de inicio de sesión y registro, y enviar respuestas
+ * adecuadas de vuelta al cliente. Se asegura de que el número máximo de usuarios
+ * conectados no se exceda y realiza el seguimiento de las conexiones activas.</p>
+ *
+ * @author Alder
  */
 public class Worker implements Runnable {
 
     private static final Logger logger = Logger.getLogger(Worker.class.getName());
     private Socket socket;
-    private static final numThread clientCounter = new numThread(); // Thread-safe client counting
+    private static final NumThread clientCounter = new NumThread(); // Contador de clientes seguro para hilos
     private static final ResourceBundle config = ResourceBundle.getBundle("Utils.socketConfig");
     private static final int MAX_USERS = Integer.parseInt(config.getString("MAX_USERS"));
 
     /**
-     * Constructor to initialize the worker with the client socket and client
-     * counter.
+     * Constructor para inicializar el trabajador con el socket del cliente.
+     *
+     * @param socket El socket del cliente con el que se va a comunicar.
      */
     public Worker(Socket socket) {
         this.socket = socket;
     }
 
     /**
-     * Handles client communication, processes messages, and sends responses.
+     * Maneja la comunicación con el cliente, procesa los mensajes y envía respuestas.
+     *
+     * <p>Este método lee los mensajes enviados por el cliente, determina el tipo de
+     * solicitud (inicio de sesión o registro) y ejecuta las acciones correspondientes
+     * utilizando la capa de acceso a datos. También maneja excepciones específicas
+     * relacionadas con las operaciones de usuario.</p>
      */
     private void handleClient() {
         ObjectInputStream objectReader = null;
@@ -42,14 +53,14 @@ public class Worker implements Runnable {
         try {
             if (clientCounter.value() < MAX_USERS) {
                 clientCounter.increment();
-                logger.info("Numero de hilos de cliente: " + clientCounter.value());
+                logger.info("Número de hilos de cliente: " + clientCounter.value());
                 objectReader = new ObjectInputStream(socket.getInputStream());
                 msg = (Message) objectReader.readObject();
 
-                // Log the entire message received for debugging
+                // Registro del mensaje completo recibido para depuración
                 logger.info("Mensaje recibido: " + msg);
 
-                // Check if the user object is not null
+                // Verifica si el objeto de usuario no es nulo
                 if (msg.getUser() != null) {
                     String userEmail = msg.getUser().getEmail();
                     switch (msg.getTipo()) {
@@ -57,9 +68,9 @@ public class Worker implements Runnable {
                             logger.info("Iniciando sesión para el usuario: " + userEmail);
                             User user = DaoFactory.getSignable().signIn(msg.getUser());
                             msg.setUser(user);
-                            if(user==null){
+                            if (user == null) {
                                 msg.setTipo(TipoMensaje.INCORRECT_CREDENTIALS_RESPONSE);
-                            }else{
+                            } else {
                                 msg.setTipo(TipoMensaje.OK_RESPONSE);
                             }
                             break;
@@ -68,9 +79,9 @@ public class Worker implements Runnable {
                             logger.info("Registrando usuario: " + userEmail);
                             user = DaoFactory.getSignable().signUp(msg.getUser());
                             msg.setUser(user);
-                             if(user==null){
+                            if (user == null) {
                                 msg.setTipo(TipoMensaje.EMAIL_EXISTS);
-                            }else{
+                            } else {
                                 msg.setTipo(TipoMensaje.OK_RESPONSE);
                             }
                             break;
@@ -82,25 +93,27 @@ public class Worker implements Runnable {
                     }
                 } else {
                     msg.setTipo(TipoMensaje.MAX_THREAD_USER);
-                    logger.warning("Maximo de usuarios alcanzado.");
+                    logger.warning("Máximo de usuarios alcanzado.");
                 }
             } else {
-                logger.warning("Max users reached, rejecting new connection.");
+                logger.warning("Máximo de usuarios alcanzado, rechazando nueva conexión.");
             }
 
         } catch (IncorrectCredentialsException e) {
             msg.setTipo(TipoMensaje.INCORRECT_CREDENTIALS_RESPONSE);
-            logger.log(Level.SEVERE, "Credenciales incorrectas para el usuario: " + (msg.getUser() != null ? msg.getUser().getEmail() : "Usuario no especificado"), e);
+            logger.log(Level.SEVERE, "Credenciales incorrectas para el usuario: " + 
+                (msg.getUser() != null ? msg.getUser().getEmail() : "Usuario no especificado"), e);
         } catch (UserAlreadyExistsException e) {
             msg.setTipo(TipoMensaje.EMAIL_EXISTS);
-            logger.log(Level.SEVERE, "El usuario ya existe: " + (msg.getUser() != null ? msg.getUser().getEmail() : "Usuario no especificado"), e);
+            logger.log(Level.SEVERE, "El usuario ya existe: " + 
+                (msg.getUser() != null ? msg.getUser().getEmail() : "Usuario no especificado"), e);
         } catch (ConnectionException e) {
             msg.setTipo(TipoMensaje.CONNECTION_ERROR);
             logger.log(Level.SEVERE, "Error de conexión", e);
         } catch (ServerErrorException e) {
             msg.setTipo(TipoMensaje.SERVER_ERROR);
             logger.log(Level.SEVERE, "Error de conexión", e);
-        }catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             msg.setTipo(TipoMensaje.SERVER_ERROR);
             logger.log(Level.SEVERE, "Clase no encontrada", e);
         } catch (IOException e) {
@@ -119,8 +132,8 @@ public class Worker implements Runnable {
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, "Error al cerrar las conexiones", ex);
             }
-            clientCounter.decrement(); // Remove the client from the counter
-            logger.info("Client removed. Current number of connected clients: " + clientCounter.value());
+            clientCounter.decrement(); // Eliminar el cliente del contador
+            logger.info("Cliente eliminado. Número actual de clientes conectados: " + clientCounter.value());
         }
     }
 

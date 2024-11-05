@@ -40,6 +40,7 @@ public class Application extends javafx.application.Application {
         
         Parent root = loader.load();
         LogInController controller = loader.getController();
+
         
         // Configuración de un nuevo Stage para la ventana de inicio de sesión
         Stage newStage = new Stage();
