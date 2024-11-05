@@ -19,7 +19,7 @@ import org.testfx.matcher.base.NodeMatchers;
 
 /**
  *
- * @author 2dam
+ * @author Adrian y Omar
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ServerDatabaseTest extends ApplicationTest {
