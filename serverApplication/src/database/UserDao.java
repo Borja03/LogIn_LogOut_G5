@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * sesión y el registro de usuarios en el sistema. Realiza operaciones en las
  * tablas 'res_partner' y 'res_users'.
  *
- * @author Omar y Alder
+ * @author Omar, Adrian y Alder
  */
 public class UserDao implements Signable {
 

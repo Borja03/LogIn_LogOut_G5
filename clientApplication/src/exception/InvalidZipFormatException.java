@@ -7,7 +7,7 @@ package exception;
  * situaciones en las que un código postal proporcionado no cumple con
  * los criterios de formato válidos establecidos por la aplicación.</p>
  * 
- * @author Omar
+ * @author Adrian
  */
 public class InvalidZipFormatException extends Exception {
     
