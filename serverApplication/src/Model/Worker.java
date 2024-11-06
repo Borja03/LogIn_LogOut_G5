@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * adecuadas de vuelta al cliente. Se asegura de que el número máximo de usuarios
  * conectados no se exceda y realiza el seguimiento de las conexiones activas.</p>
  *
- * @author Alder
+ * @author Alder and Borja
  */
 public class Worker implements Runnable {
 
