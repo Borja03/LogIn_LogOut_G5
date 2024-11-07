@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -96,7 +97,7 @@ public class MainController {
         this.stage = stage;
     }
 
-    private String currentTheme = "light";
+    private String currentTheme = "";
 
     /**
      * Initializes the controller with the provided root element and the user
@@ -190,55 +191,41 @@ public class MainController {
      *
      * @param theme the theme preference to save
      */
-    private void saveThemePreference(String theme) {
-        try {
-            // Create a Properties object to store the theme setting
-            Properties props = new Properties();
 
-            // Set the theme property to the specified theme
-            props.setProperty("theme", theme);
-
-            // Define the configuration file where the theme will be saved
-            File file = new File("config.properties");
-
-            // Store the theme setting in the file with a descriptive header
-            props.store(new FileOutputStream(file), "Theme Settings");
-        } catch (IOException e) {
-            // Log an error message if saving the theme preference fails
-            logger.severe("Error saving theme preference: " + e.getMessage());
-        }
+private void saveThemePreference(String theme) {
+    try {
+        Properties props = new Properties();
+        props.setProperty("theme", theme);
+        props.store(new FileOutputStream("src/config/config.properties"), "Theme Settings");
+    } catch (IOException e) {
+        logger.severe("Error saving theme preference: " + e.getMessage());
     }
-
+}
     /**
      * Loads the saved theme preference from a configuration file. If no
      * preference is found, returns the default theme "light".
      *
      * @return the saved theme preference, or "light" if no preference is found
      */
-    private String loadThemePreference() {
-        try {
-            // Create a Properties object to read the theme settings
-            Properties props = new Properties();
 
-            // Define the configuration file where the theme is stored
-            File file = new File("config.properties");
 
-            // Check if the configuration file exists
-            if (file.exists()) {
-                // Load the properties from the file
-                props.load(new FileInputStream(file));
-
-                // Retrieve the theme property, defaulting to "light" if not found
-                return props.getProperty("theme", "light");
-            }
-        } catch (IOException e) {
-            // Log an error message if loading the theme preference fails
-            logger.severe("Error loading theme preference: " + e.getMessage());
-        }
-
-        // Return the default theme if an error occurs or the file does not exist
-        return "light";
+/**
+ * Loads the saved theme preference from a configuration file using ResourceBundle.
+ * If no preference is found, returns the default theme "light".
+ *
+ * @return the saved theme preference, or "light" if no preference is found
+ */
+private String loadThemePreference() {
+    try {
+        ResourceBundle bundle = ResourceBundle.getBundle("config/config");
+        return bundle.getString("theme");
+    } catch (Exception e) {
+        // Log an error message if loading the theme preference fails
     }
+
+    return "light";
+}
+
 
     /**
      * Switches to the specified theme by loading it and saving the preference.

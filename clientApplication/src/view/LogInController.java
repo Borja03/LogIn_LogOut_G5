@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -180,35 +181,36 @@ public class LogInController {
      *
      * @param theme el tema a guardar, puede ser "light" o "dark".
      */
-    private void saveThemePreference(String theme) {
-        try {
-            Properties props = new Properties();
-            props.setProperty("theme", theme);
-            File file = new File("config.properties");
-            props.store(new FileOutputStream(file), "Theme Settings");
-        } catch (IOException e) {
-            logger.severe("Error saving theme preference: " + e.getMessage());
-        }
+
+private void saveThemePreference(String theme) {
+    try {
+        Properties props = new Properties();
+        props.setProperty("theme", theme);
+        props.store(new FileOutputStream("src/config/config.properties"), "Theme Settings");
+    } catch (IOException e) {
+        logger.severe("Error saving theme preference: " + e.getMessage());
+    }
+}
+
+
+
+/**
+ * Loads the saved theme preference from a configuration file using ResourceBundle.
+ * If no preference is found, returns the default theme "light".
+ *
+ * @return the saved theme preference, or "light" if no preference is found
+ */
+private String loadThemePreference() {
+    try {
+        ResourceBundle bundle = ResourceBundle.getBundle("config/config");
+        return bundle.getString("theme");
+    } catch (Exception e) {
+        // Log an error message if loading the theme preference fails
     }
 
-    /**
-     * Carga la preferencia del tema desde un archivo de propiedades.
-     *
-     * @return el tema cargado, o "light" si no se encuentra.
-     */
-    private String loadThemePreference() {
-        try {
-            Properties props = new Properties();
-            File file = new File("config.properties");
-            if (file.exists()) {
-                props.load(new FileInputStream(file));
-                return props.getProperty("theme", "light");
-            }
-        } catch (IOException e) {
-            logger.severe("Error loading theme preference: " + e.getMessage());
-        }
-        return "light";
-    }
+    return "light";
+}
+
 
     /**
      * Cambia el tema de la interfaz y guarda la preferencia.
