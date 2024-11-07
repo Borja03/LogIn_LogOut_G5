@@ -28,11 +28,13 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.WindowEvent;
 
 /**
  * Controlador para la vista de inicio de sesión en la aplicación.
@@ -91,7 +93,6 @@ public class LogInController {
 
     private ContextMenu contextMenu;
 
-    private String currentTheme = "light";
 
     @FXML
     private Pane centralPane;
@@ -121,6 +122,8 @@ public class LogInController {
      */
     private boolean isPasswordVisible = false;
 
+    
+    public static String currentTheme = loadInitialTheme(); // Load theme from config
     /**
      * Método que se ejecuta al inicializar el controlador. Configura la escena,
      * establece el título y las propiedades de la ventana principal, oculta el
@@ -143,11 +146,19 @@ public class LogInController {
 
         borderPane.setOnContextMenuRequested(this::showContextMenu);
 
-        currentTheme = loadThemePreference();
+       // currentTheme = loadThemePreference();
         loadTheme(currentTheme);
         stage.show();
     }
-
+    public static String loadInitialTheme(){
+           try {
+        ResourceBundle bundle = ResourceBundle.getBundle("config/config");
+        return bundle.getString("theme");
+    } catch (Exception e) {
+        // Log an error message if loading the theme preference fails
+    }
+    return "light";
+    }
     /**
      * Inicializa el menú contextual y define las opciones disponibles, como
      * cambiar el tema y limpiar los campos de entrada.
@@ -200,16 +211,16 @@ private void saveThemePreference(String theme) {
  *
  * @return the saved theme preference, or "light" if no preference is found
  */
-private String loadThemePreference() {
-    try {
-        ResourceBundle bundle = ResourceBundle.getBundle("config/config");
-        return bundle.getString("theme");
-    } catch (Exception e) {
-        // Log an error message if loading the theme preference fails
-    }
-
-    return "light";
-}
+//private String loadThemePreference() {
+//    try {
+//        ResourceBundle bundle = ResourceBundle.getBundle("config/config");
+//        return bundle.getString("theme");
+//    } catch (Exception e) {
+//        // Log an error message if loading the theme preference fails
+//    }
+//
+//    return "light";
+//}
 
 
     /**
@@ -367,5 +378,15 @@ private String loadThemePreference() {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
         }
+    }
+    
+    
+    /**
+     * Handle window close event to save theme preference.
+     */
+    @FXML
+    private void handleWindowCloseRequest(WindowEvent event) {
+        saveThemePreference(currentTheme); // Save theme preference when the window is closed
+        Platform.exit();
     }
 }

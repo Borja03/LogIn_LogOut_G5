@@ -160,7 +160,6 @@ public class SignUpController {
      * @param root the parent layout for the sign-up window
      */
     
-    private String currentTheme;
     public void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
 
@@ -190,8 +189,8 @@ public class SignUpController {
         root.setOnContextMenuRequested(this::showContextMenu);
 
         // Load default theme
-        currentTheme = loadThemePreference();
-        loadTheme(currentTheme);
+        //currentTheme = loadThemePreference();
+        loadTheme(LogInController.currentTheme);
         LOGGER.info("Window opened.");
 
         // Show the stage
@@ -268,9 +267,9 @@ private String loadThemePreference() {
      * @param theme the new theme to be applied
      */
     private void switchTheme(String theme) {
-        currentTheme = theme;
-        loadTheme(theme);
-        saveThemePreference(theme);
+        LogInController.currentTheme = theme;
+        loadTheme(LogInController.currentTheme);
+        saveThemePreference(LogInController.currentTheme);
     }
 
     /**
@@ -656,6 +655,7 @@ private String loadThemePreference() {
             Optional<ButtonType> result = alert.showAndWait();
             // If OK to exit
             if (result.isPresent() && result.get() == ButtonType.OK) {
+                 saveThemePreference(LogInController.currentTheme);
                 Platform.exit();
                 LOGGER.info("Application exited by user.");
             } else {

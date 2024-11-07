@@ -97,7 +97,6 @@ public class MainController {
         this.stage = stage;
     }
 
-    private String currentTheme = "";
 
     /**
      * Initializes the controller with the provided root element and the user
@@ -145,8 +144,8 @@ public class MainController {
         root.setOnContextMenuRequested(this::showContextMenu);
 
         // Load default theme
-        currentTheme = loadThemePreference();
-        loadTheme(currentTheme);
+        //currentTheme = loadThemePreference();
+        loadTheme(LogInController.currentTheme);
 
         logger.info("MainController initialized.");
         stage.show();
@@ -234,13 +233,13 @@ private String loadThemePreference() {
      */
     private void switchTheme(String theme) {
         // Update the current theme to the specified theme
-        currentTheme = theme;
+        LogInController.currentTheme = theme;
 
         // Load the specified theme settings into the application
-        loadTheme(theme);
+        loadTheme(LogInController.currentTheme);
 
         // Save the specified theme preference to the configuration file
-        saveThemePreference(theme);
+        saveThemePreference(LogInController.currentTheme);
     }
 
     /**
@@ -453,6 +452,8 @@ private String loadThemePreference() {
         // Check if the user confirmed the exit action
         if (result.isPresent() && result.get() == ButtonType.OK) {
             // If confirmed, exit the application
+                    saveThemePreference(LogInController.currentTheme);
+
             Platform.exit();
         } else {
             // If not confirmed, consume the event to prevent exit
