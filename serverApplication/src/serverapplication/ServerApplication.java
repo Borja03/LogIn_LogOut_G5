@@ -18,9 +18,7 @@ public class ServerApplication {
     /**
      * The entry point for the server application.
      * 
-     * This method checks for an optional command-line argument for the port number.
-     * If the port is provided and is a valid integer, the server will use that port.
-     * Otherwise, it will default to port 9999.
+     * It will default to port 9999.
      * 
      * <p>The method creates a {@link Worker} instance with the specified port
      * and starts the server to listen for incoming connections.</p>
