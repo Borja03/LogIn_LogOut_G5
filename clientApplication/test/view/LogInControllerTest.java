@@ -23,9 +23,9 @@ public class LogInControllerTest extends org.testfx.framework.junit.ApplicationT
     @Test
     public void a_correctSignIn() {
         clickOn("#emailTextField");
-        write("aa@aa.aa");
+        write("borjaahedo@gmail.com");
         clickOn("#passwordField");
-        write("@Aa12345");
+        write("Borja44_");
         clickOn("#logInButton");
         verifyThat("#mainPane", isVisible());
     }
@@ -41,7 +41,7 @@ public class LogInControllerTest extends org.testfx.framework.junit.ApplicationT
     @Test
     public void c_incorrectSignInWrongPassword() {
         clickOn("#emailTextField");
-        write("aa@aa.aa");
+        write("borjaahedo@gmail.com");
         clickOn("#logInButton");
         verifyThat("No se pudo iniciar sesión. Verifique sus credenciales.", isVisible());
     }
@@ -49,9 +49,9 @@ public class LogInControllerTest extends org.testfx.framework.junit.ApplicationT
     @Test
     public void d_incorrectSignInWrongEmail() {
         clickOn("#emailTextField");
-        write("aaa@aaa.aaa");
+        write("borja44@gmail.com");
         clickOn("#passwordField");
-        write("@Aa12345");
+        write("Borja44_");
         clickOn("#logInButton");
         verifyThat("No se pudo iniciar sesión. Verifique sus credenciales.", isVisible());
     }

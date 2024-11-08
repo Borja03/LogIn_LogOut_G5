@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -151,13 +152,14 @@ public class SignUpController {
     }
 
     private ContextMenu contextMenu; // Context menu for additional actions
-    private String currentTheme = "light"; // Current theme of the application
+   // private String currentTheme = "light"; // Current theme of the application
 
     /**
      * Initializes the sign-up stage with the given root layout.
      *
      * @param root the parent layout for the sign-up window
      */
+    
     public void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
 
@@ -187,8 +189,8 @@ public class SignUpController {
         root.setOnContextMenuRequested(this::showContextMenu);
 
         // Load default theme
-        currentTheme = loadThemePreference();
-        loadTheme(currentTheme);
+        //currentTheme = loadThemePreference();
+        loadTheme(LogInController.currentTheme);
         LOGGER.info("Window opened.");
 
         // Show the stage
@@ -226,45 +228,48 @@ public class SignUpController {
      *
      * @param theme the theme to be saved
      */
-    private void saveThemePreference(String theme) {
-        try {
-            Properties props = new Properties();
-            props.setProperty("theme", theme);
-            File file = new File("config.properties");
-            props.store(new FileOutputStream(file), "Theme Settings");
-        } catch (IOException e) {
-            LOGGER.severe("Error saving theme preference: " + e.getMessage());
-        }
+   private void saveThemePreference(String theme) {
+    try {
+        Properties props = new Properties();
+        props.setProperty("theme", theme);
+        props.store(new FileOutputStream("src/config/config.properties"), "Theme Settings");
+    } catch (IOException e) {
+        logger.severe("Error saving theme preference: " + e.getMessage());
     }
+}
 
     /**
      * Loads the user's theme preference from a properties file.
      *
      * @return the loaded theme preference, defaults to "light" if not found
      */
-    private String loadThemePreference() {
-        try {
-            Properties props = new Properties();
-            File file = new File("config.properties");
-            if (file.exists()) {
-                props.load(new FileInputStream(file));
-                return props.getProperty("theme", "light");
-            }
-        } catch (IOException e) {
-            LOGGER.severe("Error loading theme preference: " + e.getMessage());
-        }
-        return "light"; // Default theme
+
+
+/**
+ * Loads the saved theme preference from a configuration file using ResourceBundle.
+ * If no preference is found, returns the default theme "light".
+ *
+ * @return the saved theme preference, or "light" if no preference is found
+ */
+private String loadThemePreference() {
+    try {
+        ResourceBundle bundle = ResourceBundle.getBundle("config/config");
+        return bundle.getString("theme");
+    } catch (Exception e) {
+        // Log an error message if loading the theme preference fails
     }
 
+    return "light";
+}
     /**
      * Switches the application theme and saves the preference.
      *
      * @param theme the new theme to be applied
      */
     private void switchTheme(String theme) {
-        currentTheme = theme;
-        loadTheme(theme);
-        saveThemePreference(theme);
+        LogInController.currentTheme = theme;
+        loadTheme(LogInController.currentTheme);
+        saveThemePreference(LogInController.currentTheme);
     }
 
     /**
@@ -650,6 +655,7 @@ public class SignUpController {
             Optional<ButtonType> result = alert.showAndWait();
             // If OK to exit
             if (result.isPresent() && result.get() == ButtonType.OK) {
+                 saveThemePreference(LogInController.currentTheme);
                 Platform.exit();
                 LOGGER.info("Application exited by user.");
             } else {

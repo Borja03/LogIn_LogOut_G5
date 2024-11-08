@@ -18,9 +18,7 @@ public class ServerApplication {
     /**
      * The entry point for the server application.
      * 
-     * This method checks for an optional command-line argument for the port number.
-     * If the port is provided and is a valid integer, the server will use that port.
-     * Otherwise, it will default to port 9999.
+     * It will default to port 9999.
      * 
      * <p>The method creates a {@link Worker} instance with the specified port
      * and starts the server to listen for incoming connections.</p>
@@ -28,17 +26,8 @@ public class ServerApplication {
      * @param args the command-line arguments, where the first argument is expected to be the port number
      */
    public static void main(String[] args) {
-        int port = 9999;  // Default port
+        int port = 0;  // Default port
 
-        // Check if a port is provided via command-line arguments
-        if (args.length > 0) {
-            try {
-                port = Integer.parseInt(args[0]);
-            } catch (NumberFormatException e) {
-                // Use default port 9999
-            }
-        }
-        
         // Create a server instance
         Server server = new Server();
       }
