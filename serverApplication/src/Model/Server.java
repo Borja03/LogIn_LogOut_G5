@@ -11,12 +11,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Esta clase representa un servidor personalizado que escucha conexiones de clientes,
- * procesa solicitudes entrantes y crea instancias de {@link Worker} para manejar
- * cada cliente.
+ * Esta clase representa un servidor personalizado que escucha conexiones de
+ * clientes, procesa solicitudes entrantes y crea instancias de {@link Worker}
+ * para manejar cada cliente.
  *
- * <p>El servidor se ejecuta en un puerto específico configurado a través de un
- * archivo de recursos y permite múltiples conexiones simultáneas mediante hilos.</p>
+ * <p>
+ * El servidor se ejecuta en un puerto específico configurado a través de un
+ * archivo de recursos y permite múltiples conexiones simultáneas mediante
+ * hilos.</p>
  *
  * @author Borja
  */
@@ -34,18 +36,21 @@ public class Server {
     private ServerSocket serverSocket;
 
     /**
-     * Constructor para inicializar el servidor con el puerto de la configuración.
+     * Constructor para inicializar el servidor con el puerto de la
+     * configuración.
      */
     public Server() {
         this.startServer();
     }
 
     /**
-     * Inicia el servidor y comienza a escuchar conexiones de clientes entrantes.
+     * Inicia el servidor y comienza a escuchar conexiones de clientes
+     * entrantes.
      *
-     * <p>El servidor aceptará conexiones continuamente hasta que se indique lo contrario.
-     * Se ejecuta un hilo dedicado para escuchar la entrada del teclado para cerrar el
-     * servidor de forma controlada.</p>
+     * <p>
+     * El servidor aceptará conexiones continuamente hasta que se indique lo
+     * contrario. Se ejecuta un hilo dedicado para escuchar la entrada del
+     * teclado para cerrar el servidor de forma controlada.</p>
      */
     public void startServer() {
         try {
@@ -82,8 +87,9 @@ public class Server {
     /**
      * Método dedicado para escuchar la entrada 'q' para cerrar el servidor.
      *
-     * <p>Este método lee la entrada del teclado y, al recibir 'q', detiene
-     * el servidor de forma controlada.</p>
+     * <p>
+     * Este método lee la entrada del teclado y, al recibir 'q', detiene el
+     * servidor de forma controlada.</p>
      */
     private void keyboardListener() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -104,13 +110,12 @@ public class Server {
     /**
      * Detiene el servidor y cierra el socket del servidor.
      *
-     * <p>Este método establece la variable {@code serverOn} a false,
-     * cierra el socket del servidor y registra la detención del servidor.</p>
+     * <p>
+     * Este método establece la variable {@code serverOn} a false, cierra el
+     * socket del servidor y registra la detención del servidor.</p>
      */
     private void stopServer() {
         try {
-            
-            DBPool.getInstance().releaseAllConnections();
             serverOn = false; // Set serverOn to false
             serverOn = false; // Establece serverOn a false
             if (serverSocket != null && !serverSocket.isClosed()) {
@@ -119,9 +124,7 @@ public class Server {
             logger.info("El servidor ha sido detenido.");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error stopping the server: " + e.getMessage(), e);
-        } catch (ConnectionException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            logger.log(Level.SEVERE, "Error al detener el servidor: " + ex.getMessage(), ex);
+
         }
     }
 }
