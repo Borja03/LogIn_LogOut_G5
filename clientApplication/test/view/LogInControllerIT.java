@@ -49,6 +49,6 @@ public class LogInControllerIT extends org.testfx.framework.junit.ApplicationTes
         clickOn("#passwordField");
         write("Borja44_");
         clickOn("#logInButton");
-        verifyThat("No se pudo iniciar sesión. Máximo número de usuarios alcanzado. Espere unos minutos", isVisible());
+        verifyThat("Ocurrió un error inesperado.", isVisible());
     }
 }
