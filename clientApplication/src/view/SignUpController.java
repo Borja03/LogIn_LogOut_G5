@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -172,7 +173,8 @@ public class SignUpController {
         stage.centerOnScreen();
 
         stage.getIcons().add(new Image("/Images/userIcon.png"));
-
+   
+        
         tf_password.setVisible(false);
         tf_password_confirm.setVisible(false);
 
@@ -181,8 +183,22 @@ public class SignUpController {
         btn_show_password.setOnAction(this::handlePasswordImageButtonAction);
         stage.setOnCloseRequest(this::handleOnActionExit);
 
-        // menu
-        // Initialize context menu
+        // changes for exam
+             
+        // active chackbox
+        chb_active.setSelected(true);
+        // listener for focus
+        tf_email.focusedProperty().addListener(this::focusChanged);
+        pf_password.focusedProperty().addListener(this::focusChanged);
+        tf_password.focusedProperty().addListener(this::focusChanged);
+        pf_password_confirm.focusedProperty().addListener(this::focusChanged);
+        tf_password_confirm.focusedProperty().addListener(this::focusChanged);
+        tf_name.focusedProperty().addListener(this::focusChanged);
+        tf_street.focusedProperty().addListener(this::focusChanged);
+        tf_city.focusedProperty().addListener(this::focusChanged);
+        tf_zip.focusedProperty().addListener(this::focusChanged);
+
+      // Initialize context menu
         initializeContextMenu();
 
         // Add context menu to the scene
@@ -326,7 +342,7 @@ private String loadThemePreference() {
         tf_street.clear();
         tf_city.clear();
         tf_zip.clear();
-        chb_active.setSelected(false);
+        chb_active.setSelected(true);
         lbl_error.setText("");
     }
 
@@ -354,6 +370,14 @@ private String loadThemePreference() {
             tf_password_confirm.setVisible(false);
             pf_password_confirm.setText(tf_password_confirm.getText());
         }
+    }
+    
+    //
+    private void focusChanged(ObservableValue observable ,Boolean oldValue ,Boolean newValue){
+      if(newValue){
+       lbl_error.setText("");
+
+      }  
     }
 
     /**

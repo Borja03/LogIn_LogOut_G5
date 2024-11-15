@@ -39,8 +39,8 @@ public class SignerClient implements Signable {
     /**
      * Archivo de configuración que contiene información del socket.
      */
-    private static final ResourceBundle archivo = ResourceBundle.getBundle("Utils.socketConfig");
-
+    private static final ResourceBundle archivo = ResourceBundle.getBundle("config/config");
+    
     /**
      * Puerto para la conexión con el servidor.
      */

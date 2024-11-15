@@ -26,7 +26,7 @@ public class Server {
     private static final Logger logger = Logger.getLogger(Server.class.getName());
 
     // Carga de configuraciones
-    private static final ResourceBundle config = ResourceBundle.getBundle("Utils.socketConfig");
+    private static final ResourceBundle config = ResourceBundle.getBundle("config/config");
     private static final int PORT = Integer.parseInt(config.getString("PORT"));
 
     // Variables de estado del servidor
