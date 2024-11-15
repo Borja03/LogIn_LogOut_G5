@@ -29,8 +29,6 @@ public class UtilsMethods {
     public void validateEmail(String email) throws InvalidEmailFormatException {
         String emailRegex = "^[\\w-\\.]+@[\\w-]+\\.[a-zA-Z]{2,4}$";
         if (!email.matches(emailRegex)) {
-            logger.warning("Formato de email inválido: " + email);
-            showAlert("Formato de email inválido", "El texto tiene que estar en formato email 'example@example.extension'");
             throw new InvalidEmailFormatException("Formato email invalido: " + email);
         }
     }

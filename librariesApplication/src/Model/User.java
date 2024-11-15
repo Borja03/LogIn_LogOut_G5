@@ -18,6 +18,7 @@ public class User implements Serializable {
     private String street;
     private String city;
     private int zip;
+    private int phone;
 
     public User() {
     }
@@ -187,6 +188,14 @@ public class User implements Serializable {
      */
     public void setZip(int zip) {
         this.zip = zip;
+    }
+    
+    public int getPhone() {
+        return phone;
+    }
+
+    public void setPhone(int phone) {
+        this.phone = phone;
     }
 }
 

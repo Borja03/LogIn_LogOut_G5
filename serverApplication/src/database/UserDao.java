@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,14 +30,14 @@ public class UserDao implements Signable {
     /**
      * Consulta SQL para insertar un nuevo registro en la tabla 'res_partner'.
      */
-    private static final String INSERT_USER_PARTNERS_TABLE = "INSERT INTO public.res_partner (name, email, display_name, is_company, company_id, street, city, zip, active) "
-                    + "VALUES (?, ?, ?, FALSE, 1, ?, ?, ?, ?) RETURNING id";
+    private static final String INSERT_USER_PARTNERS_TABLE = "INSERT INTO public.res_partner (name, email, display_name, is_company, company_id, street, city, zip, active, phone) "
+            + "VALUES (?, ?, ?, FALSE, 1, ?, ?, ?, ?, ?) RETURNING id";
 
     /**
      * Consulta SQL para insertar un nuevo registro en la tabla 'res_users'.
      */
     private static final String INSERT_USER_USERS_TABLE = "INSERT INTO public.res_users (login, password, partner_id, company_id, notification_type) "
-                    + "VALUES (?, ?, ?, ?, 'email')";
+            + "VALUES (?, ?, ?, ?, 'email')";
 
     /**
      * Consulta SQL para obtener un usuario por su login (email) desde la tabla
@@ -48,7 +50,6 @@ public class UserDao implements Signable {
      * 'res_partner'.
      */
     private static final String SELECT_RES_PARTNER = "SELECT * FROM public.res_partner WHERE email = ?";
-
 
     /**
      * Método para realizar el inicio de sesión de un usuario. Verifica si el
@@ -77,7 +78,7 @@ public class UserDao implements Signable {
             // Establece la conexión con la base de datos
             connection = DBPool.getInstance().getConnection();
             if (connection == null) {
-                throw new ConnectionException("Server not working");
+                throw new DBPoolConnectionException("Server not working");
             }
 
             // Consulta para obtener los datos del partner por email
@@ -154,12 +155,12 @@ public class UserDao implements Signable {
      * @param user El objeto User que contiene los datos del usuario a registrar
      * (nombre, email, contraseña, dirección, etc.).
      * @return El objeto User con los datos registrados en la base de datos.
-     * @throws UserAlreadyExistsException o 
-     * @throws ConnectionException si se produce un error en la inserción de los datos o
-     * en la transacción.
+     * @throws UserAlreadyExistsException o
+     * @throws DBPoolConnectionException si se produce un error en la inserción
+     * de los datos o en la transacción.
      */
     @Override
-    public synchronized User signUp(User user) throws UserAlreadyExistsException, ConnectionException {
+    public synchronized User signUp(User user) throws UserAlreadyExistsException, DBPoolConnectionException, ConnectionException {
         Connection conn = null;
         PreparedStatement psPartner = null;
         PreparedStatement psUser = null;
@@ -170,7 +171,7 @@ public class UserDao implements Signable {
             conn = DBPool.getInstance().getConnection();
 
             if (conn == null) {
-                throw new ConnectionException("Server not working");
+                throw new DBPoolConnectionException("Server not working");
             }
             conn.setAutoCommit(false); // Start transaction
 
@@ -183,6 +184,9 @@ public class UserDao implements Signable {
             psPartner.setString(5, user.getCity());
             psPartner.setInt(6, user.getZip());
             psPartner.setBoolean(7, user.isActivo());
+            Scanner sc = new Scanner(System.in);
+            //Añadirlo a la base de datos
+            psPartner.setInt(8, 22);
             rs = psPartner.executeQuery();
             int partnerId = 0;
             if (rs.next()) {

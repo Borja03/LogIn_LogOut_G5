@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 
 import java.util.logging.Logger;
 import Utils.UtilsMethods;
+import static Utils.UtilsMethods.logger;
 import exception.*;
 import javafx.scene.layout.Pane;
 import java.util.logging.Level;
@@ -37,19 +38,22 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.WindowEvent;
 
 /**
- * Controlador para la vista de inicio de sesión en la aplicación.
- * Esta clase maneja la lógica para iniciar sesión, cambiar la visibilidad
- * de la contraseña, navegar entre vistas, gestionar temas de interfaz
- * (claro/oscuro) y proporciona opciones adicionales mediante un menú contextual.
- * 
- * <p>El controlador interactúa con diversos elementos de la interfaz gráfica
- * para obtener las credenciales del usuario, validarlas y manejar los intentos
- * de inicio de sesión. En caso de éxito, permite al usuario acceder a la
- * pantalla principal o a la vista de registro.</p>
- * 
- * <p>Incluye métodos utilitarios para guardar preferencias de usuario, como
- * el tema de la aplicación, y para limpiar campos de entrada cuando se solicita.</p>
- * 
+ * Controlador para la vista de inicio de sesión en la aplicación. Esta clase
+ * maneja la lógica para iniciar sesión, cambiar la visibilidad de la
+ * contraseña, navegar entre vistas, gestionar temas de interfaz (claro/oscuro)
+ * y proporciona opciones adicionales mediante un menú contextual.
+ *
+ * <p>
+ * El controlador interactúa con diversos elementos de la interfaz gráfica para
+ * obtener las credenciales del usuario, validarlas y manejar los intentos de
+ * inicio de sesión. En caso de éxito, permite al usuario acceder a la pantalla
+ * principal o a la vista de registro.</p>
+ *
+ * <p>
+ * Incluye métodos utilitarios para guardar preferencias de usuario, como el
+ * tema de la aplicación, y para limpiar campos de entrada cuando se
+ * solicita.</p>
+ *
  * @author Alder
  */
 public class LogInController {
@@ -93,7 +97,6 @@ public class LogInController {
 
     private ContextMenu contextMenu;
 
-
     @FXML
     private Pane centralPane;
 
@@ -122,8 +125,8 @@ public class LogInController {
      */
     private boolean isPasswordVisible = false;
 
-    
     public static String currentTheme = loadInitialTheme(); // Load theme from config
+
     /**
      * Método que se ejecuta al inicializar el controlador. Configura la escena,
      * establece el título y las propiedades de la ventana principal, oculta el
@@ -146,19 +149,21 @@ public class LogInController {
 
         borderPane.setOnContextMenuRequested(this::showContextMenu);
 
-       // currentTheme = loadThemePreference();
+        // currentTheme = loadThemePreference();
         loadTheme(currentTheme);
         stage.show();
     }
-    public static String loadInitialTheme(){
-           try {
-        ResourceBundle bundle = ResourceBundle.getBundle("config/config");
-        return bundle.getString("theme");
-    } catch (Exception e) {
-        // Log an error message if loading the theme preference fails
+
+    public static String loadInitialTheme() {
+        try {
+            ResourceBundle bundle = ResourceBundle.getBundle("config/config");
+            return bundle.getString("theme");
+        } catch (Exception e) {
+            // Log an error message if loading the theme preference fails
+        }
+        return "light";
     }
-    return "light";
-    }
+
     /**
      * Inicializa el menú contextual y define las opciones disponibles, como
      * cambiar el tema y limpiar los campos de entrada.
@@ -192,25 +197,23 @@ public class LogInController {
      *
      * @param theme el tema a guardar, puede ser "light" o "dark".
      */
-
-private void saveThemePreference(String theme) {
-    try {
-        Properties props = new Properties();
-        props.setProperty("theme", theme);
-        props.store(new FileOutputStream("src/config/config.properties"), "Theme Settings");
-    } catch (IOException e) {
-        logger.severe("Error saving theme preference: " + e.getMessage());
+    private void saveThemePreference(String theme) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("theme", theme);
+            props.store(new FileOutputStream("src/config/config.properties"), "Theme Settings");
+        } catch (IOException e) {
+            logger.severe("Error saving theme preference: " + e.getMessage());
+        }
     }
-}
 
-
-
-/**
- * Loads the saved theme preference from a configuration file using ResourceBundle.
- * If no preference is found, returns the default theme "light".
- *
- * @return the saved theme preference, or "light" if no preference is found
- */
+    /**
+     * Loads the saved theme preference from a configuration file using
+     * ResourceBundle. If no preference is found, returns the default theme
+     * "light".
+     *
+     * @return the saved theme preference, or "light" if no preference is found
+     */
 //private String loadThemePreference() {
 //    try {
 //        ResourceBundle bundle = ResourceBundle.getBundle("config/config");
@@ -221,8 +224,6 @@ private void saveThemePreference(String theme) {
 //
 //    return "light";
 //}
-
-
     /**
      * Cambia el tema de la interfaz y guarda la preferencia.
      *
@@ -284,19 +285,21 @@ private void saveThemePreference(String theme) {
      * @throws InvalidEmailFormatException si el formato del email es inválido.
      */
     @FXML
-    private void handleLogInButtonAction() throws InvalidEmailFormatException {
-        utils.validateEmail(emailTextField.getText());
-        String email = emailTextField.getText();
-        String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
-
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(password);
+    private void handleLogInButtonAction() {
 
         try {
+            validateEmail(emailTextField.getText());
+            String email = emailTextField.getText();
+            String password = isPasswordVisible ? visiblePasswordField.getText() : passwordField.getText();
+
+            User user = new User();
+            user.setEmail(email);
+            user.setPassword(password);
+
             User loggedInUser = SignableFactory.getSignable().signIn(user);
 
             if (loggedInUser != null) {
+                logger.info("Inicio de sesion exitoso");
                 navigateToScreen("/view/Main.fxml", "Main", true, loggedInUser);
             }
         } catch (IncorrectCredentialsException e) {
@@ -311,6 +314,9 @@ private void saveThemePreference(String theme) {
         } catch (MaxThreadUserException e) {
             utils.showAlert("Error", "No se pudo iniciar sesión. Máximo número de usuarios alcanzado. Espere unos minutos.");
             logger.warning("Máximo usuario alcanzado");
+        } catch (InvalidEmailFormatException e) {
+            utils.showAlert("Formato de email inválido", "El texto tiene que estar en formato email 'example@example.extension'");
+            logger.warning("Formato de email inválido: " + emailTextField.getText());
         } catch (Exception e) {
             utils.showAlert("Error", "Ocurrió un error inesperado.");
             logger.severe("Error inesperado");
@@ -379,8 +385,7 @@ private void saveThemePreference(String theme) {
             logger.log(Level.SEVERE, "Failed to load " + title + " screen: " + e.getMessage(), e);
         }
     }
-    
-    
+
     /**
      * Handle window close event to save theme preference.
      */
@@ -388,5 +393,12 @@ private void saveThemePreference(String theme) {
     private void handleWindowCloseRequest(WindowEvent event) {
         saveThemePreference(currentTheme); // Save theme preference when the window is closed
         Platform.exit();
+    }
+    
+    public void validateEmail(String email) throws InvalidEmailFormatException {
+        String emailRegex = "^[\\w-\\.]+@[\\w-]+\\.[a-zA-Z]{2,4}$";
+        if (!email.matches(emailRegex)) {
+            throw new InvalidEmailFormatException("Formato email invalido: " + email);
+        }
     }
 }

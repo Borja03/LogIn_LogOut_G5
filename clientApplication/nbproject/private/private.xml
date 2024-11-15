@@ -19,23 +19,7 @@
             <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/exception/EmptyFieldException.java</file>
             <file>file:/C:/Users/Omar/Desktop/GitRetos/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
         </group>
-        <group>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/package-info.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/MainController.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/SignUpController.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/LogInController.java</file>
-        </group>
-        <group>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/Application/Application.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/test/view/ServerDatabaseTest.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/package-info.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/test/view/ServerSignUpTest.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/MainController.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/SignUpController.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/src/view/LogInController.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/test/view/LogInControllerTest.java</file>
-            <file>file:/C:/Users/2dam/Desktop/LogIn_LogOut_G5/clientApplication/test/view/LogInControllerIT.java</file>
-        </group>
+        <group/>
+        <group/>
     </open-files>
 </project-private>
