@@ -1,4 +1,4 @@
-        package view;
+package view;
 
 import Model.SignableFactory;
 import Model.User;
@@ -47,11 +47,8 @@ import javafx.stage.Stage;
 
 /**
  * SignUpController handles the user interactions for the sign-up window. It
- * manages the UI components and their associated actions.
- * Author: Adrian y Omar
+ * manages the UI components and their associated actions. Author: Adrian y Omar
  */
-        
-
 public class SignUpController {
 
     // Logger for logging events
@@ -152,14 +149,13 @@ public class SignUpController {
     }
 
     private ContextMenu contextMenu; // Context menu for additional actions
-   // private String currentTheme = "light"; // Current theme of the application
+    // private String currentTheme = "light"; // Current theme of the application
 
     /**
      * Initializes the sign-up stage with the given root layout.
      *
      * @param root the parent layout for the sign-up window
      */
-    
     public void initStage(Parent root) {
         LOGGER.info("Initialising Sign Up window.");
 
@@ -228,39 +224,39 @@ public class SignUpController {
      *
      * @param theme the theme to be saved
      */
-   private void saveThemePreference(String theme) {
-    try {
-        Properties props = new Properties();
-        props.setProperty("theme", theme);
-        props.store(new FileOutputStream("src/config/config.properties"), "Theme Settings");
-    } catch (IOException e) {
-        logger.severe("Error saving theme preference: " + e.getMessage());
+    private void saveThemePreference(String theme) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("theme", theme);
+            props.store(new FileOutputStream("src/config/config.properties"), "Theme Settings");
+        } catch (IOException e) {
+            logger.severe("Error saving theme preference: " + e.getMessage());
+        }
     }
-}
 
     /**
      * Loads the user's theme preference from a properties file.
      *
      * @return the loaded theme preference, defaults to "light" if not found
      */
+    /**
+     * Loads the saved theme preference from a configuration file using
+     * ResourceBundle. If no preference is found, returns the default theme
+     * "light".
+     *
+     * @return the saved theme preference, or "light" if no preference is found
+     */
+    private String loadThemePreference() {
+        try {
+            ResourceBundle bundle = ResourceBundle.getBundle("config/config");
+            return bundle.getString("theme");
+        } catch (Exception e) {
+            // Log an error message if loading the theme preference fails
+        }
 
-
-/**
- * Loads the saved theme preference from a configuration file using ResourceBundle.
- * If no preference is found, returns the default theme "light".
- *
- * @return the saved theme preference, or "light" if no preference is found
- */
-private String loadThemePreference() {
-    try {
-        ResourceBundle bundle = ResourceBundle.getBundle("config/config");
-        return bundle.getString("theme");
-    } catch (Exception e) {
-        // Log an error message if loading the theme preference fails
+        return "light";
     }
 
-    return "light";
-}
     /**
      * Switches the application theme and saves the preference.
      *
@@ -416,8 +412,8 @@ private String loadThemePreference() {
      * @throws InvalidStreetFormatException if the street format is invalid
      */
     private void validateInputs(String email, String password, String confirmPassword, String name, String street, String city, String zip)
-                    throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
-                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+            throws EmptyFieldException, InvalidEmailFormatException, InvalidPasswordFormatException,
+            InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
 
         // Check empty fields
         checkEmptyFields(email, password, confirmPassword, name, street, city, zip);
@@ -486,8 +482,8 @@ private String loadThemePreference() {
      * @throws InvalidStreetFormatException if the street format is invalid
      */
     private void checkFieldsFormat(String email, String password, String confirmPassword, String name, String street, String city, String zip)
-                    throws InvalidEmailFormatException, InvalidPasswordFormatException,
-                    InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
+            throws InvalidEmailFormatException, InvalidPasswordFormatException,
+            InvalidCityFormatException, InvalidZipFormatException, InvalidStreetFormatException {
 
         // Regex pattern for a valid email format
         String emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$";
@@ -570,24 +566,15 @@ private String loadThemePreference() {
             // If the sign-up is successful
             if (nuevoUser != null) {
                 showAlert();
-                LOGGER.info("User signed up successfully: " + email);
+                LOGGER.log(Level.INFO, "User signed up successfully: }", email);
             }
-        } catch (UserAlreadyExistsException e) {
-            // Handle duplicate email error
-            utils.showAlert("Error", "Email already exists. Please use another email.");
-            LOGGER.warning("Email already exists: " + email);
-        } catch (ServerErrorException e) {
-            // Handle server error
-            utils.showAlert("Error", "Server is not available at the moment. Please try again later.");
-            LOGGER.warning("Server error occurred during sign-up: " + e.getMessage());
-        } catch (ConnectionException e) {
-            // Handle connection exceptions
-            utils.showAlert("Error", "Problemas de conexión a la base de datos.");
-            LOGGER.warning("Connection error during sign-up: " + e.getMessage());
+        } catch (UserAlreadyExistsException | ServerErrorException | ConnectionException e) {
+
+            utils.showAlertExcep(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } catch (Exception e) {
-            // Handle unexpected errors
-            utils.showAlert("Error", "An unexpected error occurred: " + e.getMessage());
-            LOGGER.log(Level.SEVERE, "Unexpected error in performSignUp", e);
+            utils.showAlertExcep(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -600,7 +587,7 @@ private String loadThemePreference() {
         navigateToScreen("/view/LogIn.fxml", "LogIn");
     }
 
-        private void showAlert() {
+    private void showAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Sign-up Successful");
         alert.setHeaderText(null);
@@ -614,6 +601,7 @@ private String loadThemePreference() {
             }
         });
     }
+
     /**
      * Navigates to a specified screen.
      *
@@ -626,12 +614,10 @@ private String loadThemePreference() {
             Parent root = loader.load();
             // Get the current stage
 
-
-                LogInController controller = loader.getController();
-                Stage newStage = new Stage();
-                controller.setStage(newStage);
-                controller.initialize(root);
-
+            LogInController controller = loader.getController();
+            Stage newStage = new Stage();
+            controller.setStage(newStage);
+            controller.initialize(root);
 
             stage = (Stage) btn_signup.getScene().getWindow();
             stage.close();
@@ -650,12 +636,12 @@ private String loadThemePreference() {
         try {
             // Ask user for confirmation on exit
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                            "Are you sure you want to exit the application?",
-                            ButtonType.OK, ButtonType.CANCEL);
+                    "Are you sure you want to exit the application?",
+                    ButtonType.OK, ButtonType.CANCEL);
             Optional<ButtonType> result = alert.showAndWait();
             // If OK to exit
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                 saveThemePreference(LogInController.currentTheme);
+                saveThemePreference(LogInController.currentTheme);
                 Platform.exit();
                 LOGGER.info("Application exited by user.");
             } else {
@@ -664,8 +650,8 @@ private String loadThemePreference() {
         } catch (Exception e) {
             String errorMsg = "Error exiting application: " + e.getMessage();
             Alert alert = new Alert(Alert.AlertType.ERROR,
-                            errorMsg,
-                            ButtonType.OK);
+                    errorMsg,
+                    ButtonType.OK);
             alert.showAndWait();
             LOGGER.log(Level.SEVERE, errorMsg);
         }

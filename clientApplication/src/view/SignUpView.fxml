@@ -325,7 +325,7 @@
                               <Font size="20.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="chb_active" mnemonicParsing="false">
+                        <CheckBox fx:id="chb_active" mnemonicParsing="false" selected="true">
                            <HBox.margin>
                               <Insets left="52.0" top="15.0" />
                            </HBox.margin>

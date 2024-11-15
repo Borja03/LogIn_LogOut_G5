@@ -48,4 +48,15 @@ public class UtilsMethods {
         alert.setContentText(message);
         alert.showAndWait();
     }
+    
+     public void showAlertExcep( String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+   
+
+    
 }
